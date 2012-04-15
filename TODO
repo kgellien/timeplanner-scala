@@ -1,0 +1,15 @@
+- remove absolute paths / configure tex-output dir according to input file
+
+- make headings configurable (internationalization: Privat, Sonstiges, Beruflich)
+
+- Documentation!
+
+- make use of ISO8601 calender consistent
+
+- remove dependencies on OS X (pdflatex)
+
+- test properly under Win 7 and Linux
+
+- add SBT support
+
+- find a way to distinguish between birthdays and anniversaries

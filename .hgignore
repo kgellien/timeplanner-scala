@@ -1,0 +1,16 @@
+syntax: glob
+.DS_Store
+target
+.classpath
+.project
+.scala_dependencies
+.settings
+.cache
+*~
+*.tex
+*.aux
+*.dvi
+*.log
+*.pdf
+pdflatex.stderr
+pdflatex.stdout

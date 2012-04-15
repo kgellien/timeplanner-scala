@@ -1,0 +1,30 @@
+######  2012
+
+###### regular
+
+1 =2012-04 Gym
+3 =2012-04 Gym
+5 =2012-04 Gym
+
+7 Re\-tro\-spek\-ti\-ve
+7 Planning next week
+
+M P monthly retrospektive
+Q P quarterly retrospektive
+Y P yearly retrospektive
+
+
+## April
+2012-04 Monthly aim
+2012-KW-16 weekly aim
+
+2012-Q2 P quarterly private aim
+
+
+
+2012-03 B 05. -- 09.03. QCon London
+
+2012-04 B 16. -- 20.04. JAX in Mainz
+2012-06 B 04. -- 05.06. Sea-Con in Hamburg
+
+2012-11 B Öredev
