@@ -4,6 +4,7 @@ import java.io._
 import scala.io.Source
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.latex.LatexTimePlan
+import java.util.Properties
 
 object Io {
 
@@ -49,7 +50,7 @@ object Io {
   }
 
   def executeArr(cmd: Array[String]): (Int, List[String], List[String]) = {
-    cmd foreach println
+    //cmd foreach println
     val proc = Runtime.getRuntime.exec(cmd)
     val procStdErr = readOutProcStream(proc.getErrorStream, "ERROR")
     // procStdIn is *Output* of proc, but input for this process
@@ -82,8 +83,15 @@ object Io {
         println("WARNING: osName >%s< not yet recognized; take >pdflatex<" format osName)
         "pdflatex"
     }
+    //
+    // Read properties file.
+    // TODO: make property file optional, i.e. check existence and if non-existent use above defaults
+    val properties = new Properties()
+    properties.load(new FileInputStream("timeplan.properties"))
+    val pdflatexFullPath = properties.getProperty("pdflatex")
+    println("Path to pdflatex: >%s<" format pdflatexFullPath)
     // TODO: extract output-directory from source!
-    val lst = pdflatex :: "-output-directory=." :: quote + source + quote :: Nil
+    val lst = pdflatexFullPath :: "-output-directory=." :: quote + source + quote :: Nil
     lst.toArray
   }
 
