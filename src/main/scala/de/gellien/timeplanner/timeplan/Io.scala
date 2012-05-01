@@ -71,8 +71,15 @@ object Io {
   }
   
   def getPdfLaTeXCmdArr(source: String): Array[String] = {
+    val pdflatex = osName match {
+    case "Linux" => "/usr/bin/pdflatex"
+    case "Mac OS X" => "/usr/texbin/pdflatex"
+    case "Windows XP" => "pdflatex"
+    case _ => println("WARNING: osName >%s< not yet recognized; take >pdflatex<" format osName)
+      "pdflatex"
+  }
     // TODO: extract output-directory from source!
-    val lst = "/usr/texbin/pdflatex" :: "-output-directory=." :: quote + source + quote :: Nil
+    val lst = pdflatex :: "-output-directory=." :: quote + source + quote :: Nil
     lst.toArray
   }
 
