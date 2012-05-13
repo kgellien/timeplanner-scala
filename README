@@ -17,5 +17,7 @@ In pom.xml under launcher use of the commandline is exemplified.
 Call mvn scala:run to call this launcher. The above mentioned configuration files will be taken to generate timeplan.pdf
 
 
-This project expects a functioning (La)TeX installed (pdflatex is called internally; for now: /usr/texbin/pdflatex is assumed).
-
+This project expects a functioning (La)TeX installed (pdflatex is called internally).
+For this call seemingly the full path to pdflatex is needed. To adjust your personal setting without the need to
+change something in the checked in files, copy timeplan.properties.template to timeplan.properties which is listed in .hgignore and change the entries
+according to your needs.
