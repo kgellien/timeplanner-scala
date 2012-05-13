@@ -9,7 +9,8 @@ object Plan {
   def main(args: Array[String]) : Unit = {
     val usage = """Usage: Plan [-d | --debug] todoFileName[s]"""
       val defaultTexoutput = "example.tex"
-//    println("pwd: " + System.getProperty("user.dir"))
+    println("os: " + System.getProperty("os.name"))
+    println("pwd: " + System.getProperty("user.dir"))
     if (args.length == 0) println(usage)
     
     val options = getOptions(args)

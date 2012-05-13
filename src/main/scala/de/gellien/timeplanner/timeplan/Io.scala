@@ -74,21 +74,22 @@ object Io {
   }
 
   def getPdfLaTeXCmdArr(source: String): Array[String] = {
-    val pdflatex = osName match {
-      case "Linux" => "/usr/bin/pdflatex"
-      case "Mac OS X" => "/usr/texbin/pdflatex"
-      case "Windows XP" => "pdflatex"
-      case "Windows 7" => "c:/Program Files (x86)/MiKTeX 2.9/miktex/bin/pdfplatex.exe"
+    // TODO: use constants for os
+    val os = osName match {
+      case "Linux" => "Linux"
+      case "Mac OS X" => "Mac"
+      case "Windows XP" => "WinXP"
+      case "Windows 7" => "Win7"
       case _ =>
-        println("WARNING: osName >%s< not yet recognized; take >pdflatex<" format osName)
-        "pdflatex"
+        println("WARNING: osName >%s< not yet recognized; take >Linux<" format osName)
+        "Linux"
     }
     //
     // Read properties file.
     // TODO: make property file optional, i.e. check existence and if non-existent use above defaults
     val properties = new Properties()
     properties.load(new FileInputStream("timeplan.properties"))
-    val pdflatexFullPath = properties.getProperty("pdflatex")
+    val pdflatexFullPath = properties.getProperty(os+".pdflatex")
     println("Path to pdflatex: >%s<" format pdflatexFullPath)
     // TODO: extract output-directory from source!
     val lst = pdflatexFullPath :: "-output-directory=." :: quote + source + quote :: Nil

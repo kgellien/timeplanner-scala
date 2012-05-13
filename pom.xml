@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.gellien</groupId>
 	<artifactId>timeplanner</artifactId>
-	<version>0.7.1</version>
+	<version>0.7.2</version>
 	<name>${project.artifactId}</name>
 	<description>Create Pdf-Timeplans out of simple textfiles containing appointments, tasks and birthdays/anniversaries</description>
 	<inceptionYear>2011</inceptionYear>
@@ -19,7 +19,7 @@
 		<maven.compiler.source>1.5</maven.compiler.source>
 		<maven.compiler.target>1.5</maven.compiler.target>
 		<encoding>UTF-8</encoding>
-		<scala.version>2.9.1</scala.version>
+		<scala.version>2.9.2</scala.version>
 	</properties>
 
 	<repositories>
@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.specs2</groupId>
 			<artifactId>specs2_${scala.version}</artifactId>
-			<version>1.6.1</version>
+			<version>1.9</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
