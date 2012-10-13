@@ -26,18 +26,18 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
 
   def render = {
     val result = new ListBuffer[String]
-    result append """\documentclass[12pt,a4paper,landscape]{article}"""
-    result append "\\usepackage[landscape]{geometry}" // escape does not work in """ """, neither does single backslash; backslash-u as Unicode-escape?!?
-    result append "\\usepackage[latin1]{inputenc}"
-    result append "\\usepackage[german]{babel}"
-    result append "\\usepackage[T1]{fontenc}"
-    result append "\\usepackage{times}"
-    result append "\\usepackage{multicol}"
-    result append "\\usepackage{rotating}"
-    result.append(preamble)
-    result.append("""\begin{document}""")
+    result += """\documentclass[12pt,a4paper,landscape]{article}"""
+    result += "\\usepackage[landscape]{geometry}" // escape does not work in """ """, neither does single backslash; backslash-u as Unicode-escape?!?
+    result += "\\usepackage[latin1]{inputenc}"
+    result += "\\usepackage[german]{babel}"
+    result += "\\usepackage[T1]{fontenc}"
+    result += "\\usepackage{times}"
+    result += "\\usepackage{multicol}"
+    result += "\\usepackage{rotating}"
+    result += preamble
+    result += """\begin{document}"""
     for (plan <- plans) result.appendAll(renderSinglePlan(plan))
-    result.append("""\end{document}""")
+    result += """\end{document}"""
     result
   }
 
