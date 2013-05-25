@@ -1,18 +1,18 @@
 package de.gellien.timeplanner
 
-import timeplan.{TimePlan, PeriodPlanDsl, Io}
+import timeplan.{ TimePlan, PeriodPlanDsl, Io }
 
 object Plan {
 
   type OptionMap = Map[Symbol, Any]
-  
-  def main(args: Array[String]) : Unit = {
+
+  def main(args: Array[String]): Unit = {
     val usage = """Usage: Plan [-d | --debug] todoFileName[s]"""
-      val defaultTexoutput = "example.tex"
+    val defaultTexoutput = "example.tex"
     println("os: " + System.getProperty("os.name"))
     println("pwd: " + System.getProperty("user.dir"))
     if (args.length == 0) println(usage)
-    
+
     val options = getOptions(args)
     println(options)
     if (options('input).asInstanceOf[List[String]].size == 0) {
@@ -20,14 +20,14 @@ object Plan {
       println(usage)
       sys.exit(1)
     }
-    
+
     val debug = options contains 'debug
     val callPdfLatex = options contains 'pdflatex
     val texoutput = if (options contains 'texoutput) options('texoutput).asInstanceOf[String] else defaultTexoutput
     val inputDsl = if (options contains 'inputDsl) Some(options('inputDsl).asInstanceOf[String]) else None
     val inputFiles = options('input).asInstanceOf[List[String]].reverse // must exist - see above; reverse if sequence matters
-    val todoList = Io.readFiles(inputFiles) 
-    
+    val todoList = Io.readFiles(inputFiles)
+
     val tp = inputDsl match {
       case Some(fileName) =>
         println("Evaluate %s for construction of TimePlan instance" format fileName)
@@ -59,12 +59,12 @@ object Plan {
     }
     tp
   }
-  
-// modeled after http://stackoverflow.com/questions/2315912/scala-best-way-to-parse-command-line-parameters-cli (pjotrp)
+
+  // modeled after http://stackoverflow.com/questions/2315912/scala-best-way-to-parse-command-line-parameters-cli (pjotrp)
   def getOptions(args: Array[String]): OptionMap = {
-    import scala.collection.mutable.{Map=>MMap}
+    import scala.collection.mutable.{ Map => MMap }
     type OptionMMap = MMap[Symbol, Any]
-    def nextOption(map : OptionMMap, list: List[String]) : OptionMMap = {
+    def nextOption(map: OptionMMap, list: List[String]): OptionMMap = {
       list match {
         case Nil => map
         case "--input_dsl" :: fileName :: tail => nextOption(map ++ Map('inputDsl -> fileName), tail)
@@ -80,9 +80,9 @@ object Plan {
     }
     val initialMap: OptionMMap = MMap('input -> List())
     val input = initialMap('input).asInstanceOf[List[String]]
-    nextOption(initialMap,args.toList).toMap  // return immutable version
+    nextOption(initialMap, args.toList).toMap // return immutable version
   }
-  
+
   def defaultTimePlan(todoList: List[String], debug: Boolean) = {
     val tp = new TimePlan(todoList, debug)
     tp.addWeekPlans(2012, 5 to 8)

@@ -47,8 +47,7 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
     if (plan.withOverview) {
       result.appendAll(renderSinglePeriods("6cm", """\normalsize""", plan.periodOverview))
       result.appendAll(renderSinglePeriods("10cm", """\small""", plan.periodSpecifics))
-    }
-    else {
+    } else {
       result.appendAll(renderSinglePeriods("17cm", """\small""", plan.periodSpecifics))
     }
     result append "\\newpage"
@@ -65,7 +64,7 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
       case QuarterPlan(year, quarter, workList, full) => ("%d" format year, "", "%s" format "Q%d" format quarter)
       case YearPlan(year, workList, full) => ("%d" format year, "", "")
       case _ => ("left", "middle", "right")
-    } 
+    }
     val result = new ListBuffer[String]
     result.append("""{\Large \bf %s \hfill %s \hfill %s}""" format (left, middle, right))
     result
@@ -122,7 +121,7 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
     result.append("""\end{center}""")
     result
   }
-  
+
   def getDefaultHeading(item: SinglePeriod) = {
     item match {
       case Day(year, month, day, _, _) => List(TimeHelper.displayDay(year, month, day))
