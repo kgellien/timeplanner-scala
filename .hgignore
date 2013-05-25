@@ -14,3 +14,4 @@ target
 *.pdf
 pdflatex.stderr
 pdflatex.stdout
+timeplan.properties
