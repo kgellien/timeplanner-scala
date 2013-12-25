@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.gellien</groupId>
 	<artifactId>timeplanner</artifactId>
-	<version>0.7.2</version>
+	<version>0.7.3</version>
 	<name>${project.artifactId}</name>
 	<description>Create Pdf-Timeplans out of simple textfiles containing appointments, tasks and birthdays/anniversaries</description>
 	<inceptionYear>2011</inceptionYear>
@@ -16,17 +16,18 @@
 	</licenses>
 
 	<properties>
-		<maven.compiler.source>1.5</maven.compiler.source>
-		<maven.compiler.target>1.5</maven.compiler.target>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
 		<encoding>UTF-8</encoding>
-		<scala.version>2.9.2</scala.version>
+		<scala.version>2.10.3</scala.version>
+		<scala.version.short>2.10</scala.version.short>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>scala-tools.org</id>
-			<name>Scala-Tools Maven2 Repository</name>
-			<url>https://oss.sonatype.org/content/groups/scala-tools</url>
+			<id>oss.sonatype.org</id>
+			<name>releases</name>
+			<url>http://oss.sonatype.org/content/repositories/releases</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -56,19 +57,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.specs2</groupId>
-			<artifactId>specs2_${scala.version}</artifactId>
-			<version>1.9</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.specs2</groupId>
-			<artifactId>specs2-scalaz-core_${scala.version}</artifactId>
-			<version>6.0.1</version>
+			<artifactId>specs2_${scala.version.short}</artifactId>
+			<version>2.3.6</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -77,15 +72,15 @@
 		<sourceDirectory>src/main/scala</sourceDirectory>
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-dependency-plugin</artifactId>
-    <configuration>
-        <outputDirectory>
-            ${project.build.directory}
-        </outputDirectory>
-    </configuration>
-</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<outputDirectory>
+						${project.build.directory}
+					</outputDirectory>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>

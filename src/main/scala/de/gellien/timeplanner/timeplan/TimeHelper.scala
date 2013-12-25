@@ -33,7 +33,7 @@ object TimeHelper {
     val startDay = getFirstDayInWeek(year, week)
     (for {
       i <- 0 until 7
-      val currentDay = startDay plusDays i
+      currentDay = startDay plusDays i
       } yield currentDay).toList
   }
 
@@ -61,7 +61,7 @@ object TimeHelper {
 	  else 0 // dummy; must not happen!
 	val result = (for {
 	  i <- 0 until noOfWeeks
-	  val currentMonday = firstMonday.plusWeeks(i)
+	  currentMonday = firstMonday.plusWeeks(i)
 	} yield (currentMonday.getWeekyear, currentMonday.getWeekOfWeekyear)).toList
 	result
   }

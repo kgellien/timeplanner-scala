@@ -67,7 +67,7 @@ object PeriodPlan {
   def filterWorkLists(workList: List[String], dateFilter: String, prefixes: String*): List[String] = {
     for {
       task <- (for (prefix <- prefixes) yield getEntriesWithPrefix(workList, prefix)).flatten.toList
-      val result = new BoundChecker(task, dateFilter).result
+      result = new BoundChecker(task, dateFilter).result
       if (result != None)
     } yield result.get
   }
