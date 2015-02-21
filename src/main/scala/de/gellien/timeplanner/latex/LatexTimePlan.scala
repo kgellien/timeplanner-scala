@@ -2,6 +2,7 @@ package de.gellien.timeplanner.latex
 
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
+import scala.collection.mutable.Map
 
 object LatexTimePlan {
   val totalWidth = List(280, 275, 267, 262, 258, 255, 248.15)
@@ -94,12 +95,44 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
   def renderWorklist(item: SinglePeriod) = {
     val workLists: List[ToDoList] = item.todo
     val result = new ListBuffer[String]
+    val toDoDict = Map[ToDoListType, List[String]]()
+    for (workList <- workLists) {
+      workList match {
+        case ToDoList(Anniversary, todo) =>
+          val prefix = "$*$"
+          toDoDict(Anniversary) = todo.map(line => prefix + line + "\n")
+        case ToDoList(Appointment, todo) =>
+          val prefix = ""
+          toDoDict(Appointment) = todo.map(line => prefix + line + "\n")
+        case ToDoList(Task, todo) =>
+          val prefix = "- "
+          toDoDict(Task) = todo.map(line => prefix + line + "\n")
+      }
+    }
+
+    result.appendAll(toDoDict getOrElse (Anniversary, List()))
+    if (withSeparator) {
+      result.append("""{\center \rule{0.5\linewidth}{0.3mm}\\ } \vspace*{1em}""")
+    }
+    result.appendAll(toDoDict getOrElse (Appointment, List()))
+    if (withSeparator) {
+      result.append("""{\center \rule{0.5\linewidth}{0.3mm}\\ }""")
+    }
+    result.append("""\vfill""")
+    result.appendAll(toDoDict getOrElse (Task, List()))
+
+    result
+  }
+
+  def renderWorklistOld(item: SinglePeriod) = {
+    val workLists: List[ToDoList] = item.todo
+    val result = new ListBuffer[String]
     for (workList <- workLists) {
       val prefix = workList match {
         case ToDoList(Anniversary, todo) => "$*$"
-        case ToDoList(Task, todo) => "- "
+        case ToDoList(Task, todo)        => "- "
         case ToDoList(Appointment, todo) => ""
-        case _ => "x " // fallback; should not happen
+        case _                           => "x " // fallback; should not happen
       }
       result.appendAll(workList.todo.map(line => prefix + line + "\n"))
       if (!workList.isEmpty && withSeparator) // TODO: use something like intersperse so the last line can simply be avoided!
@@ -114,7 +147,7 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
     result.append("""\begin{center}""")
     val headerLines = header match {
       case Some(line) => List(line)
-      case None => getDefaultHeading(item)
+      case None       => getDefaultHeading(item)
     }
     for (line <- headerLines) result.append("""{\bf %s} \\""" format line)
     result.append("""\rule{\linewidth}{0.3mm} \\""")
@@ -129,10 +162,10 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
         val (from, to) = TimeHelper.fromToWeek(year, week)
         val fromTo = "%s -- %s" format (from, to)
         List("KW %02d" format week, fromTo)
-      case Month(year, month, _, _) => List("%s" format (TimeHelper.monthName(month)))
+      case Month(year, month, _, _)     => List("%s" format (TimeHelper.monthName(month)))
       case Quarter(year, quarter, _, _) => List("Q%d" format quarter)
-      case Year(year, _, _) => List("%d" format year)
-      case _ => List("MyHeader") // fallback; should not happen
+      case Year(year, _, _)             => List("%d" format year)
+      case _                            => List("MyHeader") // fallback; should not happen
     }
   }
 }

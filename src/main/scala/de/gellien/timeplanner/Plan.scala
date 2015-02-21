@@ -26,6 +26,7 @@ object Plan {
     val texoutput = if (options contains 'texoutput) options('texoutput).asInstanceOf[String] else defaultTexoutput
     val inputDsl = if (options contains 'inputDsl) Some(options('inputDsl).asInstanceOf[String]) else None
     val inputFiles = options('input).asInstanceOf[List[String]].reverse // must exist - see above; reverse if sequence matters
+    val withSeparator = options contains 'withSeparator
     val todoList = Io.readFiles(inputFiles)
 
     val tp = inputDsl match {
@@ -36,7 +37,7 @@ object Plan {
         println("No input DSL file specified; construct default TimePlan instance")
         defaultTimePlan(todoList, debug)
     }
-    Io.output(texoutput, tp, withSeparator = false, callPdfLatex, debug)
+    Io.output(texoutput, tp, withSeparator, callPdfLatex, debug)
   }
 
   def buildTimePlan(fileName: String, todoList: List[String], debug: Boolean) = {
@@ -73,6 +74,10 @@ object Plan {
         case "-o" :: fileName :: tail => nextOption(map ++ Map('texoutput -> fileName), tail)
         case "--debug" :: tail => nextOption(map ++ Map('debug -> true), tail)
         case "-d" :: tail => nextOption(map ++ Map('debug -> true), tail)
+        case "--withSeparator" :: tail => nextOption(map ++ Map('withSeparator -> true), tail)
+        case "-s" :: tail => nextOption(map ++ Map('withSeparator -> true), tail)
+        case "--withOverview" :: tail => nextOption(map ++ Map('withOverview -> true), tail)
+        case "-v" :: tail => nextOption(map ++ Map('withOverview -> true), tail)
         case "--callpdflatex" :: tail => nextOption(map ++ Map('pdflatex -> true), tail)
         case "-t" :: tail => nextOption(map ++ Map('pdflatex -> true), tail)
         case string :: tail => map('input) = string :: map('input).asInstanceOf[List[String]]; nextOption(map, tail)

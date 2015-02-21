@@ -1,13 +1,17 @@
 name := "timeplanner"
 
-version := "0.7.3"
+version := "0.7.4"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.11.5"
 
-libraryDependencies += "joda-time" % "joda-time" % "2.0"
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
-libraryDependencies += "org.joda" % "joda-convert" % "1.2"
+libraryDependencies += "org.scala-lang" % "scala-parser-combinators" % "2.11.0-M4"
 
-libraryDependencies += "org.specs2" %% "specs2" % "2.3.6" % "test"
+libraryDependencies += "joda-time" % "joda-time" % "2.3"
 
-libraryDependencies += "junit" % "junit" % "4.10" % "test"
+libraryDependencies += "org.joda" % "joda-convert" % "1.6"
+
+libraryDependencies += "org.specs2" % "specs2_2.11" % "2.3.12" % "test"
+
+libraryDependencies += "junit" % "junit" % "4.11" % "test"
