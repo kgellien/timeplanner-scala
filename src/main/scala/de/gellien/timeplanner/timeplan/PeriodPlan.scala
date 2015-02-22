@@ -10,28 +10,28 @@ abstract class PeriodPlan(val withOverview: Boolean) {
   val periodSpecifics: List[SinglePeriod]
 }
 
-case class WeekPlan(year: Int, week: Int, workList: List[String], override val withOverview: Boolean = true) extends PeriodPlan(withOverview) {
+case class WeekPlan(year: Int, week: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
   override val todo = PeriodPlan.getAppointmentsByWeek(workList, year, week, removeHeaderPrefix = false)
   override val period = Week(year, week, todo)
   override val periodSpecifics = for (currentDay <- daysInWeek(year, week))
     yield Day(currentDay.getYear, currentDay.getMonthOfYear, currentDay.getDayOfMonth, PeriodPlan.getAppointmentsByDay(workList, currentDay, removeHeaderPrefix = true))
 }
 
-case class MonthPlan(year: Int, month: Int, workList: List[String], override val withOverview: Boolean = true) extends PeriodPlan(withOverview) {
+case class MonthPlan(year: Int, month: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
   override val todo = PeriodPlan.getAppointmentsByMonth(workList, year, month, removeHeaderPrefix = false)
   override val period = Month(year, month, todo)
   override val periodSpecifics = for ((weekYear, week) <- weeksInMonth(year, month))
     yield Week(weekYear, week, PeriodPlan.getAppointmentsByWeek(workList, weekYear, week, removeHeaderPrefix = true))
 }
 
-case class QuarterPlan(year: Int, quarter: Int, workList: List[String], override val withOverview: Boolean = true) extends PeriodPlan(withOverview) {
+case class QuarterPlan(year: Int, quarter: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
   override val todo = PeriodPlan.getAppointmentsByQuarter(workList, year, quarter, removeHeaderPrefix = false)
   override val period = Quarter(year, quarter, todo)
   override val periodSpecifics = for (month <- monthsInQuarter(year, quarter))
     yield Month(year, month, PeriodPlan.getAppointmentsByMonth(workList, year, month, removeHeaderPrefix = true))
 }
 
-case class YearPlan(year: Int, workList: List[String], override val withOverview: Boolean = true) extends PeriodPlan(withOverview) {
+case class YearPlan(year: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
   override val todo = PeriodPlan.getAppointmentsByYear(workList, year, removeHeaderPrefix = false)
   override val period = Year(year, todo)
   override val periodSpecifics = for (quarter <- (1 to 4).toList)

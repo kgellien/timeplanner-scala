@@ -92,6 +92,7 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
     result
   }
 
+  /* TODO: Refactor! SinglePeriod.todo should already be a map */
   def renderWorklist(item: SinglePeriod) = {
     val workLists: List[ToDoList] = item.todo
     val result = new ListBuffer[String]
@@ -110,16 +111,21 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
       }
     }
 
-    result.appendAll(toDoDict getOrElse (Anniversary, List()))
-    if (withSeparator) {
+    val anniversaries = toDoDict getOrElse (Anniversary, List())
+    val appointments = toDoDict getOrElse (Appointment, List())
+    val tasks = toDoDict getOrElse (Task, List())
+
+    // TODO: think through withSeparator
+    if (!anniversaries.isEmpty) {
+      result.appendAll(anniversaries)
       result.append("""{\center \rule{0.5\linewidth}{0.3mm}\\ } \vspace*{1em}""")
     }
-    result.appendAll(toDoDict getOrElse (Appointment, List()))
+    result.appendAll(appointments)
     if (withSeparator) {
       result.append("""{\center \rule{0.5\linewidth}{0.3mm}\\ }""")
     }
     result.append("""\vfill""")
-    result.appendAll(toDoDict getOrElse (Task, List()))
+    result.appendAll(tasks)
 
     result
   }

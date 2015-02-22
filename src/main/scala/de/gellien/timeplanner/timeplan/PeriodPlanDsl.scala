@@ -2,7 +2,7 @@ package de.gellien.timeplanner.timeplan
 
 import scala.util.parsing.combinator.JavaTokenParsers
 
-class PeriodPlanDsl(workList: List[String]) extends JavaTokenParsers {
+class PeriodPlanDsl(workList: List[String], val withOverviewDefault:Boolean = false) extends JavaTokenParsers {
 
   lazy val periodplan = (validPeriodplan | ignore)
 
@@ -11,19 +11,19 @@ class PeriodPlanDsl(workList: List[String]) extends JavaTokenParsers {
   // TODO: find a better way to make withOverview optional!
   lazy val weekLineWithOverview = ("Week" | "W") ~> year ~ weekNo ~ withOverview ^^ {case year ~ weekNo ~ withOverview => Some(WeekPlan(year, weekNo, workList, withOverview))}
   
-  lazy val weekLine = ("Week" | "W") ~> year ~ weekNo ^^ {case year ~ weekNo => Some(WeekPlan(year, weekNo, workList))}
+  lazy val weekLine = ("Week" | "W") ~> year ~ weekNo ^^ {case year ~ weekNo => Some(WeekPlan(year, weekNo, workList, withOverviewDefault))}
   
   lazy val monthLineWithOverview = ("Month" | "M") ~> year ~ monthNo ~ withOverview ^^ {case year ~ monthNo ~ withOverview => Some(MonthPlan(year, monthNo, workList, withOverview))}
   
-  lazy val monthLine = ("Month" | "M") ~> year ~ monthNo ^^ {case year ~ monthNo => Some(MonthPlan(year, monthNo, workList))}
+  lazy val monthLine = ("Month" | "M") ~> year ~ monthNo ^^ {case year ~ monthNo => Some(MonthPlan(year, monthNo, workList, withOverviewDefault))}
   
   lazy val quarterLineWithOverview = ("Quarter" | "Q") ~> year ~ quarterNo ~ withOverview ^^ {case year ~ quarterNo ~ withOverview => Some(QuarterPlan(year, quarterNo, workList, withOverview))}
   
-  lazy val quarterLine = ("Quarter" | "Q") ~> year ~ quarterNo ^^ {case year ~ quarterNo => Some(QuarterPlan(year, quarterNo, workList))}
+  lazy val quarterLine = ("Quarter" | "Q") ~> year ~ quarterNo ^^ {case year ~ quarterNo => Some(QuarterPlan(year, quarterNo, workList, withOverviewDefault))}
   
   lazy val yearLineWithOverview = ("Year" | "Y") ~> year ~ withOverview ^^ {case year ~ withOverview => Some(YearPlan(year, workList, withOverview))}
   
-  lazy val yearLine = ("Year" | "Y") ~> year ^^ {case year => Some(YearPlan(year, workList))}
+  lazy val yearLine = ("Year" | "Y") ~> year ^^ {case year => Some(YearPlan(year, workList, withOverviewDefault))}
   
   lazy val ignore = """.*""".r ^^ {case _ => None}
   
