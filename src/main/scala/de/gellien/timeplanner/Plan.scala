@@ -8,14 +8,14 @@ object Plan {
   type OptionMap = Map[Symbol, Any]
 
   def main(args: Array[String]): Unit = {
-    val usage = """Usage: Plan [-d | --debug] todoFileName[s]"""
+    val usage = """Usage: Plan [-d | --debug] -i timeplan.txt todoFileName[s]"""
     val defaultTexoutput = "example.tex"
     println("os: " + System.getProperty("os.name"))
     println("pwd: " + System.getProperty("user.dir"))
     if (args.length == 0) println(usage)
 
     val options = getOptions(args)
-    println(options)
+    println("options: " + options)
     if (options('input).asInstanceOf[List[String]].size == 0) {
       println("Fatal: need File(s) to read ToDo from")
       println(usage)
@@ -35,8 +35,9 @@ object Plan {
         println("Evaluate %s for construction of TimePlan instance" format fileName)
         buildTimePlan(fileName, todoList, debug)
       case None =>
-        println("No input DSL file specified; construct default TimePlan instance")
-        defaultTimePlan(todoList, debug)
+        println("Fatal: No input DSL file specified")
+        println(usage)
+        sys.exit(1)
     }
     Io.output(texoutput, tp, withSeparator, callPdfLatex, debug)
   }
@@ -87,14 +88,5 @@ object Plan {
     val initialMap: OptionMMap = MMap('input -> List())
     val input = initialMap('input).asInstanceOf[List[String]]
     nextOption(initialMap, args.toList).toMap // return immutable version
-  }
-
-  def defaultTimePlan(todoList: List[String], debug: Boolean) = {
-    val tp = new TimePlan(todoList, debug)
-    tp.addWeekPlans(2012, 5 to 8)
-    tp.addMonthPlans(2012, 2 to 3, false)
-    tp.addQuarterPlan(2012, 1, false)
-    tp.addYearPlan(2012, false)
-    tp
   }
 }

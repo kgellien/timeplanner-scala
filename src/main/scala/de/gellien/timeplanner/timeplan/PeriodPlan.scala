@@ -83,7 +83,7 @@ object PeriodPlan {
     List(new ToDoList(Appointment, appointments), new ToDoList(Task, tasks))
   }
 
-  // use List[List[String]], i.e. Helper.ToDoLists, to be able to differentiate in output
+  // use List[List[String]], i.e. ToDoLists, to be able to differentiate in output
   def getAppointmentsByDay(workList: List[String], currentDay: LocalDate, removeHeaderPrefix: Boolean): List[ToDoList] = {
     val anniversaries = getEntriesWithPrefix(workList, isoDate(currentDay).substring(5)+" ")
     val prefixes = List(isoDate(currentDay)+" ", dailySearchPattern, currentDay.getDayOfWeek().toString+" ")

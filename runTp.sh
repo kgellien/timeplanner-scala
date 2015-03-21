@@ -5,4 +5,4 @@ TP_OPTS=""
 
 TODOS="anniversaries.txt appointments2012.txt"
 
-sbt "run --callpdflatex $TP_OPTS -d -i timeplan.txt -o timeplan.tex $TODOS"
+sbt "run --callpdflatex $TP_OPTS -d -i timeplanDemo.txt -o timeplanDemo.tex $TODOS"
