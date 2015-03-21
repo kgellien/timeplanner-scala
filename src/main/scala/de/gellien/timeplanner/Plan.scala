@@ -68,8 +68,17 @@ object Plan {
         println(usage)
         sys.exit(1)
     }
-    val io = new Io(quote, outputEncoding)
-    io.output(texoutput, tp, withSeparator, callPdfLatex, pdflatexFullPath, debug)
+    val periodPlans = tp.periodPlans
+    if (debug) {
+      periodPlans foreach { periodPlan =>
+        println(periodPlan.period)
+        periodPlan.periodSpecifics foreach { subPeriod =>
+          println("  %s" format subPeriod)
+        }
+      }
+    }
+    val io = new Io(quote, outputEncoding, debug)
+    io.output(texoutput, periodPlans, withSeparator, callPdfLatex, pdflatexFullPath)
   }
 
   def buildTimePlan(lines: List[String], todoList: List[String], inputEncoding: String, debug: Boolean) = {
@@ -91,7 +100,7 @@ object Plan {
     tp
   }
 
-  def readFiles(fileNames: List[String], encoding: String, debug: Boolean = false) = {
+  def readFiles(fileNames: List[String], encoding: String) = {
     val result = new ListBuffer[String]
     for (fileName <- fileNames) {
       val lines = Source.fromFile(fileName, encoding).getLines.toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }

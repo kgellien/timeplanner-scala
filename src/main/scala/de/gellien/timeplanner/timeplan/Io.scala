@@ -3,22 +3,13 @@ package de.gellien.timeplanner.timeplan
 import java.io._
 import de.gellien.timeplanner.latex.LatexTimePlan
 
-class Io(quote: String, encoding: String) {
-  def output(target: String, tp: TimePlan, withSeparator: Boolean, callPdflatex: Boolean, pdflatexFullPath: String, debug: Boolean = false) {
-    val periodPlans = tp.periodPlans
-    if (debug) {
-      periodPlans foreach { periodPlan =>
-        println(periodPlan.period)
-        periodPlan.periodSpecifics foreach { subPeriod =>
-          println("  %s" format subPeriod)
-        }
-      }
-    }
+class Io(quote: String, encoding: String, debug: Boolean) {
+  def output(target: String, periodPlans: List[PeriodPlan], withSeparator: Boolean, callPdflatex: Boolean, pdflatexFullPath: String) {
     val ltp = new LatexTimePlan(periodPlans, withSeparator)
     val latexSource = ltp.render
     saveStringList(target, latexSource)
     if (callPdflatex) {
-      callPdfLaTeX(pdflatexFullPath, target, debug)
+      callPdfLaTeX(pdflatexFullPath, target)
     }
   }
 
@@ -72,7 +63,7 @@ class Io(quote: String, encoding: String) {
     lst.toArray
   }
 
-  def callPdfLaTeX(pdflatexFullPath: String, source: String, debug: Boolean) {
+  def callPdfLaTeX(pdflatexFullPath: String, source: String) {
     val cmdArr = getPdfLaTeXCmdArr(source, pdflatexFullPath)
     if (debug) {
       // TODO: extract output-directory from source!
