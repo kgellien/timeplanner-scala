@@ -4,6 +4,7 @@ import timeplan.{ TimePlan, PeriodPlanDsl, Io }
 
 object Plan {
 
+  val latin1 = "iso-8859-1"
   type OptionMap = Map[Symbol, Any]
 
   def main(args: Array[String]): Unit = {
@@ -42,7 +43,7 @@ object Plan {
 
   def buildTimePlan(fileName: String, todoList: List[String], debug: Boolean) = {
     import scala.io.Source
-    val lines = Source.fromFile(fileName, "iso-8859-1").getLines.toList
+    val lines = Source.fromFile(fileName, latin1).getLines.toList
     val tp = new TimePlan(todoList, debug) // todoList for addPeriodPlan calls not used
     for (line <- lines) {
       PeriodPlanDsl.getPeriodPlan(line, todoList) match {

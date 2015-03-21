@@ -60,7 +60,7 @@ import scala.util.parsing.combinator.JavaTokenParsers
 class DateFilterDsl extends JavaTokenParsers {
   lazy val dateFilter = (dayFilter | weekFilter | monthFilter | quarterFilter | yearFilter)
   lazy val dayFilter = """\d{4}-\d{2}-\d{2}""".r ^^ {case yearMonthDay => DayFilter(yearMonthDay)}
-  lazy val weekFilter = """\d{4}-KW-\d{2}""".r ^^ {case yearWeek => WeekFilter(yearWeek)}
+  lazy val weekFilter = """\d{4}-W\d{2}""".r ^^ {case yearWeek => WeekFilter(yearWeek)}
   lazy val monthFilter = """\d{4}-\d{2}""".r ^^ {case yearMonth => MonthFilter(yearMonth)}
   lazy val quarterFilter = """\d{4}-Q\d""".r ^^ {case yearQuarter => QuarterFilter(yearQuarter)}
   lazy val yearFilter = """\d{4}""".r ^^ {case year => YearFilter(year)}

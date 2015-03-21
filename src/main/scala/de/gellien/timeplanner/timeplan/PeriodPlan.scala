@@ -48,7 +48,7 @@ object PeriodPlan {
   val monthlySearchPattern = "M "
   val quarterlySearchPattern = "Q "
   val yearlySearchPattern = "Y "
-  val calendarWeekSearchPattern = "%d-KW-%02d "
+  val calendarWeekSearchPattern = "%d-W%02d "
   val calendarMonthSearchPattern = "%d-%02d "
   val calendarQuarterSearchPattern = "%d-Q%d "
   val calendarYearSearchPattern = "%d "

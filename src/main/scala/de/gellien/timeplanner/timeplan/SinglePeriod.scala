@@ -11,7 +11,7 @@ case class Day(year: Int, month: Int, day: Int, override val todo: List[ToDoList
 
 case class Week(year: Int, week: Int, override val todo: List[ToDoList],
     override val header: Option[String] = None) extends SinglePeriod(todo, header) {
-  override def toString = "%4d-KW-%02d" format (year, week)
+  override def toString = "%4d-W%02d" format (year, week)
 }
 
 case class Month(year: Int, month: Int, override val todo: List[ToDoList],

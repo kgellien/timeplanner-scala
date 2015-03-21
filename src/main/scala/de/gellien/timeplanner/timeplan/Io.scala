@@ -8,6 +8,9 @@ import java.util.Properties
 
 object Io {
 
+  val latin1 = "iso-8859-1"
+  val pwLatin1 = "ISO8859_1"
+
   val winQuote = "\"" // WinXP
   val macQuote = "" // Mac OS X
   val linQuote = "" // Linux
@@ -22,7 +25,7 @@ object Io {
       winQuote
   }
 
-  def saveStringList(fileName: String, list: Seq[String], encoding: String = "iso-8859-1") {
+  def saveStringList(fileName: String, list: Seq[String], encoding: String = latin1) {
     val fos = new FileOutputStream(fileName)
     val osw = new OutputStreamWriter(fos, encoding)
     list foreach { line => osw.write(line + "\n") }
@@ -64,7 +67,7 @@ object Io {
   }
 
   def executeAndSaveArr(cmd: Array[String], filePrefix: String,
-    saveAlways: Boolean = false, encoding: String = "iso-8859-1"): Int = {
+    saveAlways: Boolean = false, encoding: String = latin1): Int = {
     val (exitValue, procStdErr, procStdOut) = executeArr(cmd)
     if (saveAlways || exitValue != 0) {
       saveStringList(filePrefix + ".stderr", procStdErr, encoding)
@@ -119,7 +122,7 @@ object Io {
   def readFiles(fileNames: List[String], debug: Boolean = false) = {
     val result = new ListBuffer[String]
     for (fileName <- fileNames) {
-      val lines = Source.fromFile(fileName, "iso-8859-1").getLines.toList
+      val lines = Source.fromFile(fileName, latin1).getLines.toList
       result.appendAll(lines)
       //if (debug)
       println("Read " + lines.size.toString + " lines from " + fileName)
@@ -128,7 +131,7 @@ object Io {
   }
 
   def printToFile(f: java.io.File)(op: java.io.PrintWriter => Unit) {
-    val pw = new java.io.PrintWriter(f, "ISO8859_1")
+    val pw = new java.io.PrintWriter(f, pwLatin1)
     try { op(pw) } finally { pw.close() }
   }
 }

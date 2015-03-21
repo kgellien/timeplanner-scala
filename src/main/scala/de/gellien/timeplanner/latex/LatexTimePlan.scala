@@ -60,7 +60,7 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
       case WeekPlan(year, week, workList, full) =>
         val (start, end) = TimeHelper.fromToWeek(year, week)
         val middle = "%s -- %s" format (start, end)
-        ("%d" format year, middle, "KW %02d" format week)
+        ("%d" format year, middle, "W%02d" format week)
       case MonthPlan(year, month, workList, full) => ("%d" format year, "", "%s" format (TimeHelper.monthName(month)))
       case QuarterPlan(year, quarter, workList, full) => ("%d" format year, "", "%s" format "Q%d" format quarter)
       case YearPlan(year, workList, full) => ("%d" format year, "", "")
@@ -75,7 +75,6 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
     val result = new ListBuffer[String]
     val width = LatexTimePlan.getColumnWidth(periods.size)
     result.append("""\begin{multicols}{%d}""" format periods.size)
-    //for (singlePeriod <- periods) result.appendAll(renderSinglePeriod(singlePeriod, height, width, textsize))
     result.appendAll((for (singlePeriod <- periods) yield renderSinglePeriod(singlePeriod, height, width, textsize)).flatten)
     result.append("""\end{multicols}""")
     result
@@ -130,23 +129,6 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
     result
   }
 
-  def renderWorklistOld(item: SinglePeriod) = {
-    val workLists: List[ToDoList] = item.todo
-    val result = new ListBuffer[String]
-    for (workList <- workLists) {
-      val prefix = workList match {
-        case ToDoList(Anniversary, todo) => "$*$"
-        case ToDoList(Task, todo)        => "- "
-        case ToDoList(Appointment, todo) => ""
-        case _                           => "x " // fallback; should not happen
-      }
-      result.appendAll(workList.todo.map(line => prefix + line + "\n"))
-      if (!workList.isEmpty && withSeparator) // TODO: use something like intersperse so the last line can simply be avoided!
-        result.append("""{\center \rule{0.5\linewidth}{0.3mm}\\ } \vspace*{1em}""")
-    }
-    result
-  }
-
   def renderHeading(item: SinglePeriod) = {
     val header = item.header
     val result = new ListBuffer[String]
@@ -167,7 +149,7 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
       case Week(year, week, _, _) =>
         val (from, to) = TimeHelper.fromToWeek(year, week)
         val fromTo = "%s -- %s" format (from, to)
-        List("KW %02d" format week, fromTo)
+        List("W%02d" format week, fromTo)
       case Month(year, month, _, _)     => List("%s" format (TimeHelper.monthName(month)))
       case Quarter(year, quarter, _, _) => List("Q%d" format quarter)
       case Year(year, _, _)             => List("%d" format year)

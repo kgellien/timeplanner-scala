@@ -16,10 +16,7 @@ There I differentiate between tasks (keyed by date without associated time), app
 
 Look at anniversaries.txt and appointments2012.txt for example input, whereas timeplan.txt defines which specific plans should be generated.
 
-In `pom.xml` under launcher use of the commandline is exemplified.
-
-Call `mvn scala:run` to call this launcher. The above mentioned configuration files will be taken to generate timeplan.pdf
-
+Call ./runTp.sh to create example timeplan via SBT.
 
 This project expects a functioning (La)TeX installed (pdflatex is called internally).
 For this call seemingly the full path to pdflatex is needed. To adjust your personal setting without the need to
@@ -27,7 +24,31 @@ change something in the checked in files, copy `timeplan.properties.template` to
 according to your needs.
 
 
+## Prerequisites
+
+- SBT installed (>=0.13.5)
+- pdflatex
+
+
 ## To Do
 
 - Support build via SBT
 - Make it easy to provide ones own inputfiles *outside* of this project directory
+- Internationalisation
+
+## Revision History
+
+### 0.7.6
+ - refactoring (extraction of constants; preparation for cleanup)
+ - Week KW-%02d -> W%02d
+ - runTp.sh added to demonstrate call via SBT
+
+
+### 0.7.5
+
+
+## Maven (not any longer actively supported)
+
+In `pom.xml` under launcher use of the commandline is exemplified.
+
+Call `mvn scala:run` to call this launcher. The above mentioned configuration files will be taken to generate timeplan.pdf

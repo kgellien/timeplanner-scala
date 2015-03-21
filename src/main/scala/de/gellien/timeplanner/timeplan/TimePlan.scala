@@ -13,7 +13,7 @@ class TimePlan(workList : List[String], debug: Boolean = false) {
   }
   
   def addWeekPlan(year: Int, week: Int, full: Boolean = true) = {
-    if (debug) println("addWeekPlan(%d-KW-%02d)" format (year, week))
+    if (debug) println("addWeekPlan(%d-W%02d)" format (year, week))
     periodPlanBuffer += WeekPlan(year, week, workList, full)
   }
 
