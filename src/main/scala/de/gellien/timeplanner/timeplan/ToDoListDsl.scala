@@ -26,7 +26,8 @@ class ToDoListDsl extends JavaTokenParsers {
 
   lazy val weekly = "W" ^^ {case _ => WeeklyEntry()}
 
-  lazy val calWeek = """\d{4}-KW-\d{2}""".r ^? ({case w if ((1 to 53) contains w.substring(9).toInt)  => WeekEntry(w)}, (i => "calendar week needs to be in the range of 1 to 53"))
+  // TODO: use grouping instead of absolute position in String!
+  lazy val calWeek = """\d{4}-W\d{2}""".r ^? ({case w if ((1 to 53) contains w.substring(7).toInt)  => WeekEntry(w)}, (i => "calendar week needs to be in the range of 1 to 53"))
 
 
 //  lazy val timespan = """\d{2}:\d{2}""".r ^^ {case t => t.toString}

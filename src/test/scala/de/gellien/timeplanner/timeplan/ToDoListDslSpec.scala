@@ -8,8 +8,8 @@ class ToDoListDslSpec extends SpecificationWithJUnit {
   val task01Expected = """(WeeklyEntry(),"weekly task")"""
   val task01a = """W weekly task"""
   val task01aExpected = """(WeeklyEntry(),"weekly task")"""
-  val task02 = """2012-KW-04 "weekly task""""
-  val task02Expected = """(WeekEntry(2012-KW-04),"weekly task")"""
+  val task02 = """2012-W04 "weekly task""""
+  val task02Expected = """(WeekEntry(2012-W04),"weekly task")"""
 
   val daily = """D "daily task""""
   val dailyExpected = """(DailyEntry(),"daily task")"""

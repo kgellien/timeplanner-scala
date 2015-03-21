@@ -5,7 +5,7 @@ import org.specs2.mutable.SpecificationWithJUnit
 class TimePlanDslSpec extends SpecificationWithJUnit {
 
   val week01 = """Week 2012 5"""
-  val week01Expected = """Some(WeekPlan(2012,5,List(),true))"""
+  val week01Expected = """Some(WeekPlan(2012,5,List(),false))"""
 
   def getParseResultAsString(task: String, expected: String, debug: Boolean) = {
       if (debug) println("#  expected: " + expected)
@@ -19,10 +19,10 @@ class TimePlanDslSpec extends SpecificationWithJUnit {
       result
   }
 
-  def check_==(task: String, expected: String, debug: Boolean = true) =
+  def check_==(task: String, expected: String, debug: Boolean = false) =
       getParseResultAsString(task, expected, debug) must_== expected
 
-  def check_!=(task: String, expected: String, debug: Boolean = true) =
+  def check_!=(task: String, expected: String, debug: Boolean = false) =
       getParseResultAsString(task, expected, debug) must_!= expected
 
   "TimePlanDsl" should {
