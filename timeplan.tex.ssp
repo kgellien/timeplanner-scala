@@ -1,0 +1,37 @@
+\documentclass[12pt,a4paper,landscape]{article}
+\usepackage[landscape]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage[german]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{multicol}
+\usepackage{rotating}
+\oddsidemargin 1cm
+\evensidemargin 1cm
+\topmargin 0cm
+\addtolength{\oddsidemargin}{-2.54cm}
+\addtolength{\evensidemargin}{-2.54cm}
+\addtolength{\topmargin}{-2.54cm}
+\textwidth 27.7cm
+\textheight18cm
+\pagestyle{empty}
+\parindent 0pt
+
+\begin{document}
+
+#for (i <- 1 to 5)
+  \section{${i}}
+#end
+
+\newpage
+
+<% import de.gellien.timeplanner.timeplan.SinglePeriod %>
+<%@ var periods: List[SinglePeriod] %>
+#for (period <- periods)
+  \section{${period.toString}}
+  \newpage
+#end
+
+
+
+\end{document}

@@ -69,6 +69,24 @@ object Plan {
         sys.exit(1)
     }
     val periodPlans = tp.periodPlans
+    //
+    val periods = for {
+      periodPlan <- periodPlans
+      period = periodPlan.period
+    } yield period
+    val parms = Map("periods" -> periods)
+    //
+    import org.fusesource.scalate._
+    val engine = new TemplateEngine
+    val output = engine.layout("timeplan.tex.ssp", parms)
+    def saveString(fileName: String, string: String) {
+      val fos = new FileOutputStream(fileName)
+      val osw = new OutputStreamWriter(fos, outputEncoding)
+      osw.write(string + "\n")
+      osw.close()
+    }
+    saveString("mytimeplan.tex", output)
+    //
     if (debug) {
       periodPlans foreach { periodPlan =>
         println(periodPlan.period)
