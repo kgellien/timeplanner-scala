@@ -10,7 +10,7 @@
 7 Planning next week
 
 M P monthly retrospektive
-Q P quarterly retrospektive
+Q B quarterly retrospektive
 Y P yearly retrospektive
 
 

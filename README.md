@@ -35,6 +35,8 @@ according to your needs.
 - Support build via SBT
 - Make it easy to provide ones own inputfiles *outside* of this project directory
 - Internationalisation
+- use logging instead of println
+- try template engine (e.g. scalate) for latex output
 
 ## Revision History
 

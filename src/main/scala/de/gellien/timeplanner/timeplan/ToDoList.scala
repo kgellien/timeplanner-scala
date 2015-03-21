@@ -9,4 +9,5 @@ case object Appointment extends ToDoListType
 
 case class ToDoList(val kind: ToDoListType, val todo: List[String]) {
   def isEmpty = todo.isEmpty
+  override def toString = "%s: %s" format (kind, todo)
 }

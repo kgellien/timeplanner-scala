@@ -8,7 +8,7 @@ object TimeHelper {
     "%4d-%02d-%02d" format (date.getYear, date.getMonthOfYear, date.getDayOfMonth)
   }
   
-  def monthName(month: Int) = { // year and day do not matter; TimeHelper?
+  def monthName(month: Int) = { // year and day do not matter
     new LocalDate(2004, month, 1).monthOfYear.getAsText
   }
   

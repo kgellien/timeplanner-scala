@@ -10,7 +10,7 @@ object LatexTimePlan {
     "%4.2fmm" format (totalWidth(numberOfColumns - 1) / (numberOfColumns))
 }
 
-class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
+class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   val preamble = """\oddsidemargin 1cm
 \evensidemargin 1cm
 \topmargin 0cm
@@ -22,8 +22,6 @@ class LatexTimePlan(tp: TimePlan, withSeparator: Boolean) {
 \pagestyle{empty}
 \parindent 0pt
 """
-
-  val plans = tp.periodPlans
 
   def render = {
     val result = new ListBuffer[String]
