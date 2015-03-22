@@ -74,7 +74,8 @@ object Plan {
       periodPlan <- periodPlans
       period = periodPlan.period
     } yield period
-    val parms = Map("periods" -> periods)
+//    val parms = Map("periodPlans" -> periodPlans, "periods" -> periods)
+    val parms = Map("periodPlans" -> periodPlans)
     //
     import org.fusesource.scalate._
     val engine = new TemplateEngine

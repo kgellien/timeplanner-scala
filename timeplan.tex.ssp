@@ -19,16 +19,26 @@
 
 \begin{document}
 
-#for (i <- 1 to 5)
-  \section{${i}}
-#end
+#import(de.gellien.timeplanner.timeplan._)
+<%@ var periodPlans: List[PeriodPlan] %>
+#for (periodPlan <- periodPlans)
+    
+#{
+  val (left, middle, right) = periodPlan match {
+    case WeekPlan(year, week, workList, full) =>
+      val (start, end) = TimeHelper.fromToWeek(year, week)
+      val middle = "%s -- %s" format (start, end); ("%d" format year, middle, "W%02d" format week)
+    case MonthPlan(year, month, workList, full) =>
+      ("%d" format year, "", "%s" format (TimeHelper.monthName(month)))
+    case QuarterPlan(year, quarter, workList, full) => ("%d" format year, "", "%s" format "Q%d" format quarter)
+    case YearPlan(year, workList, full) => ("%d" format year, "", "")
+    case _ => ("left", "middle", "right")
+  }
+}#
+    
+    {\Large \bf ${left} \hfill ${middle} \hfill ${right}}
 
-\newpage
 
-<% import de.gellien.timeplanner.timeplan.SinglePeriod %>
-<%@ var periods: List[SinglePeriod] %>
-#for (period <- periods)
-  \section{${period.toString}}
   \newpage
 #end
 
