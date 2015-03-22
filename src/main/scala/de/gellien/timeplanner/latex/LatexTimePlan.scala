@@ -83,13 +83,13 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     result.append("""\framebox{""")
     result.append("""\begin{minipage}[t][%s]{%s}%s""" format (height, width, textsize))
     result.appendAll(renderHeading(singlePeriod))
-    result.appendAll(renderWorklist(singlePeriod.todo))
+    result.appendAll(renderTodoList(singlePeriod.todo))
     result.append("""\end{minipage}""")
     result.append("}")
     result
   }
 
-  def renderWorklist(todo: ToDoList) = {
+  def renderTodoList(todo: ToDoList) = {
     val result = new ListBuffer[String]
     if (!todo.anniversaries.isEmpty) {
       result.append(todo.anniversaries.mkString("\n\n"))
@@ -100,7 +100,8 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
       result.append("""{\center \rule{0.5\linewidth}{0.3mm}\\ }""")
     }
     result.append("""\vfill""")
-    result.append(todo.tasks.mkString("\n\n"))
+    val tasks = for (task <- todo.tasks) yield "- %s\n" format task
+    result.appendAll(tasks)
     result
   }
 
