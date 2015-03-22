@@ -3,39 +3,42 @@ package de.gellien.timeplanner.timeplan
 import org.joda.time.LocalDate
 import TimeHelper._
 
+sealed abstract case class ToDos()
+
 abstract class PeriodPlan(val withOverview: Boolean) {
-  val todo: List[ToDoList]
   val period: SinglePeriod
   def periodOverview: List[SinglePeriod] = PeriodSplitter.splitPeriod(period)
   val periodSpecifics: List[SinglePeriod]
 }
 
 case class WeekPlan(year: Int, week: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
-  override val todo = PeriodPlan.getAppointmentsByWeek(workList, year, week, removeHeaderPrefix = false)
+  val todo = PeriodPlan.getTodoByWeek(workList, year, week, removeHeaderPrefix = false)
   override val period = Week(year, week, todo)
-  override val periodSpecifics = for (currentDay <- daysInWeek(year, week))
-    yield Day(currentDay.getYear, currentDay.getMonthOfYear, currentDay.getDayOfMonth, PeriodPlan.getAppointmentsByDay(workList, currentDay, removeHeaderPrefix = true))
+  override val periodSpecifics = for {
+    currentDay <- daysInWeek(year, week)
+    psTodos = PeriodPlan.getTodoByDay(workList, currentDay, removeHeaderPrefix = true)
+  } yield Day(currentDay.getYear, currentDay.getMonthOfYear, currentDay.getDayOfMonth, psTodos)
 }
 
 case class MonthPlan(year: Int, month: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
-  override val todo = PeriodPlan.getAppointmentsByMonth(workList, year, month, removeHeaderPrefix = false)
+  val todo = PeriodPlan.getTodoByMonth(workList, year, month, removeHeaderPrefix = false)
   override val period = Month(year, month, todo)
   override val periodSpecifics = for ((weekYear, week) <- weeksInMonth(year, month))
-    yield Week(weekYear, week, PeriodPlan.getAppointmentsByWeek(workList, weekYear, week, removeHeaderPrefix = true))
+    yield Week(weekYear, week, PeriodPlan.getTodoByWeek(workList, weekYear, week, removeHeaderPrefix = true))
 }
 
 case class QuarterPlan(year: Int, quarter: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
-  override val todo = PeriodPlan.getAppointmentsByQuarter(workList, year, quarter, removeHeaderPrefix = false)
+  val todo = PeriodPlan.getTodoByQuarter(workList, year, quarter, removeHeaderPrefix = false)
   override val period = Quarter(year, quarter, todo)
   override val periodSpecifics = for (month <- monthsInQuarter(year, quarter))
-    yield Month(year, month, PeriodPlan.getAppointmentsByMonth(workList, year, month, removeHeaderPrefix = true))
+    yield Month(year, month, PeriodPlan.getTodoByMonth(workList, year, month, removeHeaderPrefix = true))
 }
 
 case class YearPlan(year: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
-  override val todo = PeriodPlan.getAppointmentsByYear(workList, year, removeHeaderPrefix = false)
+  val todo = PeriodPlan.getTodoByYear(workList, year, removeHeaderPrefix = false)
   override val period = Year(year, todo)
   override val periodSpecifics = for (quarter <- (1 to 4).toList)
-    yield Quarter(year, quarter, PeriodPlan.getAppointmentsByQuarter(workList, year, quarter, removeHeaderPrefix = true))
+    yield Quarter(year, quarter, PeriodPlan.getTodoByQuarter(workList, year, quarter, removeHeaderPrefix = true))
 }
 
 object PeriodPlan {
@@ -59,58 +62,61 @@ object PeriodPlan {
     else
       0
     entry.charAt(pos).isDigit &&
-    (entry.charAt(pos+1).isDigit || (List('.', ':') contains entry.charAt(pos+1)))
+      (entry.charAt(pos + 1).isDigit || (List('.', ':') contains entry.charAt(pos + 1)))
   }
-  
+
   def lexicalOrdering = (e1: String, e2: String) => (e1 compareTo e2) < 0
-  
-  def filterWorkLists(workList: List[String], dateFilter: String, prefixes: String*): List[String] = {
+
+  def filterWorkLists(workList: List[String], dateFilter: String, prefixes: String*): List[String] =
     for {
       task <- (for (prefix <- prefixes) yield getEntriesWithPrefix(workList, prefix)).flatten.toList
       result = new BoundChecker(task, dateFilter).result
       if (result != None)
     } yield result.get
-  }
-  
-  def appointmentsAndTasks(workList: List[String], dateFilter: String, removeHeaderPrefix: Boolean, prefixes: String*): List[ToDoList] = {
-    def prepareEntry(entry: String, removeHeaderPrefix: Boolean) = { // remove taskHeaderPrefix if necessary
+
+  def appointmentsAndTasks(workList: List[String], dateFilter: String, removeHeaderPrefix: Boolean, prefixes: String*): (List[String], List[String]) = {
+    def prepareEntry(entry: String, removeHeaderPrefix: Boolean) = // remove taskHeaderPrefix if necessary
       if (removeHeaderPrefix && PeriodSplitter.startsWithTaskHeaderPrefix(entry)) entry.substring(PeriodSplitter.taskHeaderPrefixSize)
       else entry
-    }
-    val todo = filterWorkLists(workList, dateFilter, prefixes:_*)
+    val todo = filterWorkLists(workList, dateFilter, prefixes: _*)
     val appointments = (for (entry <- todo if isAppointment(entry)) yield prepareEntry(entry, removeHeaderPrefix)).sortWith(lexicalOrdering)
     val tasks = (for (entry <- todo if !isAppointment(entry)) yield prepareEntry(entry, removeHeaderPrefix)).sortWith(lexicalOrdering)
-    List(new ToDoList(Appointment, appointments), new ToDoList(Task, tasks))
+    (appointments, tasks)
   }
 
-  // use List[List[String]], i.e. ToDoLists, to be able to differentiate in output
-  def getAppointmentsByDay(workList: List[String], currentDay: LocalDate, removeHeaderPrefix: Boolean): List[ToDoList] = {
-    val anniversaries = getEntriesWithPrefix(workList, isoDate(currentDay).substring(5)+" ")
-    val prefixes = List(isoDate(currentDay)+" ", dailySearchPattern, currentDay.getDayOfWeek().toString+" ")
-    new ToDoList(Anniversary, anniversaries) :: appointmentsAndTasks(workList, isoDate(currentDay), removeHeaderPrefix, prefixes: _*)
+  def getTodoByDay(workList: List[String], currentDay: LocalDate, removeHeaderPrefix: Boolean): ToDoList = {
+    val anniversaries = getEntriesWithPrefix(workList, isoDate(currentDay).substring(5) + " ")
+    val prefixes = List(isoDate(currentDay) + " ", dailySearchPattern, currentDay.getDayOfWeek().toString + " ")
+    val (appointments, tasks) = appointmentsAndTasks(workList, isoDate(currentDay), removeHeaderPrefix, prefixes: _*)
+    ToDoList(anniversaries, appointments, tasks)
   }
 
-  def getAppointmentsByWeek(workList: List[String], year: Int, week: Int, removeHeaderPrefix: Boolean): List[ToDoList] = {
+  def getTodoByWeek(workList: List[String], year: Int, week: Int, removeHeaderPrefix: Boolean): ToDoList = {
     val calWeek = calendarWeekSearchPattern.format(year, week).stripSuffix(" ")
     val prefixes = List(calendarWeekSearchPattern format (year, week), weeklySearchPattern)
-    appointmentsAndTasks(workList, calWeek, removeHeaderPrefix, prefixes: _*)
+    val (appointments, tasks) = appointmentsAndTasks(workList, calWeek, removeHeaderPrefix, prefixes: _*)
+    val anniversaries = List()
+    ToDoList(anniversaries, appointments, tasks)
   }
 
-  def getAppointmentsByMonth(workList: List[String], year: Int, month: Int, removeHeaderPrefix: Boolean): List[ToDoList] = {
+  def getTodoByMonth(workList: List[String], year: Int, month: Int, removeHeaderPrefix: Boolean): ToDoList = {
     val calMonth = calendarMonthSearchPattern.format(year, month).stripSuffix(" ")
     val prefixes = List(calendarMonthSearchPattern format (year, month), monthlySearchPattern)
-    appointmentsAndTasks(workList, calMonth, removeHeaderPrefix, prefixes: _*)
+    val (appointments, tasks) = appointmentsAndTasks(workList, calMonth, removeHeaderPrefix, prefixes: _*)
+    ToDoList(List(), appointments, tasks)
   }
 
-  def getAppointmentsByQuarter(workList: List[String], year: Int, quarter: Int, removeHeaderPrefix: Boolean): List[ToDoList] = {
+  def getTodoByQuarter(workList: List[String], year: Int, quarter: Int, removeHeaderPrefix: Boolean): ToDoList = {
     val calQuarter = calendarQuarterSearchPattern.format(year, quarter).stripSuffix(" ")
     val prefixes = List(calendarQuarterSearchPattern format (year, quarter), quarterlySearchPattern)
-    appointmentsAndTasks(workList, calQuarter, removeHeaderPrefix, prefixes: _*)
+    val (appointments, tasks) = appointmentsAndTasks(workList, calQuarter, removeHeaderPrefix, prefixes: _*)
+    ToDoList(List(), appointments, tasks)
   }
 
-  def getAppointmentsByYear(workList: List[String], year: Int, removeHeaderPrefix: Boolean): List[ToDoList] = {
+  def getTodoByYear(workList: List[String], year: Int, removeHeaderPrefix: Boolean): ToDoList = {
     val calYear = calendarYearSearchPattern.format(year, year).stripSuffix(" ")
     val prefixes = List(calendarYearSearchPattern format (year), yearlySearchPattern)
-    appointmentsAndTasks(workList, calYear, removeHeaderPrefix, prefixes: _*)
+    val (appointments, tasks) = appointmentsAndTasks(workList, calYear, removeHeaderPrefix, prefixes: _*)
+    ToDoList(List(), appointments, tasks)
   }
 }

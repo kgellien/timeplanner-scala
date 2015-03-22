@@ -6,7 +6,7 @@ object PeriodSplitter {
   val taskHeaderNameA = "Privat"
   val taskHeaderNameB = "Beruflich"
   val taskHeaderNameC = "Sonstiges"
-    // Attention: taskHeader prefixes need to be of same length!
+  // Attention: taskHeader prefixes need to be of same length!
   val taskHeaderPrefixA = "P "
   val taskHeaderPrefixB = "B "
   def taskHeaderPrefixSize = taskHeaderPrefixA.size
@@ -32,17 +32,16 @@ object PeriodSplitter {
    result
   }
 
-  def splitToDoLists(prefix: String, todoLists: List[ToDoList]): (List[ToDoList], List[ToDoList]) = {
-    val preliminaryResult = for (todo <- todoLists)
-      yield splitOnPrefix(prefix, todo)
-    val withPrefix = for (pair <- preliminaryResult) yield pair._1
-    val withoutPrefix = for (pair <- preliminaryResult) yield pair._2
-    (withPrefix, withoutPrefix)
+  def splitToDoLists(prefix: String, todo: ToDoList): (ToDoList, ToDoList) = {
+    val (anniversariesWithPrefix, anniversariesWithoutPrefix) = splitOnPrefix(prefix, todo.anniversaries)
+    val (appointmentsWithPrefix, appointmentsWithoutPrefix) = splitOnPrefix(prefix, todo.appointments)
+    val (tasksWithPrefix, tasksWithoutPrefix) = splitOnPrefix(prefix, todo.tasks)
+    (ToDoList(anniversariesWithPrefix, appointmentsWithPrefix, tasksWithPrefix), ToDoList(anniversariesWithoutPrefix, appointmentsWithoutPrefix, tasksWithoutPrefix))
   }
 
-  def splitOnPrefix(prefix: String, todoList: ToDoList): (ToDoList, ToDoList) = {
-    val withPrefix = for (entry <- todoList.todo if entry startsWith prefix) yield entry.replaceFirst(prefix, "")
-    val withoutPrefix = for (entry <- todoList.todo if !(entry startsWith prefix)) yield entry
-    (new ToDoList(todoList.kind, withPrefix), new ToDoList(todoList.kind, withoutPrefix))
+  def splitOnPrefix(prefix: String, list: List[String]): (List[String], List[String]) = {
+    val withPrefix = for (entry <- list if entry startsWith prefix) yield entry.replaceFirst(prefix, "")
+    val withoutPrefix = for (entry <- list if !(entry startsWith prefix)) yield entry
+    (withPrefix, withoutPrefix)
   }
 }

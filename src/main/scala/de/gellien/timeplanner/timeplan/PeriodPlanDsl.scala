@@ -2,7 +2,7 @@ package de.gellien.timeplanner.timeplan
 
 import scala.util.parsing.combinator.JavaTokenParsers
 
-class PeriodPlanDsl(workList: List[String], val withOverviewDefault:Boolean = false) extends JavaTokenParsers {
+class PeriodPlanDsl(workList: List[String], val withOverviewDefault: Boolean) extends JavaTokenParsers {
 
   lazy val periodplan = (validPeriodplan | ignore)
 
@@ -47,8 +47,8 @@ class PeriodPlanDsl(workList: List[String], val withOverviewDefault:Boolean = fa
 }
 
 object PeriodPlanDsl {
-  def getPeriodPlan(line: String, todoList: List[String]): Either[String, Option[PeriodPlan]] = {
-    val tpd = new PeriodPlanDsl(todoList)
+  def getPeriodPlan(line: String, todoList: List[String], withOverview: Boolean): Either[String, Option[PeriodPlan]] = {
+    val tpd = new PeriodPlanDsl(todoList, withOverview)
     val result = tpd.parseAll(tpd.periodplan, line) match {
       case tpd.Success(periodPlan, _) => Right(periodPlan)
       case tpd.Failure(msg, _) => Left("Failure: " + msg)
@@ -57,4 +57,3 @@ object PeriodPlanDsl {
     result
   }
 }
-

@@ -47,6 +47,7 @@ object Plan {
     val inputDsl = if (options contains 'inputDsl) Some(options('inputDsl).asInstanceOf[String]) else None
     val inputFiles = options('input).asInstanceOf[List[String]].reverse // must exist - see above; reverse if sequence matters
     val withSeparator = options contains 'withSeparator
+    val withOverview = options contains 'withOverview
     val inputEncoding = latin1
     val outputEncoding = latin1
 
@@ -62,7 +63,7 @@ object Plan {
       case Some(fileName) =>
         println("Evaluate %s for construction of TimePlan instance" format fileName)
         val lines = Source.fromFile(fileName, inputEncoding).getLines.toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }
-        buildTimePlan(lines, todoList, inputEncoding, debug)
+        buildTimePlan(lines, todoList, inputEncoding, withOverview, debug)
       case None =>
         println("Fatal: No input DSL file specified")
         println(usage)
@@ -74,36 +75,35 @@ object Plan {
       periodPlan <- periodPlans
       period = periodPlan.period
     } yield period
-//    val parms = Map("periodPlans" -> periodPlans, "periods" -> periods)
     val parms = Map("periodPlans" -> periodPlans)
     //
-    import org.fusesource.scalate._
-    val engine = new TemplateEngine
-    val output = engine.layout("timeplan.tex.ssp", parms)
-    def saveString(fileName: String, string: String) {
-      val fos = new FileOutputStream(fileName)
-      val osw = new OutputStreamWriter(fos, outputEncoding)
-      osw.write(string + "\n")
-      osw.close()
-    }
-    saveString("mytimeplan.tex", output)
+//    import org.fusesource.scalate._
+//    val engine = new TemplateEngine
+//    val output = engine.layout("timeplan.tex.ssp", parms)
+//    def saveString(fileName: String, string: String) {
+//      val fos = new FileOutputStream(fileName)
+//      val osw = new OutputStreamWriter(fos, outputEncoding)
+//      osw.write(string + "\n")
+//      osw.close()
+//    }
+//    saveString("mytimeplan.tex", output)
     //
-    if (debug) {
-      periodPlans foreach { periodPlan =>
-        println(periodPlan.period)
-        periodPlan.periodSpecifics foreach { subPeriod =>
-          println("  %s" format subPeriod)
-        }
-      }
-    }
+//    if (debug) {
+//      periodPlans foreach { periodPlan =>
+//        println(periodPlan.period)
+//        periodPlan.periodSpecifics foreach { subPeriod =>
+//          println("  %s" format subPeriod)
+//        }
+//      }
+//    }
     val io = new Io(quote, outputEncoding, debug)
     io.output(texoutput, periodPlans, withSeparator, callPdfLatex, pdflatexFullPath)
   }
 
-  def buildTimePlan(lines: List[String], todoList: List[String], inputEncoding: String, debug: Boolean) = {
+  def buildTimePlan(lines: List[String], todoList: List[String], inputEncoding: String, withOverview: Boolean, debug: Boolean) = {
     val tp = new TimePlan(todoList, debug) // todoList for addPeriodPlan calls not used
     for (line <- lines) {
-      PeriodPlanDsl.getPeriodPlan(line, todoList) match {
+      PeriodPlanDsl.getPeriodPlan(line, todoList, withOverview) match {
         case Left(msg) =>
           println("Problem with >%s<" format line)
           println("Left: %s" format msg)

@@ -69,71 +69,48 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     result
   }
 
-  def renderSinglePeriods(height: String, textsize: String, periods: List[SinglePeriod]) = {
+  def renderSinglePeriods(height: String, textsize: String, singlePeriods: List[SinglePeriod]) = {
     val result = new ListBuffer[String]
-    val width = LatexTimePlan.getColumnWidth(periods.size)
-    result.append("""\begin{multicols}{%d}""" format periods.size)
-    result.appendAll((for (singlePeriod <- periods) yield renderSinglePeriod(singlePeriod, height, width, textsize)).flatten)
+    val width = LatexTimePlan.getColumnWidth(singlePeriods.size)
+    result.append("""\begin{multicols}{%d}""" format singlePeriods.size)
+    result.appendAll((for (singlePeriod <- singlePeriods) yield renderSinglePeriod(singlePeriod, height, width, textsize)).flatten)
     result.append("""\end{multicols}""")
     result
   }
 
-  def renderSinglePeriod(item: SinglePeriod, height: String, width: String, textsize: String) = {
+  def renderSinglePeriod(singlePeriod: SinglePeriod, height: String, width: String, textsize: String) = {
     val result = new ListBuffer[String]
     result.append("""\framebox{""")
     result.append("""\begin{minipage}[t][%s]{%s}%s""" format (height, width, textsize))
-    result.appendAll(renderHeading(item))
-    result.appendAll(renderWorklist(item))
+    result.appendAll(renderHeading(singlePeriod))
+    result.appendAll(renderWorklist(singlePeriod.todo))
     result.append("""\end{minipage}""")
     result.append("}")
     result
   }
 
-  /* TODO: Refactor! SinglePeriod.todo should already be a map */
-  def renderWorklist(item: SinglePeriod) = {
-    val workLists: List[ToDoList] = item.todo
+  def renderWorklist(todo: ToDoList) = {
     val result = new ListBuffer[String]
-    val toDoDict = Map[ToDoListType, List[String]]()
-    for (workList <- workLists) {
-      workList match {
-        case ToDoList(Anniversary, todo) =>
-          val prefix = "$*$"
-          toDoDict(Anniversary) = todo.map(line => prefix + line + "\n")
-        case ToDoList(Appointment, todo) =>
-          val prefix = ""
-          toDoDict(Appointment) = todo.map(line => prefix + line + "\n")
-        case ToDoList(Task, todo) =>
-          val prefix = "- "
-          toDoDict(Task) = todo.map(line => prefix + line + "\n")
-      }
-    }
-
-    val anniversaries = toDoDict getOrElse (Anniversary, List())
-    val appointments = toDoDict getOrElse (Appointment, List())
-    val tasks = toDoDict getOrElse (Task, List())
-
-    // TODO: think through withSeparator
-    if (!anniversaries.isEmpty) {
-      result.appendAll(anniversaries)
+    if (!todo.anniversaries.isEmpty) {
+      result.append(todo.anniversaries.mkString("\n\n"))
       result.append("""{\center \rule{0.5\linewidth}{0.3mm}\\ } \vspace*{1em}""")
     }
-    result.appendAll(appointments)
+    result.append(todo.appointments.mkString("\n\n"))
     if (withSeparator) {
       result.append("""{\center \rule{0.5\linewidth}{0.3mm}\\ }""")
     }
     result.append("""\vfill""")
-    result.appendAll(tasks)
-
+    result.append(todo.tasks.mkString("\n\n"))
     result
   }
 
-  def renderHeading(item: SinglePeriod) = {
-    val header = item.header
+  def renderHeading(singlePeriod: SinglePeriod) = {
+    val header = singlePeriod.header
     val result = new ListBuffer[String]
     result.append("""\begin{center}""")
     val headerLines = header match {
       case Some(line) => List(line)
-      case None       => getDefaultHeading(item)
+      case None       => getDefaultHeading(singlePeriod)
     }
     for (line <- headerLines) result.append("""{\bf %s} \\""" format line)
     result.append("""\rule{\linewidth}{0.3mm} \\""")
@@ -141,8 +118,8 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     result
   }
 
-  def getDefaultHeading(item: SinglePeriod) = {
-    item match {
+  def getDefaultHeading(singlePeriod: SinglePeriod) = {
+    singlePeriod match {
       case Day(year, month, day, _, _) => List(TimeHelper.displayDay(year, month, day))
       case Week(year, week, _, _) =>
         val (from, to) = TimeHelper.fromToWeek(year, week)
