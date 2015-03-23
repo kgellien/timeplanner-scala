@@ -58,8 +58,8 @@ class Io(quote: String, encoding: String, debug: Boolean) {
   }
 
   def getPdfLaTeXCmdArr(source: String, pdflatexFullPath: String): Array[String] = {
-    // TODO: extract output-directory from source!
-    val lst = pdflatexFullPath :: "-output-directory=." :: quote + source + quote :: Nil
+    val outputDir = new File(source).getAbsoluteFile.getParentFile.getCanonicalPath
+    val lst = pdflatexFullPath :: ("-output-directory=%s" format outputDir) :: quote + source + quote :: Nil
     lst.toArray
   }
 
