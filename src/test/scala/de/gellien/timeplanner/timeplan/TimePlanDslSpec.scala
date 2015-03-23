@@ -9,7 +9,7 @@ class TimePlanDslSpec extends SpecificationWithJUnit {
 
   def getParseResultAsString(task: String, expected: String, debug: Boolean) = {
       if (debug) println("#  expected: " + expected)
-      val tpd = new PeriodPlanDsl(List())
+      val tpd = new PeriodPlanDsl(List(), false, 7)
       val result = tpd.parseAll(tpd.periodplan, task) match {
         case tpd.Success(timePlanItem, _) => timePlanItem.toString
         case tpd.Failure(msg, _) => "Failure: " + msg

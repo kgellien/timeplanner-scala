@@ -3,7 +3,20 @@ package de.gellien.timeplanner.timeplan
 import org.joda.time.LocalDate
 import TimeHelper._
 
-sealed abstract case class ToDos()
+//sealed abstract case class ToDos()
+
+import scala.collection.mutable.ListBuffer
+import scala.collection.immutable.Range
+
+class PeriodPlans() {
+  private val periodPlanBuffer = new ListBuffer[PeriodPlan]
+
+  def periodPlans = periodPlanBuffer.toList
+
+  def addPeriodPlan(periodPlan: PeriodPlan) = {
+    periodPlanBuffer += periodPlan
+  }
+}
 
 abstract class PeriodPlan(val withOverview: Boolean) {
   val period: SinglePeriod
