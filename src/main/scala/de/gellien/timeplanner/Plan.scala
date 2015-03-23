@@ -107,7 +107,7 @@ object Plan {
   }
 
   def buildTimePlan(lines: List[String], todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
-    val tp = new TimePlan(todoList, daysPerWeek, debug) // todoList for addPeriodPlan calls not used
+    val tp = new TimePlan()
     for (line <- lines) {
       PeriodPlanDsl.getPeriodPlan(line, todoList, withOverview, daysPerWeek) match {
         case Left(msg) =>
