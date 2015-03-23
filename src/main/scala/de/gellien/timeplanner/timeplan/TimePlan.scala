@@ -3,7 +3,8 @@ package de.gellien.timeplanner.timeplan
 import scala.collection.mutable.ListBuffer
 import scala.collection.immutable.Range
 
-class TimePlan(workList : List[String], debug: Boolean = false) {
+class TimePlan(workList : List[String], daysPerWeekPar: Int, debug: Boolean = false) {
+  implicit val daysPerWeek: Int = daysPerWeekPar
   private val periodPlanBuffer = new ListBuffer[PeriodPlan]
 
   def periodPlans = periodPlanBuffer.toList

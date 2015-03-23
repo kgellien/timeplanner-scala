@@ -32,11 +32,12 @@ according to your needs.
 
 ## To Do
 
-- Support build via SBT
 - Make it easy to provide ones own inputfiles *outside* of this project directory
+  (see runTp.sh)
 - Internationalisation
 - use logging instead of println
 - try template engine (e.g. scalate) for latex output
+
 
 ## Revision History
 
@@ -44,6 +45,7 @@ according to your needs.
  - refactoring (extraction of constants; preparation for cleanup)
  - Week KW-%02d -> W%02d
  - runTp.sh added to demonstrate call via SBT
+ - new parameter daysPerWeek, so that instead of 7-day-week e.g. a 5 or 6 day work week is possible
 
 
 ### 0.7.5

@@ -11,11 +11,11 @@ abstract class PeriodPlan(val withOverview: Boolean) {
   val periodSpecifics: List[SinglePeriod]
 }
 
-case class WeekPlan(year: Int, week: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
+case class WeekPlan(year: Int, week: Int, workList: List[String], override val withOverview: Boolean)(implicit val daysPerWeek: Int) extends PeriodPlan(withOverview) {
   val todo = PeriodPlan.getTodoByWeek(workList, year, week, removeHeaderPrefix = false)
   override val period = Week(year, week, todo)
   override val periodSpecifics = for {
-    currentDay <- daysInWeek(year, week)
+    currentDay <- daysInWeek(year, week) take daysPerWeek
     psTodos = PeriodPlan.getTodoByDay(workList, currentDay, removeHeaderPrefix = true)
   } yield Day(currentDay.getYear, currentDay.getMonthOfYear, currentDay.getDayOfMonth, psTodos)
 }

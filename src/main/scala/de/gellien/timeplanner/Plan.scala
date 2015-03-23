@@ -41,6 +41,12 @@ object Plan {
       sys.exit(1)
     }
 
+    val daysPerWeek = if (options contains 'daysPerWeek) options('daysPerWeek).asInstanceOf[Int] else 7
+    if (daysPerWeek < 1 || daysPerWeek > 7) {
+      println("Fatal: daysPerWeek needs to be between 1 and 7 (including)")
+      sys.exit(1)
+    }
+
     val debug = options contains 'debug
     val callPdfLatex = options contains 'pdflatex
     val texoutput = if (options contains 'texoutput) options('texoutput).asInstanceOf[String] else defaultTexoutput
@@ -63,7 +69,7 @@ object Plan {
       case Some(fileName) =>
         println("Evaluate %s for construction of TimePlan instance" format fileName)
         val lines = Source.fromFile(fileName, inputEncoding).getLines.toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }
-        buildTimePlan(lines, todoList, inputEncoding, withOverview, debug)
+        buildTimePlan(lines, todoList, inputEncoding, withOverview, daysPerWeek, debug)
       case None =>
         println("Fatal: No input DSL file specified")
         println(usage)
@@ -100,10 +106,10 @@ object Plan {
     io.output(texoutput, periodPlans, withSeparator, callPdfLatex, pdflatexFullPath)
   }
 
-  def buildTimePlan(lines: List[String], todoList: List[String], inputEncoding: String, withOverview: Boolean, debug: Boolean) = {
-    val tp = new TimePlan(todoList, debug) // todoList for addPeriodPlan calls not used
+  def buildTimePlan(lines: List[String], todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
+    val tp = new TimePlan(todoList, daysPerWeek, debug) // todoList for addPeriodPlan calls not used
     for (line <- lines) {
-      PeriodPlanDsl.getPeriodPlan(line, todoList, withOverview) match {
+      PeriodPlanDsl.getPeriodPlan(line, todoList, withOverview, daysPerWeek) match {
         case Left(msg) =>
           println("Problem with >%s<" format line)
           println("Left: %s" format msg)
@@ -136,6 +142,7 @@ object Plan {
     def nextOption(map: OptionMMap, list: List[String]): OptionMMap = {
       list match {
         case Nil                               => map
+        case "--daysPerWeek" :: dpw :: tail    => nextOption(map ++ Map('daysPerWeek -> dpw.toInt), tail)
         case "--input_dsl" :: fileName :: tail => nextOption(map ++ Map('inputDsl -> fileName), tail)
         case "-i" :: fileName :: tail          => nextOption(map ++ Map('inputDsl -> fileName), tail)
         case "--texoutput" :: fileName :: tail => nextOption(map ++ Map('texoutput -> fileName), tail)
