@@ -9,12 +9,17 @@ import scala.collection.mutable.ListBuffer
 import scala.collection.immutable.Range
 
 abstract sealed class PeriodPlan(val withOverview: Boolean) {
+  val header: (String, String, String)
   val period: SinglePeriod
   def periodOverview: List[SinglePeriod] = PeriodSplitter.splitPeriod(period)
   val periodSpecifics: List[SinglePeriod]
 }
 
 case class WeekPlan(year: Int, week: Int, workList: List[String], override val withOverview: Boolean)(implicit val daysPerWeek: Int) extends PeriodPlan(withOverview) {
+  override val header = {
+    val (start, end) = TimeHelper.fromToWeek(year, week)
+    ("%d" format year, "%s -- %s" format (start, end), "W%02d" format week)
+  }
   val todo = PeriodPlan.getTodoByWeek(workList, year, week, removeHeaderPrefix = false)
   override val period = Week(year, week, todo)
   override val periodSpecifics = for {
@@ -24,6 +29,7 @@ case class WeekPlan(year: Int, week: Int, workList: List[String], override val w
 }
 
 case class MonthPlan(year: Int, month: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
+  override val header = ("%d" format year, "", "%s" format (TimeHelper.monthName(month)))
   val todo = PeriodPlan.getTodoByMonth(workList, year, month, removeHeaderPrefix = false)
   override val period = Month(year, month, todo)
   override val periodSpecifics = for ((weekYear, week) <- weeksInMonth(year, month))
@@ -31,6 +37,7 @@ case class MonthPlan(year: Int, month: Int, workList: List[String], override val
 }
 
 case class QuarterPlan(year: Int, quarter: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
+  override val header = ("%d" format year, "", "%s" format "Q%d" format quarter)
   val todo = PeriodPlan.getTodoByQuarter(workList, year, quarter, removeHeaderPrefix = false)
   override val period = Quarter(year, quarter, todo)
   override val periodSpecifics = for (month <- monthsInQuarter(year, quarter))
@@ -38,6 +45,7 @@ case class QuarterPlan(year: Int, quarter: Int, workList: List[String], override
 }
 
 case class YearPlan(year: Int, workList: List[String], override val withOverview: Boolean) extends PeriodPlan(withOverview) {
+  override val header = ("%d" format year, "", "")
   val todo = PeriodPlan.getTodoByYear(workList, year, removeHeaderPrefix = false)
   override val period = Year(year, todo)
   override val periodSpecifics = for (quarter <- (1 to 4).toList)
