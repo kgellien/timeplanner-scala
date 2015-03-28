@@ -18,7 +18,7 @@ class PeriodPlans() {
   }
 }
 
-abstract class PeriodPlan(val withOverview: Boolean) {
+abstract sealed class PeriodPlan(val withOverview: Boolean) {
   val period: SinglePeriod
   def periodOverview: List[SinglePeriod] = PeriodSplitter.splitPeriod(period)
   val periodSpecifics: List[SinglePeriod]

@@ -4,7 +4,7 @@ import java.io._
 import java.util.Properties
 import scala.io.Source
 import scala.collection.mutable.ListBuffer
-import timeplan.{ PeriodPlans, PeriodPlanDsl, Io }
+import timeplan._
 
 object Plan {
   val winQuote = "\"" // WinXP
@@ -107,6 +107,21 @@ object Plan {
   }
 
   def buildTimePlan(lines: List[String], todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
+    val tps = for {
+      line <- lines
+      tp <- TimePlanDsl.getTimePlan(line, daysPerWeek)
+    } yield tp
+    //
+    val pps = new PeriodPlans()
+    for (tp <- tps) {
+      println(tp)
+      val pp = tp.createPeriodPlan(todoList, withOverview)
+      pps.addPeriodPlan(pp)
+    }
+    pps
+  }
+
+  def buildTimePlanOld(lines: List[String], todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
     val tp = new PeriodPlans()
     for (line <- lines) {
       PeriodPlanDsl.getPeriodPlan(line, todoList, withOverview, daysPerWeek) match {

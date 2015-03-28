@@ -1,4 +1,4 @@
-- remove absolute paths / configure tex-output dir according to input file
+- remove absolute paths
 
 - make headings configurable (internationalization: Privat, Sonstiges, Beruflich)
 

@@ -46,6 +46,9 @@ according to your needs.
  - Week KW-%02d -> W%02d
  - runTp.sh added to demonstrate call via SBT
  - new parameter daysPerWeek, so that instead of 7-day-week e.g. a 5 or 6 day work week is possible
+ - Format for timeplan.txt changed: Year, Quarter, Month, Week now analogous to the Task/Appointment entries
+ - --withOverview now only as global Option; at the moment not settable at the PeriodPlan level
+ - tried to make structure more regular
 
 
 ### 0.7.5
