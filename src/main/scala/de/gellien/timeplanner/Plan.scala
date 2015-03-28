@@ -81,7 +81,7 @@ object Plan {
     //      osw.write(string + "\n")
     //      osw.close()
     //    }
-    //    saveString("mytimeplan.tex", output)
+    //    io.saveString("mytimeplan.tex", output)
     val ltp = new LatexTimePlan(periodPlans, withSeparator)
     val latexSource = ltp.render
     val io = new Io(quote, outputEncoding, debug)
@@ -92,7 +92,7 @@ object Plan {
   }
 
   def buildPeriodPlans(inputDsl: String, todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
-    val lines = Source.fromFile(inputDsl, inputEncoding).getLines.toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }
+    val lines = getFilteredLines(inputDsl, inputEncoding)
     for {
       line <- lines
       tp <- TimePlanDsl.getTimePlan(line, daysPerWeek)
@@ -102,12 +102,14 @@ object Plan {
   def readFiles(fileNames: List[String], encoding: String) = {
     val result = new ListBuffer[String]
     for (fileName <- fileNames) {
-      val lines = Source.fromFile(fileName, encoding).getLines.toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }
+      val lines = getFilteredLines(fileName, encoding)
       result.appendAll(lines)
       println("Read " + lines.size.toString + " lines from " + fileName)
     }
     result.toList.sortWith((e1, e2) => (e1 compareTo e2) < 0)
   }
+
+  def getFilteredLines(fileName: String, encoding: String) = Source.fromFile(fileName, encoding).getLines.toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }
 
   // modeled after http://stackoverflow.com/questions/2315912/scala-best-way-to-parse-command-line-parameters-cli (pjotrp)
   def getOptions(args: Array[String]): OptionMap = {
