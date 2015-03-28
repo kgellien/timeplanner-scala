@@ -106,14 +106,13 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   }
 
   def renderHeading(singlePeriod: SinglePeriod) = {
-    val header = singlePeriod.header
     val result = new ListBuffer[String]
     result.append("""\begin{center}""")
-    val headerLines = header match {
-      case Some(line) => List(line)
+    val header = singlePeriod.header match {
+      case Some(line) => line
       case None       => getDefaultHeading(singlePeriod)
     }
-    for (line <- headerLines) result.append("""{\bf %s} \\""" format line)
+    result.append("""{\bf %s} \\""" format header)
     result.append("""\rule{\linewidth}{0.3mm} \\""")
     result.append("""\end{center}""")
     result
@@ -121,15 +120,15 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
 
   def getDefaultHeading(singlePeriod: SinglePeriod) = {
     singlePeriod match {
-      case Day(year, month, day, _, _) => List(TimeHelper.displayDay(year, month, day))
+      case Day(year, month, day, _, _) => TimeHelper.displayDay(year, month, day)
       case Week(year, week, _, _) =>
         val (from, to) = TimeHelper.fromToWeek(year, week)
         val fromTo = "%s -- %s" format (from, to)
-        List("W%02d" format week, fromTo)
-      case Month(year, month, _, _)     => List("%s" format (TimeHelper.monthName(month)))
-      case Quarter(year, quarter, _, _) => List("Q%d" format quarter)
-      case Year(year, _, _)             => List("%d" format year)
-      case _                            => List("MyHeader") // fallback; should not happen
+        "W%02d: %s" format (week, fromTo)
+      case Month(year, month, _, _)     => "%s" format (TimeHelper.monthName(month))
+      case Quarter(year, quarter, _, _) => "Q%d" format quarter
+      case Year(year, _, _)             => "%d" format year
+      case _                            => "MyHeader" // fallback; should not happen
     }
   }
 }
