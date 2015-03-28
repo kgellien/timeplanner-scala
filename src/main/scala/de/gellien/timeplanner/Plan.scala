@@ -40,6 +40,11 @@ object Plan {
       println(usage)
       sys.exit(1)
     }
+    if (!(options contains 'inputDsl)) {
+      println("Fatal: No input DSL file specified (via Option -i/--input_dsl)")
+      println(usage)
+      sys.exit(1)
+    }
 
     val daysPerWeek = if (options contains 'daysPerWeek) options('daysPerWeek).asInstanceOf[Int] else 7
     if (daysPerWeek < 1 || daysPerWeek > 7) {
@@ -50,7 +55,7 @@ object Plan {
     val debug = options contains 'debug
     val callPdfLatex = options contains 'pdflatex
     val texoutput = if (options contains 'texoutput) options('texoutput).asInstanceOf[String] else defaultTexoutput
-    val inputDsl = if (options contains 'inputDsl) Some(options('inputDsl).asInstanceOf[String]) else None
+    val inputDsl = options('inputDsl).asInstanceOf[String] // must exist - see above
     val inputFiles = options('input).asInstanceOf[List[String]].reverse // must exist - see above; reverse if sequence matters
     val withSeparator = options contains 'withSeparator
     val withOverview = options contains 'withOverview
@@ -59,65 +64,33 @@ object Plan {
 
     val todoList = readFiles(inputFiles, inputEncoding)
 
-    // TODO: make property file optional, i.e. check existence and if non-existent use above defaults
     val properties = new Properties()
     properties.load(new FileInputStream("timeplan.properties"))
     val pdflatexFullPath = properties.getProperty(os + ".pdflatex")
     println("Path to pdflatex: >%s<" format pdflatexFullPath)
 
-    val tp = inputDsl match {
-      case Some(fileName) =>
-        println("Evaluate %s for construction of TimePlan instance" format fileName)
-        val lines = Source.fromFile(fileName, inputEncoding).getLines.toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }
-        buildTimePlan(lines, todoList, inputEncoding, withOverview, daysPerWeek, debug)
-      case None =>
-        println("Fatal: No input DSL file specified")
-        println(usage)
-        sys.exit(1)
-    }
-    val periodPlans = tp.periodPlans
-    //
-    val periods = for {
-      periodPlan <- periodPlans
-      period = periodPlan.period
-    } yield period
-    val parms = Map("periodPlans" -> periodPlans)
-    //
-//    import org.fusesource.scalate._
-//    val engine = new TemplateEngine
-//    val output = engine.layout("timeplan.tex.ssp", parms)
-//    def saveString(fileName: String, string: String) {
-//      val fos = new FileOutputStream(fileName)
-//      val osw = new OutputStreamWriter(fos, outputEncoding)
-//      osw.write(string + "\n")
-//      osw.close()
-//    }
-//    saveString("mytimeplan.tex", output)
-    //
-//    if (debug) {
-//      periodPlans foreach { periodPlan =>
-//        println(periodPlan.period)
-//        periodPlan.periodSpecifics foreach { subPeriod =>
-//          println("  %s" format subPeriod)
-//        }
-//      }
-//    }
+    val periodPlans = buildPeriodPlans(inputDsl, todoList, inputEncoding, withOverview, daysPerWeek, debug)
+    //    val parms = Map("periodPlans" -> periodPlans)
+    //    import org.fusesource.scalate._
+    //    val engine = new TemplateEngine
+    //    val output = engine.layout("timeplan.tex.ssp", parms)
+    //    def saveString(fileName: String, string: String) {
+    //      val fos = new FileOutputStream(fileName)
+    //      val osw = new OutputStreamWriter(fos, outputEncoding)
+    //      osw.write(string + "\n")
+    //      osw.close()
+    //    }
+    //    saveString("mytimeplan.tex", output)
     val io = new Io(quote, outputEncoding, debug)
     io.output(texoutput, periodPlans, withSeparator, callPdfLatex, pdflatexFullPath)
   }
 
-  def buildTimePlan(lines: List[String], todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
-    val tps = for {
+  def buildPeriodPlans(inputDsl: String, todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
+    val lines = Source.fromFile(inputDsl, inputEncoding).getLines.toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }
+    for {
       line <- lines
       tp <- TimePlanDsl.getTimePlan(line, daysPerWeek)
-    } yield tp
-    //
-    val pps = new PeriodPlans()
-    for (tp <- tps) {
-      val pp = tp.createPeriodPlan(todoList, withOverview)
-      pps.addPeriodPlan(pp)
-    }
-    pps
+    } yield tp.createPeriodPlan(todoList, withOverview)
   }
 
   def readFiles(fileNames: List[String], encoding: String) = {

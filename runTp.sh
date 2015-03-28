@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TP_OPTS="--withSeparator"
-TP_OPTS="--daysPerWeek 5 --withOverview"
+TP_OPTS="--daysPerWeek 7 --withOverview"
 
 TODOS="anniversaries.txt appointments2012.txt"
 

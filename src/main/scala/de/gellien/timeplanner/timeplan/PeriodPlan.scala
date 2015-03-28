@@ -8,16 +8,6 @@ import TimeHelper._
 import scala.collection.mutable.ListBuffer
 import scala.collection.immutable.Range
 
-class PeriodPlans() {
-  private val periodPlanBuffer = new ListBuffer[PeriodPlan]
-
-  def periodPlans = periodPlanBuffer.toList
-
-  def addPeriodPlan(periodPlan: PeriodPlan) = {
-    periodPlanBuffer += periodPlan
-  }
-}
-
 abstract sealed class PeriodPlan(val withOverview: Boolean) {
   val period: SinglePeriod
   def periodOverview: List[SinglePeriod] = PeriodSplitter.splitPeriod(period)
