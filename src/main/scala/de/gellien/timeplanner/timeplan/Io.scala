@@ -1,17 +1,9 @@
 package de.gellien.timeplanner.timeplan
 
 import java.io._
-import de.gellien.timeplanner.latex.LatexTimePlan
+import scala.collection.mutable.ListBuffer
 
 class Io(quote: String, encoding: String, debug: Boolean) {
-  def output(target: String, periodPlans: List[PeriodPlan], withSeparator: Boolean, callPdflatex: Boolean, pdflatexFullPath: String) {
-    val ltp = new LatexTimePlan(periodPlans, withSeparator)
-    val latexSource = ltp.render
-    saveStringList(target, latexSource)
-    if (callPdflatex) {
-      callPdfLaTeX(pdflatexFullPath, target)
-    }
-  }
 
   def readOutProcStream(is: InputStream, tagName: String): List[String] = {
     val content = readOutProcStreamNaked(is)
@@ -22,8 +14,7 @@ class Io(quote: String, encoding: String, debug: Boolean) {
   }
 
   def readOutProcStreamNaked(is: InputStream): List[String] = {
-    val isr = new InputStreamReader(is);
-    val br = new BufferedReader(isr);
+    val br = new BufferedReader(new InputStreamReader(is));
     var result: List[String] = Nil
     var line: String = br.readLine()
     while (line != null) {
@@ -34,7 +25,6 @@ class Io(quote: String, encoding: String, debug: Boolean) {
   }
 
   def executeArr(cmd: Array[String]): (Int, List[String], List[String]) = {
-    //cmd foreach println
     val proc = Runtime.getRuntime.exec(cmd)
     val procStdErr = readOutProcStream(proc.getErrorStream, "ERROR")
     // procStdIn is *Output* of proc, but input for this process
@@ -47,30 +37,17 @@ class Io(quote: String, encoding: String, debug: Boolean) {
     (exitValue, procStdErr, procStdIn)
   }
 
-  def executeAndSaveArr(cmd: Array[String], filePrefix: String,
-                        saveAlways: Boolean = false): Int = {
+  def executeAndSaveArr(cmd: Array[String], filePrefix: String): Int = {
     val (exitValue, procStdErr, procStdOut) = executeArr(cmd)
-    if (saveAlways || exitValue != 0) {
-      saveStringList(filePrefix + ".stderr", procStdErr)
-      saveStringList(filePrefix + ".stdout", procStdOut)
-    }
+    saveStringList(filePrefix + ".stderr", procStdErr)
+    saveStringList(filePrefix + ".stdout", procStdOut)
     exitValue
   }
 
-  def getPdfLaTeXCmdArr(source: String, pdflatexFullPath: String): Array[String] = {
-    val outputDir = new File(source).getAbsoluteFile.getParentFile.getCanonicalPath
-    val lst = pdflatexFullPath :: ("-output-directory=%s" format outputDir) :: quote + source + quote :: Nil
-    lst.toArray
-  }
-
   def callPdfLaTeX(pdflatexFullPath: String, source: String) {
-    val cmdArr = getPdfLaTeXCmdArr(source, pdflatexFullPath)
-    if (debug) {
-      // TODO: extract output-directory from source!
-      executeAndSaveArr(cmdArr, filePrefix = "pdflatex", saveAlways = true) // ignore exitValue
-    } else {
-      executeArr(cmdArr) // ignore exitValue
-    }
+    val outputDir = new File(source).getAbsoluteFile.getParentFile.getCanonicalPath
+    val cmd = pdflatexFullPath :: ("-output-directory=%s" format outputDir) :: quote + source + quote :: Nil
+    executeAndSaveArr(cmd.toArray, filePrefix = "%s/pdflatex" format outputDir) // ignore exitValue
   }
 
   def saveStringList(fileName: String, list: Seq[String]) {

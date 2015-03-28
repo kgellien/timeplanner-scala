@@ -5,6 +5,7 @@ import java.util.Properties
 import scala.io.Source
 import scala.collection.mutable.ListBuffer
 import timeplan._
+import latex.LatexTimePlan
 
 object Plan {
   val winQuote = "\"" // WinXP
@@ -81,8 +82,13 @@ object Plan {
     //      osw.close()
     //    }
     //    saveString("mytimeplan.tex", output)
+    val ltp = new LatexTimePlan(periodPlans, withSeparator)
+    val latexSource = ltp.render
     val io = new Io(quote, outputEncoding, debug)
-    io.output(texoutput, periodPlans, withSeparator, callPdfLatex, pdflatexFullPath)
+    io.saveStringList(texoutput, latexSource)
+    if (callPdfLatex) {
+      io.callPdfLaTeX(pdflatexFullPath, texoutput)
+    }
   }
 
   def buildPeriodPlans(inputDsl: String, todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
