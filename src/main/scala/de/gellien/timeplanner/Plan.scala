@@ -120,25 +120,6 @@ object Plan {
     pps
   }
 
-  def buildTimePlanOld(lines: List[String], todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
-    val tp = new PeriodPlans()
-    for (line <- lines) {
-      PeriodPlanDsl.getPeriodPlan(line, todoList, withOverview, daysPerWeek) match {
-        case Left(msg) =>
-          println("Problem with >%s<" format line)
-          println("Left: %s" format msg)
-        case Right(optPp) => optPp match {
-          case None =>
-            println("ignored >%s<" format line)
-          case Some(periodPlan) =>
-            tp.addPeriodPlan(periodPlan)
-            println("parsed  >%s<" format line)
-        }
-      }
-    }
-    tp
-  }
-
   def readFiles(fileNames: List[String], encoding: String) = {
     val result = new ListBuffer[String]
     for (fileName <- fileNames) {
