@@ -114,7 +114,6 @@ object Plan {
     //
     val pps = new PeriodPlans()
     for (tp <- tps) {
-      println(tp)
       val pp = tp.createPeriodPlan(todoList, withOverview)
       pps.addPeriodPlan(pp)
     }

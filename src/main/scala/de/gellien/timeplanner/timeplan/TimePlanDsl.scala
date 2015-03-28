@@ -4,11 +4,10 @@ import scala.util.parsing.combinator.JavaTokenParsers
 
 class TimePlanDsl(daysPerWeekPar: Int) extends JavaTokenParsers {
   implicit val daysPerWeek = daysPerWeekPar
-  lazy val timeplan = (validTimeplan | ignore)
+
+  lazy val timeplan = (validTimeplan)
 
   lazy val validTimeplan = (weekLine | monthLine | quarterLine | yearLine)
-
-  lazy val ignore = """.*""".r ^^ { case _ => None }
 
   lazy val weekLine = year ~ "-W" ~ weekNo ^^ { case year ~ str ~ weekNo => Some(WeekTimePlan(year, weekNo)) }
 
@@ -33,12 +32,10 @@ object TimePlanDsl {
     val result = tpd.parseAll(tpd.timeplan, line) match {
       case tpd.Success(periodPlan, _) => periodPlan
       case tpd.Failure(msg, _) =>
-        println("Problem with >%s<" format line)
-        println("Failure: %s" format msg)
+        println("Failure parsing line >%s<: %s" format (line, msg))
         None
       case tpd.Error(msg, _) =>
-        println("Problem with >%s<" format line)
-        println("Error: %s" format msg)
+        println("Error parsing line >%s<: %s" format (line, msg))
         None
     }
     result
