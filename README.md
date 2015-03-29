@@ -37,7 +37,7 @@ according to your needs.
 - Internationalisation
 - use logging instead of println
 - try template engine (e.g. scalate) for latex output
-- started to experiment further with ToDoListDsl
+- started to experiment further with ToDoListDsl		
 
 
 ## Revision History
