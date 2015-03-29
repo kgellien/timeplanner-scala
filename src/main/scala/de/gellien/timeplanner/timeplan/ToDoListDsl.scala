@@ -1,20 +1,25 @@
 package de.gellien.timeplanner.timeplan
 
-//import scala.util.parsing.combinator.syntactical.StandardTokenParsers
 import scala.util.parsing.combinator.JavaTokenParsers
 
 class ToDoListDsl extends JavaTokenParsers {
 
-  lazy val toDoItem = (anniversary | task)
+  lazy val toDoItem = (anniversary | appointmentOrTask)
   
   lazy val anniversary = monthNo ~ "-" ~ dayNo ~ rep(yearNo) ~ info ^^ {
     case m ~ str ~ d ~ Nil ~ i => Anniversary(m, d, None, i)
     case m ~ str ~ d ~ y ~ i => Anniversary(m, d, Some(y.head), i)
   }
   
-  lazy val  task = dateInfo ~ rep(classifier) ~ rep(timespan) ~ info ^^ { // TODO: check whether zero or once is possible with rep
-    case d ~ Nil ~ t ~ i => Task(d, None, t.mkString, i)
-    case d ~ c ~ t ~ i   => Task(d, c.head, t.mkString, i)
+  lazy val  appointmentOrTask = dateInfo ~ rep(classifier) ~ rep(timespan) ~ info ^^ { // TODO: check whether zero or once is possible with rep
+    case d ~ c ~ Nil ~ i => c match {
+      case Nil => Task(d, None, i)
+      case _ => Task(d, Some(c.head), i)
+    }
+    case d ~ c ~ t ~ i => c match {
+      case Nil => Appointment(d, None, t.mkString, i)
+      case _ => Appointment(d, Some(c.head), t.mkString, i)
+    }
   }
 
   lazy val dateInfo = (day | week | month | quarter | year)
@@ -28,7 +33,7 @@ class ToDoListDsl extends JavaTokenParsers {
   lazy val timespan = (clockspan | datespan)
 
   lazy val daily = "D" ^^ { case _ => DailyEntry() }
-  lazy val calDay = """\d{4}-\d{2}-\d{2}""".r ^^ { case isoDate => DayEntry(isoDate) }
+  lazy val calDay = yearNo ~ "-" ~ monthNo ~ "-" ~ dayNo ^^ { case yearNo ~ s1 ~ monthNo ~ s2~ dayNo => DayEntry(yearNo, monthNo, dayNo) }
   lazy val weekDay = """D\d""".r ^? ({ case i if ((1 to 7) contains i.tail.toInt) => WeekDayEntry(i.tail.toInt) }, (i => "week day needs to be in the range of 1 to 7"))
 
   lazy val weekly = "W" ^^ { case _ => WeeklyEntry() }
@@ -46,9 +51,8 @@ class ToDoListDsl extends JavaTokenParsers {
   lazy val clockspan = """\d\d?:\d{2}( --? \d\d?:\d{2})?""".r ^^ { case t => t.toString }
   lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?.\d\d?\.)?""".r ^^ { case t => t.toString }
 
-  lazy val classifier = "[" ~> text <~ "]" ^^ { case str => Some(str) }
+  lazy val classifier = "[" ~> text <~ "]" //^^ { case str => Some(str) }
   lazy val text = """\w*""".r
-//  lazy val classifier = "[" ~> info <~ "]" ^^ { case str => Some(str) }
 
   lazy val info = """.*""".r
 
@@ -83,12 +87,13 @@ abstract sealed class ToDoEntry
 case class Anniversary(val month: Int, val day: Int, val year: Option[Int], val info: String) extends ToDoEntry {
   override def toString = "Anniversary(%d, %d, %s, %s)" format (month, day, year, info)
 }
-case class Appointment() extends ToDoEntry
 
-case class Task(val periodInfo: PeriodBase, val classifier: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
-  val strInfo = if (timeInfo.isEmpty) info else "\"" + timeInfo + " " + info.substring(1)
-  //  override def toString = "(" + periodInfo + "," + strInfo + ")"
-  override def toString = "Task(%s, %s, %s, %s)" format (periodInfo, classifier, timeInfo, info)
+case class Appointment(val periodInfo: PeriodBase, val classifier: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
+  override def toString = "Appointment(%s, %s, %s, %s)" format (periodInfo, classifier, timeInfo, info)
+}
+
+case class Task(val periodInfo: PeriodBase, val classifier: Option[String], val info: String) extends ToDoEntry {
+  override def toString = "Task(%s, %s, %s)" format (periodInfo, classifier, info)
 }
 
 abstract sealed class PeriodBase
@@ -119,8 +124,8 @@ case class WeekEntry(year: Int, week: Int) extends WeekBase {
 
 abstract sealed class DayBase extends PeriodBase
 case class DailyEntry() extends DayBase
-case class DayEntry(isoDate: String) extends DayBase {
-  override def toString = "DayEntry(%s)" format isoDate
+case class DayEntry(yearNo: Int, monthNo: Int, dayNo: Int) extends DayBase {
+  override def toString = "DayEntry(%d-%02d-%02d)" format (yearNo, monthNo, dayNo)
 }
 case class WeekDayEntry(weekDay: Int) extends DayBase {
   override def toString = "WeekDayEntry(%d)" format weekDay
