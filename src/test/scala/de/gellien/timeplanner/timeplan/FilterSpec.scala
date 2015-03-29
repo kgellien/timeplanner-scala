@@ -5,8 +5,9 @@ import org.specs2.mutable.SpecificationWithJUnit
 class FilterSpec extends SpecificationWithJUnit {
 
   def createOverview = {
-    val lines = List("2012-KW-03 P private test")
-    val wp = WeekPlan(2012, 3, lines, false)(7)
+    val workList = List("2012-KW-03 P private test")
+    val wtp = WeekTimePlan(2012, 3)(7)
+    val wp = wtp.createPeriodPlan(workList, true)
     wp.periodOverview
   }
   
