@@ -92,6 +92,11 @@ object Plan {
   }
 
   def buildPeriodPlans(inputDsl: String, todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
+    val tdl = for {
+      line <- todoList
+      td <- ToDoListDsl.getToDo(line)
+    } yield td
+    if (debug) tdl foreach println
     val lines = getFilteredLines(inputDsl, inputEncoding)
     for {
       line <- lines

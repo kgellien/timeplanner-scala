@@ -4,25 +4,27 @@ import org.specs2.mutable.SpecificationWithJUnit
 
 class ToDoListDslSpec extends SpecificationWithJUnit {
 
-  val task01 = """W "weekly task""""
-  val task01Expected = """(WeeklyEntry(),"weekly task")"""
+  val task01 = """W weekly task"""
+  val task01Expected = """Task(WeeklyEntry(), None, , weekly task)"""
   val task01a = """W weekly task"""
-  val task01aExpected = """(WeeklyEntry(),"weekly task")"""
-  val task02 = """2012-W04 "weekly task""""
-  val task02Expected = """(WeekEntry(2012-W04),"weekly task")"""
+  val task01aExpected = """Task(WeeklyEntry(), None, , weekly task)"""
+  val task02 = """2012-W04 weekly task"""
+  val task02Expected = """Task(WeekEntry(2012-W04), None, , weekly task)"""
 
   val daily = """D "daily task""""
-  val dailyExpected = """(DailyEntry(),"daily task")"""
-  val mondays = """1 "mondays""""
-  val mondaysExpected = """(WeekDayEntry(1),"mondays")"""
+  val dailyExpected = """Task(DailyEntry(), None, , "daily task")"""
+  val mondays = """D1 "mondays""""
+  val mondaysExpected = """Task(WeekDayEntry(1), None, , "mondays")"""
   val specificDate = """2012-01-26 "specific day in january""""
-  val specificDateExpected = """(DayEntry(2012-01-26),"specific day in january")"""
+  val specificDateExpected = """Task(DayEntry(2012-01-26), None, , "specific day in january")"""
+  val specificDateWithClassifier = """2012-01-26 [aikido] "classified task""""
+  val specificDateExpectedWithClassifier = """Task(DayEntry(2012-01-26), Some(aikido), , "classified task")"""
   val dailyWithTime = """D 11:00 "daily task""""
-  val dailyWithTimeExpected = """(DailyEntry(),"11:00 daily task")"""
+  val dailyWithTimeExpected = """Task(DailyEntry(), None, 11:00, "daily task")"""
   val dailyWithTimePeriod = """D 11:00 -- 12:00 "daily task""""
-  val dailyWithTimePeriodExpected = """(DailyEntry(),"11:00 -- 12:00 daily task")"""
+  val dailyWithTimePeriodExpected = """Task(DailyEntry(), None, 11:00 -- 12:00, "daily task")"""
   val dailyWithTimePeriod2 = """D 11:00 - 12:00 "daily task""""
-  val dailyWithTimePeriod2Expected = """(DailyEntry(),"11:00 - 12:00 daily task")"""
+  val dailyWithTimePeriod2Expected = """Task(DailyEntry(), None, 11:00 - 12:00, "daily task")"""
     
   def getParseResultAsString(task: String, expected: String, debug: Boolean) = {
       if (debug) println("#  expected: " + expected)
@@ -51,9 +53,9 @@ class ToDoListDslSpec extends SpecificationWithJUnit {
       check_==(task02, task02Expected)
     }
 
-    "task without enclosing double-ticks leads to Failure" in {
-      check_!=(task01a, task01aExpected)
-    }
+//    "task without enclosing double-ticks leads to Failure" in {
+//      check_!=(task01a, task01aExpected)
+//    }
 
     "parse daily" in {
       check_==(daily, dailyExpected)
@@ -65,6 +67,10 @@ class ToDoListDslSpec extends SpecificationWithJUnit {
     
     "parse specific date" in {
       check_==(specificDate, specificDateExpected)
+    }
+
+    "parse specific date with classifier" in {
+      check_==(specificDateWithClassifier, specificDateExpectedWithClassifier)
     }
 
     "parse daily with time" in {

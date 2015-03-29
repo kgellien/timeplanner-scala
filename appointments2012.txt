@@ -2,29 +2,30 @@
 
 ###### regular
 
-1 =2012-04 Gym
-3 =2012-04 Gym
-5 =2012-04 Gym
+D1 =2012-04 Gym
+D3 =2012-04 Gym
+D5 =2012-04 Gym
 
-7 Re\-tro\-spek\-ti\-ve
-7 Planning next week
+D7 Re\-tro\-spek\-ti\-ve
+D7 Planning next week
 
-M P monthly retrospektive
-Q B quarterly retrospektive
-Y P yearly retrospektive
+M monthly retrospektive
+Q quarterly retrospektive
+Y yearly retrospektive
 
 
 ## April
+2012-04-01 9:00 Prank
 2012-04 Monthly aim
 2012-W16 weekly aim
 
-2012-Q2 P quarterly private aim
+2012-Q2 quarterly private aim
 
 
 
-2012-03 B 05. -- 09.03. QCon London
+2012-03 5. -- 09.3. QCon London
 
-2012-04 B 16. -- 20.04. JAX in Mainz
-2012-06 B 04. -- 05.06. Sea-Con in Hamburg
+2012-04 16. -- 20.04. JAX in Mainz
+2012-06 04. -- 5.06. Sea-Con in Hamburg
 
-2012-11 B Öredev
+2012-11 Öredev
