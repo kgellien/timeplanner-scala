@@ -84,8 +84,12 @@ object ToDoListDsl {
 }
 
 abstract sealed class ToDoEntry
-case class Anniversary(val month: Int, val day: Int, val year: Option[Int], val info: String) extends ToDoEntry {
-  override def toString = "Anniversary(%d, %d, %s, %s)" format (month, day, year, info)
+case class Anniversary(val month: Int, val day: Int, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
+  override def toString = "Anniversary(%d, %d, %s, %s)" format (month, day, yearOpt, info)
+  def toLatex = yearOpt match {
+    case Some(year) => "%s (%s)" format (info, year)
+    case _ => info
+  }
 }
 
 case class Appointment(val periodInfo: PeriodBase, val classifier: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {

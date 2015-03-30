@@ -83,7 +83,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   def renderTodoList(todo: ToDoList) = {
     val result = new ListBuffer[String]
     if (!todo.anniversaries.isEmpty) {
-      result += todo.anniversaries.mkString("\n\n")
+      result += todo.anniversaries.map { a => "$*$%s" format a.toLatex }.mkString("\n\n")
       result += """{\center \rule{0.5\linewidth}{0.3mm}\\ } \vspace*{1em}"""
     }
     result += todo.appointments.mkString("\n\n")

@@ -96,12 +96,12 @@ object Plan {
       line <- todoList
       td <- ToDoListDsl.getToDo(line)
     } yield td
-    if (debug) tdl foreach println
+//    if (debug) tdl foreach println
     val lines = getFilteredLines(inputDsl, inputEncoding)
     for {
       line <- lines
       tp <- TimePlanDsl.getTimePlan(line, daysPerWeek)
-    } yield tp.createPeriodPlan(todoList, withOverview)
+    } yield tp.createPeriodPlan(tdl, todoList, withOverview)
   }
 
   def readFiles(fileNames: List[String], encoding: String) = {

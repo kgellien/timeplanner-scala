@@ -3,7 +3,7 @@ package de.gellien.timeplanner.timeplan
 import org.joda.time.LocalDate
 import TimeHelper._
 
-case class ToDoList(val anniversaries: List[String], val appointments: List[String], val tasks: List[String])
+case class ToDoList(val anniversaries: List[Anniversary], val appointments: List[String], val tasks: List[String])
 
 object ToDoHelper {
   def getEntriesWithPrefix(lines: List[String], prefix: String) = {
@@ -48,10 +48,27 @@ object ToDoHelper {
     (appointments, tasks)
   }
 
-  def getTodoByDay(workList: List[String], currentDay: LocalDate, removeHeaderPrefix: Boolean): ToDoList = {
-    val anniversaries = getEntriesWithPrefix(workList, isoDate(currentDay).substring(5) + " ")
+  def getTodoByDay(todos: List[ToDoEntry], workList: List[String], currentDay: LocalDate, removeHeaderPrefix: Boolean): ToDoList = {
+    //val anniversaries = getEntriesWithPrefix(workList, isoDate(currentDay).substring(5) + " ")
     val prefixes = List(isoDate(currentDay) + " ", dailySearchPattern, currentDay.getDayOfWeek().toString + " ")
     val (appointments, tasks) = appointmentsAndTasks(workList, isoDate(currentDay), removeHeaderPrefix, prefixes: _*)
+    //
+    println("%s ---" format currentDay)
+    val (month, day, year) = (currentDay.getMonthOfYear, currentDay.getDayOfMonth, currentDay.getYear)
+    // ClasscastException
+    //val ann = todos filter {case Anniversary(`month`, `day`, year, info) => true; case _ => false} map { x => asInstanceOf[Anniversary] }
+    val anniversaries = (for {
+      entry <- todos
+      if entry.isInstanceOf[Anniversary]
+    } yield entry.asInstanceOf[Anniversary]) filter {case Anniversary(`month`, `day`, year, info) => true; case _ => false}
+    val pi = DayEntry(year, month, day)
+    val app = todos filter {case Appointment(`pi`, c, t, info) => true; case _ => false}
+    val tas = todos filter {case Task(`pi`, c, info) => true; case _ => false}
+    //    println("  Anniversaries neu: %s" format anniversaries)
+    //    println("  Appointments alt: %s" format appointments)
+    //    println("  Appointments neu: %s" format app)
+    //    println("  Tasks alt: %s" format tasks)
+    //    println("  Tasks neu: %s" format tas)
     ToDoList(anniversaries, appointments, tasks)
   }
 

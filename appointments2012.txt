@@ -26,6 +26,11 @@ Y yearly retrospektive
 2012-03 5. -- 09.3. QCon London
 
 2012-04 16. -- 20.04. JAX in Mainz
+2012-04-16 09:00 JAX in Mainz
+2012-04-17 JAX in Mainz
+2012-04-18 JAX in Mainz
+2012-04-19 9:00 -- 18:00 JAX in Mainz
+2012-04-20 JAX in Mainz
 2012-06 04. -- 5.06. Sea-Con in Hamburg
 
 2012-11 Öredev

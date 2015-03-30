@@ -33,10 +33,11 @@ object PeriodSplitter {
   }
 
   def splitToDoLists(prefix: String, todo: ToDoList): (ToDoList, ToDoList) = {
-    val (anniversariesWithPrefix, anniversariesWithoutPrefix) = splitOnPrefix(prefix, todo.anniversaries)
+//    val (anniversariesWithPrefix, anniversariesWithoutPrefix) = splitOnPrefix(prefix, todo.anniversaries)
     val (appointmentsWithPrefix, appointmentsWithoutPrefix) = splitOnPrefix(prefix, todo.appointments)
     val (tasksWithPrefix, tasksWithoutPrefix) = splitOnPrefix(prefix, todo.tasks)
-    (ToDoList(anniversariesWithPrefix, appointmentsWithPrefix, tasksWithPrefix), ToDoList(anniversariesWithoutPrefix, appointmentsWithoutPrefix, tasksWithoutPrefix))
+//    (ToDoList(anniversariesWithPrefix, appointmentsWithPrefix, tasksWithPrefix), ToDoList(anniversariesWithoutPrefix, appointmentsWithoutPrefix, tasksWithoutPrefix))
+    (ToDoList(todo.anniversaries, appointmentsWithPrefix, tasksWithPrefix), ToDoList(todo.anniversaries, appointmentsWithoutPrefix, tasksWithoutPrefix))
   }
 
   def splitOnPrefix(prefix: String, list: List[String]): (List[String], List[String]) = {
