@@ -1,6 +1,7 @@
 ######  2012
 
 ###### regular
+D Meditation
 
 D1 =2012-04 Gym
 D3 =2012-04 Gym
