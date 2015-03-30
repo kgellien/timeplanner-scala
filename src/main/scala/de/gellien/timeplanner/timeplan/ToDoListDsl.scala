@@ -6,9 +6,9 @@ class ToDoListDsl extends JavaTokenParsers {
 
   lazy val toDoItem = (anniversary | appointmentOrTask)
   
-  lazy val anniversary = monthNo ~ "-" ~ dayNo ~ rep(yearNo) ~ info ^^ {
-    case m ~ str ~ d ~ Nil ~ i => Anniversary(m, d, None, i)
-    case m ~ str ~ d ~ y ~ i => Anniversary(m, d, Some(y.head), i)
+  lazy val anniversary = anniversaryEntry ~ rep(yearNo) ~ info ^^ {
+    case a ~ Nil ~ i => Anniversary(a, None, i)
+    case a ~ y ~ i => Anniversary(a, Some(y.head), i)
   }
   
   lazy val  appointmentOrTask = dateInfo ~ rep(classifier) ~ rep(timespan) ~ info ^^ { // TODO: check whether zero or once is possible with rep
@@ -22,7 +22,7 @@ class ToDoListDsl extends JavaTokenParsers {
     }
   }
 
-  lazy val dateInfo = (day | week | month | quarter | year)
+  lazy val dateInfo = (anniversaryEntry | day | week | month | quarter | year)
 
   lazy val day = (weekDay | daily | calDay)
   lazy val week = (weekly | calWeek)
@@ -32,6 +32,8 @@ class ToDoListDsl extends JavaTokenParsers {
   
   lazy val timespan = (clockspan | datespan)
 
+  lazy val anniversaryEntry = monthNo ~ "-" ~ dayNo ^^ { case monthNo ~ str ~ dayNo => AnniversaryEntry(monthNo, dayNo) }
+  
   lazy val daily = "D" ^^ { case _ => DailyEntry() }
   lazy val calDay = yearNo ~ "-" ~ monthNo ~ "-" ~ dayNo ^^ { case yearNo ~ s1 ~ monthNo ~ s2~ dayNo => DayEntry(yearNo, monthNo, dayNo) }
   lazy val weekDay = """D\d""".r ^? ({ case i if ((1 to 7) contains i.tail.toInt) => WeekDayEntry(i.tail.toInt) }, (i => "week day needs to be in the range of 1 to 7"))
@@ -84,7 +86,16 @@ object ToDoListDsl {
 }
 
 abstract sealed class ToDoEntry
-case class Anniversary(val month: Int, val day: Int, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
+
+case class Anniversary(val periodInfo: PeriodBase, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
+  override def toString = "Anniversary(%s, %s, %s)" format (periodInfo, yearOpt, info)
+  def toLatex = yearOpt match {
+    case Some(year) => "%s (%s)" format (info, year)
+    case _ => info
+  }
+}
+
+case class AnniversaryOld(val month: Int, val day: Int, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
   override def toString = "Anniversary(%d, %d, %s, %s)" format (month, day, yearOpt, info)
   def toLatex = yearOpt match {
     case Some(year) => "%s (%s)" format (info, year)
@@ -92,15 +103,25 @@ case class Anniversary(val month: Int, val day: Int, val yearOpt: Option[Int], v
   }
 }
 
-case class Appointment(val periodInfo: PeriodBase, val classifier: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
-  override def toString = "Appointment(%s, %s, %s, %s)" format (periodInfo, classifier, timeInfo, info)
+case class Appointment(val periodInfo: PeriodBase, val classifierOpt: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
+  override def toString = "Appointment(%s, %s, %s, %s)" format (periodInfo, classifierOpt, timeInfo, info)
+  def toLatex = classifierOpt match {
+    case Some(classifier) => "[%s] %s %s" format (classifier, timeInfo, info)
+    case _ => "%s %s" format (timeInfo, info)
+  }
 }
 
-case class Task(val periodInfo: PeriodBase, val classifier: Option[String], val info: String) extends ToDoEntry {
-  override def toString = "Task(%s, %s, %s)" format (periodInfo, classifier, info)
+case class Task(val periodInfo: PeriodBase, val classifierOpt: Option[String], val info: String) extends ToDoEntry {
+  override def toString = "Task(%s, %s, %s)" format (periodInfo, classifierOpt, info)
+  def toLatex = classifierOpt match {
+    case Some(classifier) => "[%s] %s" format (classifier, info)
+    case _ => info
+  }
 }
 
 abstract sealed class PeriodBase
+
+case class AnniversaryEntry(month: Int, day: Int) extends PeriodBase
 
 abstract sealed class YearBase extends PeriodBase
 case class YearlyEntry() extends YearBase

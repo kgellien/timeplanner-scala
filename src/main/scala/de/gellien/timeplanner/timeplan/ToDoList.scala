@@ -1,5 +1,6 @@
 package de.gellien.timeplanner.timeplan
 
+import scala.collection.mutable.ListBuffer
 import org.joda.time.LocalDate
 import TimeHelper._
 
@@ -48,56 +49,105 @@ object ToDoHelper {
     (appointments, tasks)
   }
 
+  def extract(todos: List[ToDoEntry], pbs: PeriodBase*): ToDoList = {
+    val anniversaries = new ListBuffer[Anniversary]
+    val appointments = new ListBuffer[Appointment]
+    val tasks = new ListBuffer[Task]
+    for (todo <- todos; pb <- pbs) {
+      todo match {
+        case Anniversary(`pb`, y, i)     => anniversaries += todo.asInstanceOf[Anniversary]
+        case Appointment(`pb`, c, tp, i) => appointments += todo.asInstanceOf[Appointment]
+        case Task(`pb`, c, i)            => tasks += todo.asInstanceOf[Task]
+        case _                           => ;
+      }
+    }
+    ToDoList(anniversaries.toList, appointments.toList.map { _.toLatex }, tasks.toList.map { _.toLatex })
+  }
+
   def getTodoByDay(todos: List[ToDoEntry], workList: List[String], currentDay: LocalDate, removeHeaderPrefix: Boolean): ToDoList = {
-    //val anniversaries = getEntriesWithPrefix(workList, isoDate(currentDay).substring(5) + " ")
     val prefixes = List(isoDate(currentDay) + " ", dailySearchPattern, currentDay.getDayOfWeek().toString + " ")
     val (appointments, tasks) = appointmentsAndTasks(workList, isoDate(currentDay), removeHeaderPrefix, prefixes: _*)
     //
-    println("%s ---" format currentDay)
     val (month, day, year) = (currentDay.getMonthOfYear, currentDay.getDayOfMonth, currentDay.getYear)
-    // ClasscastException
-    //val ann = todos filter {case Anniversary(`month`, `day`, year, info) => true; case _ => false} map { x => asInstanceOf[Anniversary] }
-    val anniversaries = (for {
-      entry <- todos
-      if entry.isInstanceOf[Anniversary]
-    } yield entry.asInstanceOf[Anniversary]) filter {case Anniversary(`month`, `day`, year, info) => true; case _ => false}
     val pi = DayEntry(year, month, day)
-    val app = todos filter {case Appointment(`pi`, c, t, info) => true; case _ => false}
-    val tas = todos filter {case Task(`pi`, c, info) => true; case _ => false}
-    //    println("  Anniversaries neu: %s" format anniversaries)
-    //    println("  Appointments alt: %s" format appointments)
-    //    println("  Appointments neu: %s" format app)
-    //    println("  Tasks alt: %s" format tasks)
-    //    println("  Tasks neu: %s" format tas)
-    ToDoList(anniversaries, appointments, tasks)
+    val pii = DailyEntry()
+    val piii = WeekDayEntry(currentDay.getDayOfWeek)
+    val piv = AnniversaryEntry(month, day)
+    val tl = extract(todos, pi, pii, piii, piv)
+    //    println("%s ---" format currentDay)
+    //    println("  D Anniversaries new: %s" format tl.anniversaries.map { _.toLatex })
+    //    println("  D Appointments old: %s" format appointments)
+    //    println("  D Appointments new: %s" format tl.appointments)
+    //    println("  D Tasks old: %s" format tasks)
+    //    println("  D Tasks new: %s" format tl.tasks)
+    tl
   }
 
-  def getTodoByWeek(workList: List[String], year: Int, week: Int, removeHeaderPrefix: Boolean): ToDoList = {
+  def getTodoByWeek(todos: List[ToDoEntry], workList: List[String], year: Int, week: Int, removeHeaderPrefix: Boolean): ToDoList = {
     val calWeek = calendarWeekSearchPattern.format(year, week).stripSuffix(" ")
     val prefixes = List(calendarWeekSearchPattern format (year, week), weeklySearchPattern)
     val (appointments, tasks) = appointmentsAndTasks(workList, calWeek, removeHeaderPrefix, prefixes: _*)
     val anniversaries = List()
-    ToDoList(anniversaries, appointments, tasks)
+    //
+    val pi = WeekEntry(year, week)
+    val pii = WeeklyEntry()
+    val tl = extract(todos, pi, pii)
+    //    println("getTodoByWeek ---")
+    //    println("  W Appointments old: %s" format appointments)
+    //    println("  W Appointments new: %s" format tl.appointments)
+    //    println("  W Tasks old: %s" format tasks)
+    //    println("  W Tasks new: %s" format tl.tasks)
+    tl
   }
 
-  def getTodoByMonth(workList: List[String], year: Int, month: Int, removeHeaderPrefix: Boolean): ToDoList = {
+  def getTodoByMonth(todos: List[ToDoEntry], workList: List[String], year: Int, month: Int, removeHeaderPrefix: Boolean): ToDoList = {
     val calMonth = calendarMonthSearchPattern.format(year, month).stripSuffix(" ")
     val prefixes = List(calendarMonthSearchPattern format (year, month), monthlySearchPattern)
     val (appointments, tasks) = appointmentsAndTasks(workList, calMonth, removeHeaderPrefix, prefixes: _*)
-    ToDoList(List(), appointments, tasks)
+    val anniversaries = List()
+    //
+    val pi = MonthEntry(year, month)
+    val pii = MonthlyEntry()
+    val tl = extract(todos, pi, pii)
+    //    println("getTodoByMonth ---")
+    //    println("  M Appointments old: %s" format appointments)
+    //    println("  M Appointments new: %s" format tl.appointments)
+    //    println("  M Tasks old: %s" format tasks)
+    //    println("  M Tasks new: %s" format tl.tasks)
+    tl
   }
 
-  def getTodoByQuarter(workList: List[String], year: Int, quarter: Int, removeHeaderPrefix: Boolean): ToDoList = {
+  def getTodoByQuarter(todos: List[ToDoEntry], workList: List[String], year: Int, quarter: Int, removeHeaderPrefix: Boolean): ToDoList = {
     val calQuarter = calendarQuarterSearchPattern.format(year, quarter).stripSuffix(" ")
     val prefixes = List(calendarQuarterSearchPattern format (year, quarter), quarterlySearchPattern)
     val (appointments, tasks) = appointmentsAndTasks(workList, calQuarter, removeHeaderPrefix, prefixes: _*)
-    ToDoList(List(), appointments, tasks)
+    val anniversaries = List()
+    //
+    val pi = QuarterEntry(year, quarter)
+    val pii = QuarterlyEntry()
+    val tl = extract(todos, pi, pii)
+    //    println("getTodoByQuarter ---")
+    //    println("  Q Appointments old: %s" format appointments)
+    //    println("  Q Appointments new: %s" format tl.appointments)
+    //    println("  Q Tasks old: %s" format tasks)
+    //    println("  Q Tasks new: %s" format tl.tasks)
+    tl
   }
 
-  def getTodoByYear(workList: List[String], year: Int, removeHeaderPrefix: Boolean): ToDoList = {
+  def getTodoByYear(todos: List[ToDoEntry], workList: List[String], year: Int, removeHeaderPrefix: Boolean): ToDoList = {
     val calYear = calendarYearSearchPattern.format(year, year).stripSuffix(" ")
     val prefixes = List(calendarYearSearchPattern format (year), yearlySearchPattern)
-    val (appointments, tasks) = appointmentsAndTasks(workList, calYear, removeHeaderPrefix, prefixes: _*)
-    ToDoList(List(), appointments, tasks)
+    val (appointmentsOld, tasksOld) = appointmentsAndTasks(workList, calYear, removeHeaderPrefix, prefixes: _*)
+    val anniversaries = List()
+    //
+    val pi = YearEntry(year)
+    val pii = YearlyEntry()
+    val tl = extract(todos, pi, pii)
+    //    println("getTodoByYear ---")
+    //    println("  Y Appointments old: %s" format appointments)
+    //    println("  Y Appointments new: %s" format tl.appointments)
+    //    println("  Y Tasks old: %s" format tasks)
+    //    println("  Y Tasks new: %s" format tl.tasks)
+    tl
   }
 }

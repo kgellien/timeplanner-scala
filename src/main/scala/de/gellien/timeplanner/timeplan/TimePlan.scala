@@ -6,7 +6,7 @@ abstract sealed class TimePlan() {
 
 case class WeekTimePlan(year: Int, week: Int)(implicit val daysPerWeek: Int) extends TimePlan {
   override def createPeriodPlan(todos: List[ToDoEntry], workList: List[String], withOverview: Boolean): PeriodPlan = {
-    val todo = ToDoHelper.getTodoByWeek(workList, year, week, removeHeaderPrefix = false)
+    val todo = ToDoHelper.getTodoByWeek(todos, workList, year, week, removeHeaderPrefix = false)
     val period = Week(year, week, todo)
     val periodSpecifics = for {
       currentDay <- TimeHelper.daysInWeek(year, week) take daysPerWeek
@@ -19,10 +19,10 @@ case class WeekTimePlan(year: Int, week: Int)(implicit val daysPerWeek: Int) ext
 
 case class MonthTimePlan(year: Int, month: Int) extends TimePlan {
   override def createPeriodPlan(todos: List[ToDoEntry], workList: List[String], withOverview: Boolean): PeriodPlan = {
-    val todo = ToDoHelper.getTodoByMonth(workList, year, month, removeHeaderPrefix = false)
+    val todo = ToDoHelper.getTodoByMonth(todos, workList, year, month, removeHeaderPrefix = false)
     val period = Month(year, month, todo)
     val periodSpecifics = for ((weekYear, week) <- TimeHelper.weeksInMonth(year, month))
-      yield Week(weekYear, week, ToDoHelper.getTodoByWeek(workList, weekYear, week, removeHeaderPrefix = true))
+      yield Week(weekYear, week, ToDoHelper.getTodoByWeek(todos, workList, weekYear, week, removeHeaderPrefix = true))
     MonthPlan(year, month, period, periodSpecifics, withOverview)
   }
   override def toString = "MonthTimePlan(%d, %d)" format (year, month)
@@ -30,10 +30,10 @@ case class MonthTimePlan(year: Int, month: Int) extends TimePlan {
 
 case class QuarterTimePlan(year: Int, quarter: Int) extends TimePlan {
   override def createPeriodPlan(todos: List[ToDoEntry], workList: List[String], withOverview: Boolean): PeriodPlan = {
-    val todo = ToDoHelper.getTodoByQuarter(workList, year, quarter, removeHeaderPrefix = false)
+    val todo = ToDoHelper.getTodoByQuarter(todos, workList, year, quarter, removeHeaderPrefix = false)
     val period = Quarter(year, quarter, todo)
     val periodSpecifics = for (month <- TimeHelper.monthsInQuarter(year, quarter))
-      yield Month(year, month, ToDoHelper.getTodoByMonth(workList, year, month, removeHeaderPrefix = true))
+      yield Month(year, month, ToDoHelper.getTodoByMonth(todos, workList, year, month, removeHeaderPrefix = true))
     QuarterPlan(year, quarter, period, periodSpecifics, withOverview)
   }
   override def toString = "QuarterTimePlan(%d, %d)" format (year, quarter)
@@ -41,10 +41,10 @@ case class QuarterTimePlan(year: Int, quarter: Int) extends TimePlan {
 
 case class YearTimePlan(year: Int) extends TimePlan {
   override def createPeriodPlan(todos: List[ToDoEntry], workList: List[String], withOverview: Boolean): PeriodPlan = {
-    val todo = ToDoHelper.getTodoByYear(workList, year, removeHeaderPrefix = false)
+    val todo = ToDoHelper.getTodoByYear(todos, workList, year, removeHeaderPrefix = false)
     val period = Year(year, todo)
     val periodSpecifics = for (quarter <- (1 to 4).toList)
-      yield Quarter(year, quarter, ToDoHelper.getTodoByQuarter(workList, year, quarter, removeHeaderPrefix = true))
+      yield Quarter(year, quarter, ToDoHelper.getTodoByQuarter(todos, workList, year, quarter, removeHeaderPrefix = true))
     YearPlan(year, period, periodSpecifics, withOverview)
   }
   override def toString = "YearTimePlan(%d)" format (year)
