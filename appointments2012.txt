@@ -12,19 +12,15 @@ D7 Planning next week
 
 M [B] monthly retrospektive
 Q quarterly retrospektive
-Y yearly retrospektive
+Y [P] yearly retrospektive
 
 
 ## April
-2012-04-01 9:00 Prank
-2012-04 Monthly aim
+2012-04 [B] Monthly aim
 2012-W16 [P] weekly aim
 
 2012-Q2 [P] quarterly private aim
 
-
-
-2012-03 5. -- 09.3. QCon London
 
 2012-04 [B] 16. -- 20.04. JAX in Mainz
 2012-04-16 09:00 JAX in Mainz
@@ -32,6 +28,3 @@ Y yearly retrospektive
 2012-04-18 JAX in Mainz
 2012-04-19 9:00 -- 18:00 JAX in Mainz
 2012-04-20 [B] JAX in Mainz
-2012-06 04. -- 5.06. Sea-Con in Hamburg
-
-2012-11 Öredev

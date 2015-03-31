@@ -91,8 +91,6 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
       result += """{\center \rule{0.5\linewidth}{0.3mm}\\ }"""
     }
     result += """\vfill"""
-//    val tasks = for (task <- todo.tasks) yield "- %s\n" format task
-//    result.appendAll(tasks)
     result += todo.tasks.map { a => "- %s" format a.toLatex }.mkString("\n\n")
     result
   }

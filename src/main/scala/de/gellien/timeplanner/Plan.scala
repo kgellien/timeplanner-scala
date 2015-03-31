@@ -95,7 +95,6 @@ object Plan {
   }
 
   def buildPeriodPlans(inputDsl: String, todoList: List[ToDoEntry], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
-    //    if (debug) tdl foreach println
     val lines = getFilteredLines(inputDsl, inputEncoding)
     for {
       line <- lines
