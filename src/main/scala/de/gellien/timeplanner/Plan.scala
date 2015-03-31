@@ -63,7 +63,10 @@ object Plan {
     val inputEncoding = latin1
     val outputEncoding = latin1
 
-    val todoList = readFiles(inputFiles, inputEncoding)
+    val todoList = for {
+      line <- readFiles(inputFiles, inputEncoding)
+      td <- ToDoListDsl.getToDo(line)
+    } yield td
 
     val properties = new Properties()
     properties.load(new FileInputStream("timeplan.properties"))
@@ -91,17 +94,13 @@ object Plan {
     }
   }
 
-  def buildPeriodPlans(inputDsl: String, todoList: List[String], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
-    val tdl = for {
-      line <- todoList
-      td <- ToDoListDsl.getToDo(line)
-    } yield td
-//    if (debug) tdl foreach println
+  def buildPeriodPlans(inputDsl: String, todoList: List[ToDoEntry], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
+    //    if (debug) tdl foreach println
     val lines = getFilteredLines(inputDsl, inputEncoding)
     for {
       line <- lines
       tp <- TimePlanDsl.getTimePlan(line, daysPerWeek)
-    } yield tp.createPeriodPlan(tdl, todoList, withOverview)
+    } yield tp.createPeriodPlan(todoList, withOverview)
   }
 
   def readFiles(fileNames: List[String], encoding: String) = {
