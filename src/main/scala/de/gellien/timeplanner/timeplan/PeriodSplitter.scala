@@ -1,19 +1,20 @@
 package de.gellien.timeplanner.timeplan
 
+import scala.collection.mutable.ListBuffer
+
 object PeriodSplitter {
 
   // TODO: the following names should be configurable via localization
   val taskHeaderNameA = "Privat"
   val taskHeaderNameB = "Beruflich"
   val taskHeaderNameC = "Sonstiges"
-  // Attention: taskHeader prefixes need to be of same length!
-  val taskHeaderPrefixA = "P "
-  val taskHeaderPrefixB = "B "
-  def taskHeaderPrefixSize = taskHeaderPrefixA.size
+  val taskHeaderPrefixA = "P"
+  val taskHeaderPrefixB = "B"
 
   def startsWithTaskHeaderPrefix(entry: String) = entry.startsWith(taskHeaderPrefixA) || entry.startsWith(taskHeaderPrefixB)
-   
+
   def splitPeriod(period: SinglePeriod): List[SinglePeriod] = {
+    println(period)
     val (todoA, rest) = splitToDoLists(taskHeaderPrefixA, period.todo)
     val (todoB, todoC) = splitToDoLists(taskHeaderPrefixB, rest)
     val (col1, col2, col3) = period match {
@@ -29,20 +30,28 @@ object PeriodSplitter {
         (Year(year, todoA, Some(taskHeaderNameA)), Year(year, todoC, Some(taskHeaderNameC)), Year(year, todoB, Some(taskHeaderNameB)))
     }
     val result = List(col1, col2, col3)
-   result
+    result foreach {c => println("  %s" format c)}
+    result
   }
 
   def splitToDoLists(prefix: String, todo: ToDoList): (ToDoList, ToDoList) = {
-//    val (anniversariesWithPrefix, anniversariesWithoutPrefix) = splitOnPrefix(prefix, todo.anniversaries)
     val (appointmentsWithPrefix, appointmentsWithoutPrefix) = splitOnPrefix(prefix, todo.appointments)
     val (tasksWithPrefix, tasksWithoutPrefix) = splitOnPrefix(prefix, todo.tasks)
-//    (ToDoList(anniversariesWithPrefix, appointmentsWithPrefix, tasksWithPrefix), ToDoList(anniversariesWithoutPrefix, appointmentsWithoutPrefix, tasksWithoutPrefix))
-    (ToDoList(todo.anniversaries, appointmentsWithPrefix, tasksWithPrefix), ToDoList(todo.anniversaries, appointmentsWithoutPrefix, tasksWithoutPrefix))
+    (ToDoList(todo.anniversaries, appointmentsWithPrefix.map { _.asInstanceOf[Appointment] }, tasksWithPrefix.map { _.asInstanceOf[Task] }), ToDoList(todo.anniversaries, appointmentsWithoutPrefix.map { _.asInstanceOf[Appointment] }, tasksWithoutPrefix.map { _.asInstanceOf[Task] }))
   }
 
-  def splitOnPrefix(prefix: String, list: List[String]): (List[String], List[String]) = {
-    val withPrefix = for (entry <- list if entry startsWith prefix) yield entry.replaceFirst(prefix, "")
-    val withoutPrefix = for (entry <- list if !(entry startsWith prefix)) yield entry
-    (withPrefix, withoutPrefix)
+  def splitOnPrefix(classifier: String, list: List[ToDoEntry]): (List[ToDoEntry], List[ToDoEntry]) = {
+    val withClassifier = new ListBuffer[ToDoEntry]
+    val withoutClassifier = new ListBuffer[ToDoEntry]
+    for (todo <- list) {
+      todo match {
+        case Appointment(_, Some(`classifier`), _, _) => withClassifier += todo
+        case Appointment(_, _, _, _)               => withoutClassifier += todo
+        case Task(_, Some(`classifier`), _)           => withClassifier += todo
+        case Task(_, _, _)                         => withoutClassifier += todo
+        case _                                        => ;
+      }
+    }
+    (withClassifier.toList, withoutClassifier.toList)
   }
 }

@@ -95,14 +95,6 @@ case class Anniversary(val periodInfo: PeriodBase, val yearOpt: Option[Int], val
   }
 }
 
-case class AnniversaryOld(val month: Int, val day: Int, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
-  override def toString = "Anniversary(%d, %d, %s, %s)" format (month, day, yearOpt, info)
-  def toLatex = yearOpt match {
-    case Some(year) => "%s (%s)" format (info, year)
-    case _ => info
-  }
-}
-
 case class Appointment(val periodInfo: PeriodBase, val classifierOpt: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
   override def toString = "Appointment(%s, %s, %s, %s)" format (periodInfo, classifierOpt, timeInfo, info)
   def toLatex = classifierOpt match {

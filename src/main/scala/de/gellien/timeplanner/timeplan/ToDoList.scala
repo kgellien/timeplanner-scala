@@ -4,7 +4,7 @@ import scala.collection.mutable.ListBuffer
 import org.joda.time.LocalDate
 import TimeHelper._
 
-case class ToDoList(val anniversaries: List[Anniversary], val appointments: List[String], val tasks: List[String])
+case class ToDoList(val anniversaries: List[Anniversary], val appointments: List[Appointment], val tasks: List[Task])
 
 object ToDoHelper {
   def extract(todos: List[ToDoEntry], pbs: PeriodBase*): ToDoList = {
@@ -19,27 +19,21 @@ object ToDoHelper {
         case _                           => ;
       }
     }
-    ToDoList(anniversaries.toList, appointments.toList.map { _.toLatex }, tasks.toList.map { _.toLatex })
+    ToDoList(anniversaries.toList, appointments.toList, tasks.toList)
   }
 
   def getTodoByDay(todos: List[ToDoEntry], currentDay: LocalDate, removeHeaderPrefix: Boolean): ToDoList = {
     val (month, day, year) = (currentDay.getMonthOfYear, currentDay.getDayOfMonth, currentDay.getYear)
-    val pi = DayEntry(year, month, day)
-    val pii = DailyEntry()
-    val piii = WeekDayEntry(currentDay.getDayOfWeek)
-    val piv = AnniversaryEntry(month, day)
-    val tl = extract(todos, pi, pii, piii, piv)
+    val tl = extract(todos, DayEntry(year, month, day), DailyEntry(), WeekDayEntry(currentDay.getDayOfWeek), AnniversaryEntry(month, day))
     //    println("%s ---" format currentDay)
     //    println("  D Anniversaries new: %s" format tl.anniversaries.map { _.toLatex })
-    //    println("  D Appointments new: %s" format tl.appointments)
-    //    println("  D Tasks new: %s" format tl.tasks)
+    //    println("  D Appointments new: %s" format tl.appointments.map { _.toLatex })
+    //    println("  D Tasks new: %s" format tl.tasks.map { _.toLatex })
     tl
   }
 
   def getTodoByWeek(todos: List[ToDoEntry], year: Int, week: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    val pi = WeekEntry(year, week)
-    val pii = WeeklyEntry()
-    val tl = extract(todos, pi, pii)
+    val tl = extract(todos, WeekEntry(year, week), WeeklyEntry())
     //    println("getTodoByWeek ---")
     //    println("  W Appointments old: %s" format appointments)
     //    println("  W Appointments new: %s" format tl.appointments)
@@ -49,32 +43,26 @@ object ToDoHelper {
   }
 
   def getTodoByMonth(todos: List[ToDoEntry], year: Int, month: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    val pi = MonthEntry(year, month)
-    val pii = MonthlyEntry()
-    val tl = extract(todos, pi, pii)
+    val tl = extract(todos, MonthEntry(year, month), MonthlyEntry())
     //    println("getTodoByMonth ---")
-    //    println("  M Appointments new: %s" format tl.appointments)
-    //    println("  M Tasks new: %s" format tl.tasks)
+    //    println("  M Appointments new: %s" format tl.appointments.map { _.toLatex })
+    //    println("  M Tasks new: %s" format tl.tasks.map { _.toLatex })
     tl
   }
 
   def getTodoByQuarter(todos: List[ToDoEntry], year: Int, quarter: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    val pi = QuarterEntry(year, quarter)
-    val pii = QuarterlyEntry()
-    val tl = extract(todos, pi, pii)
+    val tl = extract(todos, QuarterEntry(year, quarter), QuarterlyEntry())
     //    println("getTodoByQuarter ---")
-    //    println("  Q Appointments new: %s" format tl.appointments)
-    //    println("  Q Tasks new: %s" format tl.tasks)
+    //    println("  Q Appointments new: %s" format tl.appointments.map { _.toLatex })
+    //    println("  Q Tasks new: %s" format tl.tasks.map { _.toLatex })
     tl
   }
 
   def getTodoByYear(todos: List[ToDoEntry], year: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    val pi = YearEntry(year)
-    val pii = YearlyEntry()
-    val tl = extract(todos, pi, pii)
+    val tl = extract(todos, YearEntry(year), YearlyEntry())
     //    println("getTodoByYear ---")
-    //    println("  Y Appointments new: %s" format tl.appointments)
-    //    println("  Y Tasks new: %s" format tl.tasks)
+    //    println("  Y Appointments new: %s" format tl.appointments.map { _.toLatex })
+    //    println("  Y Tasks new: %s" format tl.tasks.map { _.toLatex })
     tl
   }
 }
