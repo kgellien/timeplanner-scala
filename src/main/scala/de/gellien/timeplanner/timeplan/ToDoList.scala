@@ -6,6 +6,35 @@ import TimeHelper._
 
 case class ToDoList(val anniversaries: List[Anniversary], val appointments: List[Appointment], val tasks: List[Task])
 
+abstract sealed class ToDoEntry
+
+case class Anniversary(val periodInfo: PeriodBase, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
+  override def toString = "Anniversary(%s, %s, %s)" format (periodInfo, yearOpt, info)
+  def toLatex = yearOpt match {
+    case Some(year) => "%s (%s)" format (info, year)
+    case _ => info
+  }
+}
+
+case class Appointment(val periodInfo: PeriodBase, val classifierOpt: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
+  override def toString = "Appointment(%s, %s, %s, %s)" format (periodInfo, classifierOpt, timeInfo, info)
+  def toLatex = "%s %s" format (timeInfo, info)
+  def toLatexWithClassifier = classifierOpt match {
+    case Some(classifier) => "[%s] %s %s" format (classifier, timeInfo, info)
+    case _ => "%s %s" format (timeInfo, info)
+  }
+}
+
+case class Task(val periodInfo: PeriodBase, val classifierOpt: Option[String], val info: String) extends ToDoEntry {
+  override def toString = "Task(%s, %s, %s)" format (periodInfo, classifierOpt, info)
+  def toLatex = info
+  def toLatexWithClassifier = classifierOpt match {
+    case Some(classifier) => "[%s] %s" format (classifier, info)
+    case _ => info
+  }
+}
+
+
 object ToDoHelper {
   def extract(todos: List[ToDoEntry], pbs: PeriodBase*): ToDoList = {
     val anniversaries = new ListBuffer[Anniversary]
@@ -24,45 +53,22 @@ object ToDoHelper {
 
   def getTodoByDay(todos: List[ToDoEntry], currentDay: LocalDate, removeHeaderPrefix: Boolean): ToDoList = {
     val (month, day, year) = (currentDay.getMonthOfYear, currentDay.getDayOfMonth, currentDay.getYear)
-    val tl = extract(todos, DayEntry(year, month, day), DailyEntry(), WeekDayEntry(currentDay.getDayOfWeek), AnniversaryEntry(month, day))
-    //    println("%s ---" format currentDay)
-    //    println("  D Anniversaries new: %s" format tl.anniversaries.map { _.toLatex })
-    //    println("  D Appointments new: %s" format tl.appointments.map { _.toLatex })
-    //    println("  D Tasks new: %s" format tl.tasks.map { _.toLatex })
-    tl
+    extract(todos, DayEntry(year, month, day), DailyEntry(), WeekDayEntry(currentDay.getDayOfWeek), AnniversaryEntry(month, day))
   }
 
   def getTodoByWeek(todos: List[ToDoEntry], year: Int, week: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    val tl = extract(todos, WeekEntry(year, week), WeeklyEntry())
-    //    println("getTodoByWeek ---")
-    //    println("  W Appointments old: %s" format appointments)
-    //    println("  W Appointments new: %s" format tl.appointments)
-    //    println("  W Tasks old: %s" format tasks)
-    //    println("  W Tasks new: %s" format tl.tasks)
-    tl
+    extract(todos, WeekEntry(year, week), WeeklyEntry())
   }
 
   def getTodoByMonth(todos: List[ToDoEntry], year: Int, month: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    val tl = extract(todos, MonthEntry(year, month), MonthlyEntry())
-    //    println("getTodoByMonth ---")
-    //    println("  M Appointments new: %s" format tl.appointments.map { _.toLatex })
-    //    println("  M Tasks new: %s" format tl.tasks.map { _.toLatex })
-    tl
+    extract(todos, MonthEntry(year, month), MonthlyEntry())
   }
 
   def getTodoByQuarter(todos: List[ToDoEntry], year: Int, quarter: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    val tl = extract(todos, QuarterEntry(year, quarter), QuarterlyEntry())
-    //    println("getTodoByQuarter ---")
-    //    println("  Q Appointments new: %s" format tl.appointments.map { _.toLatex })
-    //    println("  Q Tasks new: %s" format tl.tasks.map { _.toLatex })
-    tl
+    extract(todos, QuarterEntry(year, quarter), QuarterlyEntry())
   }
 
   def getTodoByYear(todos: List[ToDoEntry], year: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    val tl = extract(todos, YearEntry(year), YearlyEntry())
-    //    println("getTodoByYear ---")
-    //    println("  Y Appointments new: %s" format tl.appointments.map { _.toLatex })
-    //    println("  Y Tasks new: %s" format tl.tasks.map { _.toLatex })
-    tl
+    extract(todos, YearEntry(year), YearlyEntry())
   }
 }

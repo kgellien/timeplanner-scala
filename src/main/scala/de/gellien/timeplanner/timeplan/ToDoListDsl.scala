@@ -85,32 +85,6 @@ object ToDoListDsl {
   }
 }
 
-abstract sealed class ToDoEntry
-
-case class Anniversary(val periodInfo: PeriodBase, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
-  override def toString = "Anniversary(%s, %s, %s)" format (periodInfo, yearOpt, info)
-  def toLatex = yearOpt match {
-    case Some(year) => "%s (%s)" format (info, year)
-    case _ => info
-  }
-}
-
-case class Appointment(val periodInfo: PeriodBase, val classifierOpt: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
-  override def toString = "Appointment(%s, %s, %s, %s)" format (periodInfo, classifierOpt, timeInfo, info)
-  def toLatex = classifierOpt match {
-    case Some(classifier) => "[%s] %s %s" format (classifier, timeInfo, info)
-    case _ => "%s %s" format (timeInfo, info)
-  }
-}
-
-case class Task(val periodInfo: PeriodBase, val classifierOpt: Option[String], val info: String) extends ToDoEntry {
-  override def toString = "Task(%s, %s, %s)" format (periodInfo, classifierOpt, info)
-  def toLatex = classifierOpt match {
-    case Some(classifier) => "[%s] %s" format (classifier, info)
-    case _ => info
-  }
-}
-
 abstract sealed class PeriodBase
 
 case class AnniversaryEntry(month: Int, day: Int) extends PeriodBase
