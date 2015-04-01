@@ -3,26 +3,30 @@ package de.gellien.timeplanner.timeplan
 import scala.collection.mutable.ListBuffer
 import scala.collection.immutable.Range
 
-abstract sealed class PeriodPlan(val period: SinglePeriod, val periodSpecifics: List[SinglePeriod], val withOverview: Boolean) {
+abstract sealed class PeriodPlan(val periodBase: PeriodEntry, val period: SinglePeriod, val periodSpecifics: List[SinglePeriod], val withOverview: Boolean) {
   val header: (String, String, String)
   def periodOverview: List[SinglePeriod] = PeriodSplitter.splitPeriod(period)
 }
 
-case class WeekPlan(year: Int, week: Int, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean)(implicit val daysPerWeek: Int) extends PeriodPlan(period, periodSpecifics, withOverview) {
+case class DayPlan(val periodEntry: DayEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
+  override val header = ("%d" format periodEntry.year, "", "%s" format (TimeHelper.monthName(periodEntry.month)))
+}
+
+case class WeekPlan(val periodEntry: WeekEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean)(implicit val daysPerWeek: Int) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
   override val header = {
-    val (start, end) = TimeHelper.fromToWeek(year, week)
-    ("%d" format year, "%s -- %s" format (start, end), "W%02d" format week)
+    val (start, end) = TimeHelper.fromToWeek(periodEntry.year, periodEntry.week)
+    ("%d" format periodEntry.year, "%s -- %s" format (start, end), "W%02d" format periodEntry.week)
   }
 }
 
-case class MonthPlan(year: Int, month: Int, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(period, periodSpecifics, withOverview) {
-  override val header = ("%d" format year, "", "%s" format (TimeHelper.monthName(month)))
+case class MonthPlan(val periodEntry: MonthEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
+  override val header = ("%d" format periodEntry.year, "", "%s" format (TimeHelper.monthName(periodEntry.month)))
 }
 
-case class QuarterPlan(year: Int, quarter: Int, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(period, periodSpecifics, withOverview) {
-  override val header = ("%d" format year, "", "%s" format "Q%d" format quarter)
+case class QuarterPlan(val periodEntry: QuarterEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
+  override val header = ("%d" format periodEntry.year, "", "%s" format "Q%d" format periodEntry.quarter)
 }
 
-case class YearPlan(year: Int, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(period, periodSpecifics, withOverview) {
-  override val header = ("%d" format year, "", "")
+case class YearPlan(val periodEntry: YearEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
+  override val header = ("%d" format periodEntry.year, "", "")
 }

@@ -8,16 +8,16 @@ case class ToDoList(val anniversaries: List[Anniversary], val appointments: List
 
 abstract sealed class ToDoEntry
 
-case class Anniversary(val periodInfo: PeriodBase, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
-  override def toString = "Anniversary(%s, %s, %s)" format (periodInfo, yearOpt, info)
+case class Anniversary(val periodEntry: PeriodEntry, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
+  override def toString = "Anniversary(%s, %s, %s)" format (periodEntry, yearOpt, info)
   def toLatex = yearOpt match {
     case Some(year) => "%s (%s)" format (info, year)
     case _ => info
   }
 }
 
-case class Appointment(val periodInfo: PeriodBase, val classifierOpt: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
-  override def toString = "Appointment(%s, %s, %s, %s)" format (periodInfo, classifierOpt, timeInfo, info)
+case class Appointment(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
+  override def toString = "Appointment(%s, %s, %s, %s)" format (periodEntry, classifierOpt, timeInfo, info)
   def toLatex = "%s %s" format (timeInfo, info)
   def toLatexWithClassifier = classifierOpt match {
     case Some(classifier) => "[%s] %s %s" format (classifier, timeInfo, info)
@@ -25,8 +25,8 @@ case class Appointment(val periodInfo: PeriodBase, val classifierOpt: Option[Str
   }
 }
 
-case class Task(val periodInfo: PeriodBase, val classifierOpt: Option[String], val info: String) extends ToDoEntry {
-  override def toString = "Task(%s, %s, %s)" format (periodInfo, classifierOpt, info)
+case class Task(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val info: String) extends ToDoEntry {
+  override def toString = "Task(%s, %s, %s)" format (periodEntry, classifierOpt, info)
   def toLatex = info
   def toLatexWithClassifier = classifierOpt match {
     case Some(classifier) => "[%s] %s" format (classifier, info)
@@ -36,7 +36,7 @@ case class Task(val periodInfo: PeriodBase, val classifierOpt: Option[String], v
 
 
 object ToDoHelper {
-  def extract(todos: List[ToDoEntry], pbs: PeriodBase*): ToDoList = {
+  def extract(todos: List[ToDoEntry], pbs: PeriodEntry*): ToDoList = {
     val anniversaries = new ListBuffer[Anniversary]
     val appointments = new ListBuffer[Appointment]
     val tasks = new ListBuffer[Task]
