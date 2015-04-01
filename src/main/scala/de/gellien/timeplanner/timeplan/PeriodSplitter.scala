@@ -1,30 +1,29 @@
 package de.gellien.timeplanner.timeplan
 
+import java.util.Locale
 import scala.collection.mutable.ListBuffer
 
 object PeriodSplitter {
 
   // TODO: the following names should be configurable via localization / properties
-  val taskHeaderNameA = "Privat"
-  val taskHeaderNameB = "Beruflich"
-  val taskHeaderNameC = "Sonstiges"
+  val taskHeaderNameA = if (Locale.getDefault.toString().startsWith("de")) "Privat" else "Private"
+  val taskHeaderNameB = if (Locale.getDefault.toString().startsWith("de")) "Beruf" else "Business"
+  val taskHeaderNameC = if (Locale.getDefault.toString().startsWith("de")) "Sonstiges" else "Miscellaneous"
   val taskHeaderClassifierA = "P"
   val taskHeaderClassifierB = "B"
-
-//  def startsWithTaskHeaderClassifier(entry: String) = entry.startsWith(taskHeaderClassifierA) || entry.startsWith(taskHeaderClassifierB)
 
   def splitPeriod(period: SinglePeriod): List[SinglePeriod] = {
     val (todoA, rest) = splitToDoLists(taskHeaderClassifierA, period.todo)
     val (todoB, todoC) = splitToDoLists(taskHeaderClassifierB, rest)
     period match {
-      case Day(year, month, day, todo, header) => // to be exhaustive; not used yet
-        List(Day(year, month, day, todoA, Some(taskHeaderNameA)), Day(year, month, day, todoC, Some(taskHeaderNameC)), Day(year, month, day, todoB, Some(taskHeaderNameB)))
-      case Week(year, week, todo, header) =>
-        List(Week(year, week, todoA, Some(taskHeaderNameA)), Week(year, week, todoC, Some(taskHeaderNameC)), Week(year, week, todoB, Some(taskHeaderNameB)))
-      case Month(year, month, todo, header) =>
-        List(Month(year, month, todoA, Some(taskHeaderNameA)), Month(year, month, todoC, Some(taskHeaderNameC)), Month(year, month, todoB, Some(taskHeaderNameB)))
-      case Quarter(year, quarter, todo, header) =>
-        List(Quarter(year, quarter, todoA, Some(taskHeaderNameA)), Quarter(year, quarter, todoC, Some(taskHeaderNameC)), Quarter(year, quarter, todoB, Some(taskHeaderNameB)))
+      case Day(periodEntry, todo, header) => // to be exhaustive; not used yet
+        List(Day(periodEntry, todoA, Some(taskHeaderNameA)), Day(periodEntry, todoC, Some(taskHeaderNameC)), Day(periodEntry, todoB, Some(taskHeaderNameB)))
+      case Week(periodEntry, todo, header) =>
+        List(Week(periodEntry, todoA, Some(taskHeaderNameA)), Week(periodEntry, todoC, Some(taskHeaderNameC)), Week(periodEntry, todoB, Some(taskHeaderNameB)))
+      case Month(periodEntry, todo, header) =>
+        List(Month(periodEntry, todoA, Some(taskHeaderNameA)), Month(periodEntry, todoC, Some(taskHeaderNameC)), Month(periodEntry, todoB, Some(taskHeaderNameB)))
+      case Quarter(periodEntry, todo, header) =>
+        List(Quarter(periodEntry, todoA, Some(taskHeaderNameA)), Quarter(periodEntry, todoC, Some(taskHeaderNameC)), Quarter(periodEntry, todoB, Some(taskHeaderNameB)))
       case Year(year, todo, header) =>
         List(Year(year, todoA, Some(taskHeaderNameA)), Year(year, todoC, Some(taskHeaderNameC)), Year(year, todoB, Some(taskHeaderNameB)))
     }

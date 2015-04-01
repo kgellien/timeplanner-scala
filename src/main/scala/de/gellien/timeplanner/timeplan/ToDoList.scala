@@ -51,24 +51,24 @@ object ToDoHelper {
     ToDoList(anniversaries.toList, appointments.toList, tasks.toList)
   }
 
-  def getTodoByDay(todos: List[ToDoEntry], currentDay: LocalDate, removeHeaderPrefix: Boolean): ToDoList = {
-    val (month, day, year) = (currentDay.getMonthOfYear, currentDay.getDayOfMonth, currentDay.getYear)
-    extract(todos, DayEntry(year, month, day), DailyEntry(), WeekDayEntry(currentDay.getDayOfWeek), AnniversaryEntry(month, day))
+  def getTodoByDay(todos: List[ToDoEntry], periodEntry: DayEntry, removeHeaderPrefix: Boolean): ToDoList = {
+    val currentDay = new LocalDate(periodEntry.year, periodEntry.month, periodEntry.day)
+    extract(todos, periodEntry, DailyEntry(), WeekDayEntry(currentDay.getDayOfWeek), AnniversaryEntry(periodEntry.month, periodEntry.day))
   }
 
-  def getTodoByWeek(todos: List[ToDoEntry], year: Int, week: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    extract(todos, WeekEntry(year, week), WeeklyEntry())
+  def getTodoByWeek(todos: List[ToDoEntry], periodEntry: WeekEntry, removeHeaderPrefix: Boolean): ToDoList = {
+    extract(todos, periodEntry, WeeklyEntry())
   }
 
-  def getTodoByMonth(todos: List[ToDoEntry], year: Int, month: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    extract(todos, MonthEntry(year, month), MonthlyEntry())
+  def getTodoByMonth(todos: List[ToDoEntry], periodEntry: MonthEntry, removeHeaderPrefix: Boolean): ToDoList = {
+    extract(todos, periodEntry, MonthlyEntry())
   }
 
-  def getTodoByQuarter(todos: List[ToDoEntry], year: Int, quarter: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    extract(todos, QuarterEntry(year, quarter), QuarterlyEntry())
+  def getTodoByQuarter(todos: List[ToDoEntry], periodEntry: QuarterEntry, removeHeaderPrefix: Boolean): ToDoList = {
+    extract(todos, periodEntry, QuarterlyEntry())
   }
 
-  def getTodoByYear(todos: List[ToDoEntry], year: Int, removeHeaderPrefix: Boolean): ToDoList = {
-    extract(todos, YearEntry(year), YearlyEntry())
+  def getTodoByYear(todos: List[ToDoEntry], periodEntry: YearEntry, removeHeaderPrefix: Boolean): ToDoList = {
+    extract(todos, periodEntry, YearlyEntry())
   }
 }

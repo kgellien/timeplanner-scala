@@ -4,13 +4,13 @@ import org.specs2.mutable.SpecificationWithJUnit
 
 class TimePlanDslSpec extends SpecificationWithJUnit {
   val week01 = """2012-W05"""
-  val week01Expected = """Some(WeekTimePlan(2012, 5))"""
+  val week01Expected = """Some(WeekTimePlan(2012-W05))"""
   val month01 = """2013-01"""
-  val month01Expected = """Some(MonthTimePlan(2013, 1))"""
+  val month01Expected = """Some(MonthTimePlan(2013-01))"""
   val quarter01 = """2013-Q1"""
-  val quarter01Expected = """Some(QuarterTimePlan(2013, 1))"""
+  val quarter01Expected = """Some(QuarterTimePlan(2013-Q1))"""
   val quarter02 = """2013-Q01"""
-  val quarter02Expected = """Some(QuarterTimePlan(2013, 1))"""
+  val quarter02Expected = """Some(QuarterTimePlan(2013-Q1))"""
   val year01 = """2013"""
   val year01Expected = """Some(YearTimePlan(2013))"""
 

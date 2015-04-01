@@ -9,13 +9,13 @@ class TimePlanDsl(daysPerWeekPar: Int) extends JavaTokenParsers {
 
   lazy val validTimeplan = (weekLine | monthLine | quarterLine | yearLine)
 
-  lazy val weekLine = year ~ "-W" ~ weekNo ^^ { case year ~ str ~ weekNo => Some(WeekTimePlan(year, weekNo)) }
+  lazy val weekLine = year ~ "-W" ~ weekNo ^^ { case year ~ str ~ weekNo => Some(WeekTimePlan(WeekEntry(year, weekNo))) }
 
-  lazy val monthLine = year ~ "-" ~ monthNo ^^ { case year ~ str ~ monthNo => Some(MonthTimePlan(year, monthNo)) }
+  lazy val monthLine = year ~ "-" ~ monthNo ^^ { case year ~ str ~ monthNo => Some(MonthTimePlan(MonthEntry(year, monthNo))) }
 
-  lazy val quarterLine = year ~ "-Q" ~ quarterNo ^^ { case year ~ str ~ quarterNo => Some(QuarterTimePlan(year, quarterNo)) }
+  lazy val quarterLine = year ~ "-Q" ~ quarterNo ^^ { case year ~ str ~ quarterNo => Some(QuarterTimePlan(QuarterEntry(year, quarterNo))) }
 
-  lazy val yearLine = year ^^ { case year => Some(YearTimePlan(year)) }
+  lazy val yearLine = year ^^ { case year => Some(YearTimePlan(YearEntry(year))) }
 
   lazy val year = """\d{4}""".r ^^ { case year => year.toInt }
 

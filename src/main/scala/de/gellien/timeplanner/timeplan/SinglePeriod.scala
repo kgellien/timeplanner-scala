@@ -1,45 +1,40 @@
 package de.gellien.timeplanner.timeplan
 
-abstract sealed class SinglePeriod(val todo: ToDoList, val hheader: Option[String]) {
+abstract sealed class SinglePeriod(val periodEntry: PeriodEntry, val todo: ToDoList, val hheader: Option[String]) {
   def defaultHeader: String
   def header = hheader match {
     case Some(h) => h
     case None    => defaultHeader
   }
+  override def toString = "%s: %s" format (periodEntry, todo)
 }
 
 // TODO: collect format strings used for toString methods at one place!
 
-case class Day(year: Int, month: Int, day: Int, override val todo: ToDoList,
-               override val hheader: Option[String] = None) extends SinglePeriod(todo, hheader) {
-  override val defaultHeader = TimeHelper.displayDay(year, month, day)
-  override def toString = "%4d-%02d-%02d: %s" format (year, month, day, todo)
+case class Day(override val periodEntry: DayEntry, override val todo: ToDoList,
+               override val hheader: Option[String] = None) extends SinglePeriod(periodEntry, todo, hheader) {
+  override val defaultHeader = TimeHelper.displayDay(periodEntry.year, periodEntry.month, periodEntry.day)
 }
 
-case class Week(year: Int, week: Int, override val todo: ToDoList,
-                override val hheader: Option[String] = None) extends SinglePeriod(todo, hheader) {
+case class Week(override val periodEntry: WeekEntry, override val todo: ToDoList,
+                override val hheader: Option[String] = None) extends SinglePeriod(periodEntry, todo, hheader) {
   override val defaultHeader = {
-    val (from, to) = TimeHelper.fromToWeek(year, week)
-    val fromTo = "%s -- %s" format (from, to)
-    "W%02d: %s" format (week, fromTo)
+    val (from, to) = TimeHelper.fromToWeek(periodEntry.year, periodEntry.week)
+    "W%02d: %s -- %s" format (periodEntry.week, from, to)
   }
-  override def toString = "%4d-W%02d: %s" format (year, week, todo)
 }
 
-case class Month(year: Int, month: Int, override val todo: ToDoList,
-                 override val hheader: Option[String] = None) extends SinglePeriod(todo, hheader) {
-  override val defaultHeader = "%s" format (TimeHelper.monthName(month))
-  override def toString = "%4d-%02d: %s" format (year, month, todo)
+case class Month(override val periodEntry: MonthEntry, override val todo: ToDoList,
+                 override val hheader: Option[String] = None) extends SinglePeriod(periodEntry, todo, hheader) {
+  override val defaultHeader = "%s" format (TimeHelper.monthName(periodEntry.month))
 }
 
-case class Quarter(year: Int, quarter: Int, override val todo: ToDoList,
-                   override val hheader: Option[String] = None) extends SinglePeriod(todo, hheader) {
-  override val defaultHeader = "Q%d" format quarter
-  override def toString = "%4d-Q%d: %s" format (year, quarter, todo)
+case class Quarter(override val periodEntry: QuarterEntry, override val todo: ToDoList,
+                   override val hheader: Option[String] = None) extends SinglePeriod(periodEntry, todo, hheader) {
+  override val defaultHeader = "Q%d" format periodEntry.quarter
 }
 
-case class Year(year: Int, override val todo: ToDoList,
-                override val hheader: Option[String] = None) extends SinglePeriod(todo, hheader) {
-  override val defaultHeader = "%d" format year
-  override def toString = "%4d: %s" format (year, todo)
+case class Year(override val periodEntry: YearEntry, override val todo: ToDoList,
+                override val hheader: Option[String] = None) extends SinglePeriod(periodEntry, todo, hheader) {
+  override val defaultHeader = "%d" format periodEntry.year
 }
