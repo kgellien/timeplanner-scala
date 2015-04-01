@@ -36,7 +36,7 @@ case class Task(val periodEntry: PeriodEntry, val classifierOpt: Option[String],
 
 
 object ToDoHelper {
-  def extract(todos: List[ToDoEntry], pbs: PeriodEntry*): ToDoList = {
+  def extractTodosForPeriod(todos: List[ToDoEntry], pbs: PeriodEntry*): ToDoList = {
     val anniversaries = new ListBuffer[Anniversary]
     val appointments = new ListBuffer[Appointment]
     val tasks = new ListBuffer[Task]
@@ -51,24 +51,4 @@ object ToDoHelper {
     ToDoList(anniversaries.toList, appointments.toList, tasks.toList)
   }
 
-  def getTodoByDay(todos: List[ToDoEntry], periodEntry: DayEntry, removeHeaderPrefix: Boolean): ToDoList = {
-    val currentDay = new LocalDate(periodEntry.year, periodEntry.month, periodEntry.day)
-    extract(todos, periodEntry, DailyEntry(), WeekDayEntry(currentDay.getDayOfWeek), AnniversaryEntry(periodEntry.month, periodEntry.day))
-  }
-
-  def getTodoByWeek(todos: List[ToDoEntry], periodEntry: WeekEntry, removeHeaderPrefix: Boolean): ToDoList = {
-    extract(todos, periodEntry, WeeklyEntry())
-  }
-
-  def getTodoByMonth(todos: List[ToDoEntry], periodEntry: MonthEntry, removeHeaderPrefix: Boolean): ToDoList = {
-    extract(todos, periodEntry, MonthlyEntry())
-  }
-
-  def getTodoByQuarter(todos: List[ToDoEntry], periodEntry: QuarterEntry, removeHeaderPrefix: Boolean): ToDoList = {
-    extract(todos, periodEntry, QuarterlyEntry())
-  }
-
-  def getTodoByYear(todos: List[ToDoEntry], periodEntry: YearEntry, removeHeaderPrefix: Boolean): ToDoList = {
-    extract(todos, periodEntry, YearlyEntry())
-  }
 }
