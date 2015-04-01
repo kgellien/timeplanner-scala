@@ -35,19 +35,20 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     result += "\\usepackage{rotating}"
     result += preamble
     result += """\begin{document}"""
-    for (plan <- plans) result.appendAll(renderSinglePlan(plan))
+    for (plan <- plans)
+      result ++= renderSinglePlan(plan)
     result += """\end{document}"""
     result
   }
 
   def renderSinglePlan(plan: PeriodPlan) = {
     val result = new ListBuffer[String]
-    result.appendAll(renderHeader(plan))
+    result ++= renderHeader(plan)
     if (plan.withOverview) {
-      result.appendAll(renderSinglePeriods("6cm", """\normalsize""", plan.periodOverview))
-      result.appendAll(renderSinglePeriods("10cm", """\small""", plan.periodSpecifics))
+      result ++= renderSinglePeriods("6cm", """\normalsize""", plan.periodOverview)
+      result ++= renderSinglePeriods("10cm", """\small""", plan.periodSpecifics)
     } else {
-      result.appendAll(renderSinglePeriods("17cm", """\small""", plan.periodSpecifics))
+      result ++= renderSinglePeriods("17cm", """\small""", plan.periodSpecifics)
     }
     result += "\\newpage"
     result
@@ -64,7 +65,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val result = new ListBuffer[String]
     val width = LatexTimePlan.getColumnWidth(singlePeriods.size)
     result += """\begin{multicols}{%d}""" format singlePeriods.size
-    result.appendAll((for (singlePeriod <- singlePeriods) yield renderSinglePeriod(singlePeriod, height, width, textsize)).flatten)
+    result ++= (for (singlePeriod <- singlePeriods) yield renderSinglePeriod(singlePeriod, height, width, textsize)).flatten
     result += """\end{multicols}"""
     result
   }
@@ -73,8 +74,8 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val result = new ListBuffer[String]
     result += """\framebox{"""
     result += """\begin{minipage}[t][%s]{%s}%s""" format (height, width, textsize)
-    result.appendAll(renderHeading(singlePeriod))
-    result.appendAll(renderTodoList(singlePeriod.todo))
+    result ++= renderHeading(singlePeriod)
+    result ++= renderTodoList(singlePeriod.todo)
     result += """\end{minipage}"""
     result += "}"
     result
