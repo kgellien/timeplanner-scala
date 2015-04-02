@@ -1,11 +1,11 @@
 package de.gellien.timeplanner.timeplan
 
 abstract sealed class TimePlan(val periodEntry: PeriodEntry) {
-  def createPeriodPlan(todos: List[ToDoEntry], withOverview: Boolean): PeriodPlan
+  def createPeriodPlan(todos: List[ToDo], withOverview: Boolean): PeriodPlan
 }
 
 case class DayTimePlan(override val periodEntry: DayEntry)(implicit val daysPerWeek: Int) extends TimePlan(periodEntry) {
-  override def createPeriodPlan(todos: List[ToDoEntry], withOverview: Boolean): PeriodPlan = {
+  override def createPeriodPlan(todos: List[ToDo], withOverview: Boolean): PeriodPlan = {
     val todo = ToDoHelper.extractTodosForPeriod(todos, periodEntry, DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(periodEntry)), AnniversaryEntry(periodEntry.month, periodEntry.day))
     val period = Day(periodEntry, todo)
     val periodSpecifics = List()
@@ -15,7 +15,7 @@ case class DayTimePlan(override val periodEntry: DayEntry)(implicit val daysPerW
 }
 
 case class WeekTimePlan(override val periodEntry: WeekEntry)(implicit val daysPerWeek: Int) extends TimePlan(periodEntry) {
-  override def createPeriodPlan(todos: List[ToDoEntry], withOverview: Boolean): PeriodPlan = {
+  override def createPeriodPlan(todos: List[ToDo], withOverview: Boolean): PeriodPlan = {
     val todo = ToDoHelper.extractTodosForPeriod(todos, periodEntry, WeeklyEntry())
     val period = Week(periodEntry, todo)
     val periodSpecifics = for {
@@ -29,7 +29,7 @@ case class WeekTimePlan(override val periodEntry: WeekEntry)(implicit val daysPe
 }
 
 case class MonthTimePlan(override val periodEntry: MonthEntry) extends TimePlan(periodEntry) {
-  override def createPeriodPlan(todos: List[ToDoEntry], withOverview: Boolean): PeriodPlan = {
+  override def createPeriodPlan(todos: List[ToDo], withOverview: Boolean): PeriodPlan = {
     val todo = ToDoHelper.extractTodosForPeriod(todos, periodEntry, MonthlyEntry())
     val period = Month(periodEntry, todo)
     val periodSpecifics = for {
@@ -42,7 +42,7 @@ case class MonthTimePlan(override val periodEntry: MonthEntry) extends TimePlan(
 }
 
 case class QuarterTimePlan(override val periodEntry: QuarterEntry) extends TimePlan(periodEntry) {
-  override def createPeriodPlan(todos: List[ToDoEntry], withOverview: Boolean): PeriodPlan = {
+  override def createPeriodPlan(todos: List[ToDo], withOverview: Boolean): PeriodPlan = {
     val todo = ToDoHelper.extractTodosForPeriod(todos, periodEntry, QuarterlyEntry())
     val period = Quarter(periodEntry, todo)
     val periodSpecifics = for {
@@ -55,7 +55,7 @@ case class QuarterTimePlan(override val periodEntry: QuarterEntry) extends TimeP
 }
 
 case class YearTimePlan(override val periodEntry: YearEntry) extends TimePlan(periodEntry) {
-  override def createPeriodPlan(todos: List[ToDoEntry], withOverview: Boolean): PeriodPlan = {
+  override def createPeriodPlan(todos: List[ToDo], withOverview: Boolean): PeriodPlan = {
     val todo = ToDoHelper.extractTodosForPeriod(todos, periodEntry, YearlyEntry())
     val period = Year(periodEntry, todo)
     val periodSpecifics = for {

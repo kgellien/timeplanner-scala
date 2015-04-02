@@ -2,7 +2,7 @@ package de.gellien.timeplanner.timeplan
 
 import org.specs2.mutable.SpecificationWithJUnit
 
-class ToDoListDslSpec extends SpecificationWithJUnit {
+class ToDoDslSpec extends SpecificationWithJUnit {
 
   val task01 = """W weekly task"""
   val task01Expected = """Task(W, None, weekly task)"""
@@ -25,24 +25,24 @@ class ToDoListDslSpec extends SpecificationWithJUnit {
   val dailyWithTimePeriodExpected = """Appointment(D, None, 11:00 -- 12:00, daily task)"""
   val dailyWithTimePeriod2 = """D 11:00 - 12:00 daily task"""
   val dailyWithTimePeriod2Expected = """Appointment(D, None, 11:00 - 12:00, daily task)"""
-    
+
   def getParseResultAsString(task: String, expected: String, debug: Boolean) = {
-      if (debug) println("#  expected: " + expected)
-      val tpd = new ToDoListDsl
-      val result = tpd.parseAll(tpd.toDoItem, task) match {
-        case tpd.Success(toDoItem, _) => toDoItem.toString
-        case tpd.Failure(msg, _) => "Failure: " + msg
-        case tpd.Error(msg, _) => "Error: " + msg
-      }
-      if (debug) println("## result:   " + result)
-      result
+    if (debug) println("#  expected: " + expected)
+    val tpd = new ToDoDsl
+    val result = tpd.parseAll(tpd.toDoItem, task) match {
+      case tpd.Success(toDoItem, _) => toDoItem.toString
+      case tpd.Failure(msg, _)      => "Failure: " + msg
+      case tpd.Error(msg, _)        => "Error: " + msg
+    }
+    if (debug) println("## result:   " + result)
+    result
   }
 
   def check_==(task: String, expected: String, debug: Boolean = false) =
-      getParseResultAsString(task, expected, debug) must_== expected
+    getParseResultAsString(task, expected, debug) must_== expected
 
   def check_!=(task: String, expected: String, debug: Boolean = false) =
-      getParseResultAsString(task, expected, debug) must_!= expected
+    getParseResultAsString(task, expected, debug) must_!= expected
 
   "ToDoListDsl" should {
     "parse weekly entry" in {
@@ -53,9 +53,9 @@ class ToDoListDslSpec extends SpecificationWithJUnit {
       check_==(task02, task02Expected)
     }
 
-//    "task without enclosing double-ticks leads to Failure" in {
-//      check_!=(task01a, task01aExpected)
-//    }
+    //    "task without enclosing double-ticks leads to Failure" in {
+    //      check_!=(task01a, task01aExpected)
+    //    }
 
     "parse daily" in {
       check_==(daily, dailyExpected)
@@ -64,7 +64,7 @@ class ToDoListDslSpec extends SpecificationWithJUnit {
     "parse mondays" in {
       check_==(mondays, mondaysExpected)
     }
-    
+
     "parse specific date" in {
       check_==(specificDate, specificDateExpected)
     }
@@ -84,6 +84,5 @@ class ToDoListDslSpec extends SpecificationWithJUnit {
     "parse daily with time period" in {
       check_==(dailyWithTimePeriod2, dailyWithTimePeriod2Expected)
     }
-
   }
 }

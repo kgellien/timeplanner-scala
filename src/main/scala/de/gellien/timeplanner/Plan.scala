@@ -65,7 +65,7 @@ object Plan {
 
     val todoList = for {
       line <- readFiles(inputFiles, inputEncoding)
-      td <- ToDoListDsl.getToDo(line)
+      td <- ToDoDsl.getToDo(line)
     } yield td
 
     val properties = new Properties()
@@ -94,7 +94,7 @@ object Plan {
     }
   }
 
-  def buildPeriodPlans(inputDsl: String, todoList: List[ToDoEntry], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
+  def buildPeriodPlans(inputDsl: String, todoList: List[ToDo], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
     val lines = getFilteredLines(inputDsl, inputEncoding)
     for {
       line <- lines

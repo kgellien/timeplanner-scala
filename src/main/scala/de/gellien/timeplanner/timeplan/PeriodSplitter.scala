@@ -35,9 +35,9 @@ object PeriodSplitter {
     (ToDoList(todo.anniversaries, appointmentsWithPrefix.map { _.asInstanceOf[Appointment] }, tasksWithPrefix.map { _.asInstanceOf[Task] }), ToDoList(todo.anniversaries, appointmentsWithoutPrefix.map { _.asInstanceOf[Appointment] }, tasksWithoutPrefix.map { _.asInstanceOf[Task] }))
   }
 
-  def splitOnClassifier(classifier: String, list: List[ToDoEntry]): (List[ToDoEntry], List[ToDoEntry]) = {
-    val withClassifier = new ListBuffer[ToDoEntry]
-    val withoutClassifier = new ListBuffer[ToDoEntry]
+  def splitOnClassifier(classifier: String, list: List[ToDo]): (List[ToDo], List[ToDo]) = {
+    val withClassifier = new ListBuffer[ToDo]
+    val withoutClassifier = new ListBuffer[ToDo]
     for (todo <- list) {
       todo match {
         case Appointment(_, Some(`classifier`), _, _) => withClassifier += todo

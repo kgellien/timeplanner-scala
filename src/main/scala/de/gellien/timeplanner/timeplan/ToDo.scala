@@ -6,9 +6,9 @@ import TimeHelper._
 
 case class ToDoList(val anniversaries: List[Anniversary], val appointments: List[Appointment], val tasks: List[Task])
 
-abstract sealed class ToDoEntry
+abstract sealed class ToDo
 
-case class Anniversary(val periodEntry: PeriodEntry, val yearOpt: Option[Int], val info: String) extends ToDoEntry {
+case class Anniversary(val periodEntry: PeriodEntry, val yearOpt: Option[Int], val info: String) extends ToDo {
   override def toString = "Anniversary(%s, %s, %s)" format (periodEntry, yearOpt, info)
   def toLatex = yearOpt match {
     case Some(year) => "%s (%s)" format (info, year)
@@ -16,7 +16,7 @@ case class Anniversary(val periodEntry: PeriodEntry, val yearOpt: Option[Int], v
   }
 }
 
-case class Appointment(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val timeInfo: String, val info: String) extends ToDoEntry {
+case class Appointment(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val timeInfo: String, val info: String) extends ToDo {
   override def toString = "Appointment(%s, %s, %s, %s)" format (periodEntry, classifierOpt, timeInfo, info)
   def toLatex = "%s %s" format (timeInfo, info)
   def toLatexWithClassifier = classifierOpt match {
@@ -25,7 +25,7 @@ case class Appointment(val periodEntry: PeriodEntry, val classifierOpt: Option[S
   }
 }
 
-case class Task(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val info: String) extends ToDoEntry {
+case class Task(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val info: String) extends ToDo {
   override def toString = "Task(%s, %s, %s)" format (periodEntry, classifierOpt, info)
   def toLatex = info
   def toLatexWithClassifier = classifierOpt match {
@@ -36,7 +36,7 @@ case class Task(val periodEntry: PeriodEntry, val classifierOpt: Option[String],
 
 
 object ToDoHelper {
-  def extractTodosForPeriod(todos: List[ToDoEntry], pbs: PeriodEntry*): ToDoList = {
+  def extractTodosForPeriod(todos: List[ToDo], pbs: PeriodEntry*): ToDoList = {
     val anniversaries = new ListBuffer[Anniversary]
     val appointments = new ListBuffer[Appointment]
     val tasks = new ListBuffer[Task]

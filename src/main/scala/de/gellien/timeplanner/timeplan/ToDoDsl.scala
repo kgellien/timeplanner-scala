@@ -2,7 +2,7 @@ package de.gellien.timeplanner.timeplan
 
 import scala.util.parsing.combinator.JavaTokenParsers
 
-class ToDoListDsl extends JavaTokenParsers {
+class ToDoDsl extends JavaTokenParsers {
 
   lazy val toDoItem = (anniversary | appointmentOrTask)
   
@@ -69,9 +69,9 @@ class ToDoListDsl extends JavaTokenParsers {
   lazy val yearNo = """\d{4}""".r ^^ { case year => year.toInt }
 }
 
-object ToDoListDsl {
-  def getToDo(line: String): Option[ToDoEntry] = {
-    val tdld = new ToDoListDsl()
+object ToDoDsl {
+  def getToDo(line: String): Option[ToDo] = {
+    val tdld = new ToDoDsl()
     val result = tdld.parseAll(tdld.toDoItem, line) match {
       case tdld.Success(toDoItem, _) => Some(toDoItem)
       case tdld.Failure(msg, _) =>
