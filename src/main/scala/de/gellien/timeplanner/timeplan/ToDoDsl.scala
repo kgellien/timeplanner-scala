@@ -5,20 +5,20 @@ import scala.util.parsing.combinator.JavaTokenParsers
 class ToDoDsl extends JavaTokenParsers {
 
   lazy val toDoItem = (anniversary | appointmentOrTask)
-  
+
   lazy val anniversary = anniversaryEntry ~ rep(yearNo) ~ info ^^ {
     case a ~ Nil ~ i => Anniversary(a, None, i)
-    case a ~ y ~ i => Anniversary(a, Some(y.head), i)
+    case a ~ y ~ i   => Anniversary(a, Some(y.head), i)
   }
-  
-  lazy val  appointmentOrTask = dateInfo ~ rep(classifier) ~ rep(timespan) ~ info ^^ { // TODO: check whether zero or once is possible with rep
-    case d ~ c ~ Nil ~ i => c match {
-      case Nil => Task(d, None, i)
-      case _ => Task(d, Some(c.head), i)
+
+  lazy val appointmentOrTask = dateInfo ~ rep(classifier) ~ rep(dateBound) ~ rep(timespan) ~ info ^^ { // TODO: check whether zero or once is possible with rep
+    case d ~ c ~ db ~ Nil ~ i => c match {
+      case Nil => Task(d, None, db, i)
+      case _   => Task(d, Some(c.head), db, i)
     }
-    case d ~ c ~ t ~ i => c match {
+    case d ~ c ~ db ~ t ~ i => c match {
       case Nil => Appointment(d, None, t.mkString, i)
-      case _ => Appointment(d, Some(c.head), t.mkString, i)
+      case _   => Appointment(d, Some(c.head), t.mkString, i)
     }
   }
 
@@ -29,13 +29,13 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val month = (monthly | calMonth)
   lazy val quarter = (quarterly | calQuarter)
   lazy val year = (yearly | calYear)
-  
+
   lazy val timespan = (clockspan | datespan)
 
   lazy val anniversaryEntry = monthNo ~ "-" ~ dayNo ^^ { case monthNo ~ str ~ dayNo => AnniversaryEntry(monthNo, dayNo) }
-  
+
   lazy val daily = "D" ^^ { case _ => DailyEntry() }
-  lazy val calDay = yearNo ~ "-" ~ monthNo ~ "-" ~ dayNo ^^ { case yearNo ~ s1 ~ monthNo ~ s2~ dayNo => DayEntry(yearNo, monthNo, dayNo) }
+  lazy val calDay = yearNo ~ "-" ~ monthNo ~ "-" ~ dayNo ^^ { case yearNo ~ s1 ~ monthNo ~ s2 ~ dayNo => DayEntry(yearNo, monthNo, dayNo) }
   lazy val weekDay = """D\d""".r ^? ({ case i if ((1 to 7) contains i.tail.toInt) => WeekDayEntry(i.tail.toInt) }, (i => "week day needs to be in the range of 1 to 7"))
 
   lazy val weekly = "W" ^^ { case _ => WeeklyEntry() }
@@ -67,6 +67,20 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val quarterNo = """\d\d?""".r ^? ({ case quarterNo if ((1 to 4) contains quarterNo.toInt) => quarterNo.toInt }, (quarterNo => "quarter needs to be in the range of 1 to 4"))
 
   lazy val yearNo = """\d{4}""".r ^^ { case year => year.toInt }
+
+  lazy val dateBound = (eqBound | ltBound | gtBound | leBound | geBound)
+
+  lazy val eqBound = "=" ~> calDate ^^ { case pe => EqBound(pe) }
+
+  lazy val ltBound = "<" ~> calDate ^^ { case pe => LtBound(pe) }
+
+  lazy val gtBound = ">" ~> calDate ^^ { case pe => GtBound(pe) }
+
+  lazy val leBound = "<=" ~> calDate ^^ { case pe => LeBound(pe) }
+
+  lazy val geBound = ">=" ~> calDate ^^ { case pe => GeBound(pe) }
+
+  lazy val calDate = (calDay | calWeek | calMonth | calQuarter | calYear)
 }
 
 object ToDoDsl {

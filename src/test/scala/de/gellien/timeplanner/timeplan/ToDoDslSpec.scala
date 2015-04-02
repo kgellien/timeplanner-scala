@@ -5,20 +5,24 @@ import org.specs2.mutable.SpecificationWithJUnit
 class ToDoDslSpec extends SpecificationWithJUnit {
 
   val task01 = """W weekly task"""
-  val task01Expected = """Task(W, None, weekly task)"""
+  val task01Expected = """Task(W, None, List(), weekly task)"""
   val task01a = """W weekly task"""
-  val task01aExpected = """Task(W, None, weekly task)"""
+  val task01aExpected = """Task(W, None, List(), weekly task)"""
   val task02 = """2012-W04 weekly task"""
-  val task02Expected = """Task(2012-W04, None, weekly task)"""
+  val task02Expected = """Task(2012-W04, None, List(), weekly task)"""
 
   val daily = """D daily task"""
-  val dailyExpected = """Task(D, None, daily task)"""
+  val dailyExpected = """Task(D, None, List(), daily task)"""
   val mondays = """D1 mondays"""
-  val mondaysExpected = """Task(D1, None, mondays)"""
+  val mondaysExpected = """Task(D1, None, List(), mondays)"""
+  val mondaysWithSeparatedBound = """D1 = 2012-04 mondays in april"""
+  val mondaysWithSeparatedBoundExpected = """Task(D1, None, List(EqBound(2012-04)), mondays in april)"""
+  val mondaysWithBound = """D1 =2012-04 mondays in april"""
+  val mondaysWithBoundExpected = """Task(D1, None, List(EqBound(2012-04)), mondays in april)"""
   val specificDate = """2012-01-26 specific day in january"""
-  val specificDateExpected = """Task(2012-01-26, None, specific day in january)"""
+  val specificDateExpected = """Task(2012-01-26, None, List(), specific day in january)"""
   val specificDateWithClassifier = """2012-01-26 [aikido] classified task"""
-  val specificDateExpectedWithClassifier = """Task(2012-01-26, Some(aikido), classified task)"""
+  val specificDateExpectedWithClassifier = """Task(2012-01-26, Some(aikido), List(), classified task)"""
   val dailyWithTime = """D 11:00 daily task"""
   val dailyWithTimeExpected = """Appointment(D, None, 11:00, daily task)"""
   val dailyWithTimePeriod = """D 11:00 -- 12:00 daily task"""
@@ -63,6 +67,14 @@ class ToDoDslSpec extends SpecificationWithJUnit {
 
     "parse mondays" in {
       check_==(mondays, mondaysExpected)
+    }
+
+    "parse mondays with EqBound" in {
+      check_==(mondaysWithBound, mondaysWithBoundExpected)
+    }
+
+    "parse mondays with separated EqBound" in {
+      check_==(mondaysWithSeparatedBound, mondaysWithSeparatedBoundExpected)
     }
 
     "parse specific date" in {

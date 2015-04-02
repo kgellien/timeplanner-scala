@@ -49,6 +49,12 @@ object TimeHelper {
       else date.getWeekOfWeekyear
     result
   }
+  
+  def weeksInQuarter(year: Int, quarter: Int): List[(Int, Int)] = {
+    val miq = monthsInQuarter(year, quarter)
+    (for (month <- miq)
+      yield weeksInMonth(year, month)).flatten
+  }
 
   def weeksInMonth(year: Int, month: Int): List[(Int, Int)] = {
     val firstOfMonth = new LocalDate(year, month, 1)

@@ -42,8 +42,8 @@ object PeriodSplitter {
       todo match {
         case Appointment(_, Some(`classifier`), _, _) => withClassifier += todo
         case Appointment(_, _, _, _)                  => withoutClassifier += todo
-        case Task(_, Some(`classifier`), _)           => withClassifier += todo
-        case Task(_, _, _)                            => withoutClassifier += todo
+        case Task(_, Some(`classifier`), _, _)        => withClassifier += todo
+        case Task(_, _, _, _)                         => withoutClassifier += todo
         case _                                        => ;
       }
     }

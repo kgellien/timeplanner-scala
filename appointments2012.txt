@@ -3,9 +3,9 @@
 ###### regular
 D Meditation
 
-D1 =2012-04 Gym
-D3 =2012-04 Gym
-D5 =2012-04 Gym
+D1 = 2012-04 MondayGym April
+D3 =2012-W16 WednesdayGym W16
+D5 =2012-04 FridayGym April
 
 D7 Re\-tro\-spek\-ti\-ve
 D7 Planning next week
@@ -13,7 +13,11 @@ D7 Planning next week
 M [B] monthly retrospektive
 Q quarterly retrospektive
 Y [P] yearly retrospektive
+Q =2013 quarterly 2013
 
+W =2012-04 weekly aim April
+W =2012-Q1 weekly in Q1
+D2 =2012-Q2 Tuesdays in Q2
 
 ## April
 2012-04 [B] Monthly aim
