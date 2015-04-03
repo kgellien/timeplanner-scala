@@ -35,11 +35,11 @@ case class Task(val periodEntry: PeriodEntry, val classifierOpt: Option[String],
 }
 
 object ToDoHelper {
-  def extractTodosForPeriod(pe: PeriodEntry, todos: List[ToDo], pbs: PeriodEntry*): ToDoList = {
+  def extractTodosForPeriod(pe: PeriodEntry, todos: List[ToDo], pes: PeriodEntry*): ToDoList = {
     val anniversaries = new ListBuffer[Anniversary]
     val appointments = new ListBuffer[Appointment]
     val tasks = new ListBuffer[Task]
-    for (todo <- todos; pb <- pe::(pbs.toList)) {
+    for (todo <- todos; pb <- pe::(pes.toList)) {
       todo match {
         case Anniversary(`pb`, y, i)     => anniversaries += todo.asInstanceOf[Anniversary]
         case Appointment(`pb`, c, tp, i) => appointments += todo.asInstanceOf[Appointment]

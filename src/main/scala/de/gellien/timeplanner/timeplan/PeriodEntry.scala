@@ -34,7 +34,7 @@ case class YearEntry(year: Int) extends YearBase {
       case YearEntry(y) => year == y
       case _            => false
     }
-    println("%s <-> %s %s" format (this, pe, result))
+    //println("%s <-> %s %s" format (this, pe, result))
     result
   }
 }
@@ -52,7 +52,7 @@ case class QuarterEntry(year: Int, quarter: Int) extends QuarterBase {
       case QuarterEntry(y, q) => (year == y) && (quarter == q)
       case _                  => false
     }
-    println("%s <-> %s %s" format (this, pe, result))
+    //println("%s <-> %s %s" format (this, pe, result))
     result
   }
 }
