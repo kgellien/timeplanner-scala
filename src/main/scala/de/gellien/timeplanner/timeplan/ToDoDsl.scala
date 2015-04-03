@@ -68,9 +68,11 @@ class ToDoDsl extends JavaTokenParsers {
 
   lazy val yearNo = """\d{4}""".r ^^ { case year => year.toInt }
 
-  lazy val dateBound = (eqBound | ltBound | gtBound | leBound | geBound)
+  lazy val dateBound = (eqBound | neBound | ltBound | gtBound | leBound | geBound)
 
   lazy val eqBound = "=" ~> calDate ^^ { case pe => EqBound(pe) }
+
+  lazy val neBound = "!" ~> calDate ^^ { case pe => NeBound(pe) }
 
   lazy val ltBound = "<" ~> calDate ^^ { case pe => LtBound(pe) }
 

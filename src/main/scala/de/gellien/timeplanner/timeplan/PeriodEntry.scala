@@ -4,14 +4,15 @@ import org.joda.time.LocalDate
 
 object BoundChecker {
   def withinBounds(basePe: PeriodEntry, dateBounds: List[DateBound]) = {
-    var result = false
-    for (dateBound <- dateBounds) {
-      dateBound match {
-        case EqBound(pe) => if (basePe within pe) result = true
-        case _           => ;
+    val rs = for {
+      dateBound <- dateBounds
+      res = dateBound match {
+        case EqBound(pe) => if (basePe within pe) true
+        case NeBound(pe) => if (!(basePe within pe)) true
+        case _           => false
       }
-    }
-    result
+    } yield res
+    rs forall { _ == true }
   }
 }
 
