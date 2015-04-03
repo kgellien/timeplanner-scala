@@ -7,9 +7,12 @@ object BoundChecker {
     val rs = for {
       dateBound <- dateBounds
       res = dateBound match {
-        case EqBound(pe) => if (basePe within pe) true
-        case NeBound(pe) => if (!(basePe within pe)) true
-        case _           => false
+        case EqBound(pe) => basePe within pe
+        case NeBound(pe) => !(basePe within pe)
+        case LtBound(pe) => basePe.toString() < pe.toString()
+        case LeBound(pe) => basePe.toString() <= pe.toString()
+        case GtBound(pe) => basePe.toString() > pe.toString()
+        case GeBound(pe) => basePe.toString() >= pe.toString()
       }
     } yield res
     rs forall { _ == true }
