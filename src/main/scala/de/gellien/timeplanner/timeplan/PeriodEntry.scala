@@ -8,6 +8,8 @@ abstract sealed class PeriodEntry {
 
 case class AnniversaryEntry(month: Int, day: Int) extends PeriodEntry
 
+// TODO: better/clearer hierarchy: *Entry should have common base class
+
 abstract sealed class YearBase extends PeriodEntry
 case class YearlyEntry() extends YearBase {
   override def toString = "Y"

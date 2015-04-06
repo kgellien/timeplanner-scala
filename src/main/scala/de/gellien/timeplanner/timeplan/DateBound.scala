@@ -14,28 +14,28 @@ case class EqBound(override val pe: PeriodEntry) extends DateBound(pe) {
 }
 
 case class NeBound(override val pe: PeriodEntry) extends DateBound(pe) {
-  val lower = PeriodHelper.getIsoDateLowerBound(pe)
+  val lower = PeriodHelper.getIsoDateLowerEqBound(pe)
   val upper = PeriodHelper.getIsoDateUpperEqBound(pe)
 }
 
 case class LtBound(override val pe: PeriodEntry) extends DateBound(pe) {
-  val lower = PeriodHelper.getIsoDateLowerBound(pe)
-  val upper = lower
+  val lower = PeriodHelper.getIsoDateLowerEqBound(pe)
+  val upper = PeriodHelper.getIsoDateUpperEqBound(pe)
 }
 
 case class GtBound(override val pe: PeriodEntry) extends DateBound(pe) {
-  val lower = PeriodHelper.getIsoDateUpperEqBound(pe)
-  val upper = lower
+  val lower = PeriodHelper.getIsoDateLowerEqBound(pe)
+  val upper = PeriodHelper.getIsoDateUpperEqBound(pe)
 }
 
 case class LeBound(override val pe: PeriodEntry) extends DateBound(pe) {
   val lower = PeriodHelper.getIsoDateLowerEqBound(pe)
-  val upper = lower
+  val upper = PeriodHelper.getIsoDateUpperEqBound(pe)
 }
 
 case class GeBound(override val pe: PeriodEntry) extends DateBound(pe) {
-  val lower = PeriodHelper.getIsoDateUpperBound(pe)
-  val upper = lower
+  val lower = PeriodHelper.getIsoDateLowerEqBound(pe)
+  val upper = PeriodHelper.getIsoDateUpperEqBound(pe)
 }
 
 object PeriodHelper {
@@ -63,7 +63,7 @@ object PeriodHelper {
         ld plusMonths (1) minusDays (1)
       case WeekEntry(year, week)      => TimeHelper.getFirstDayInWeek(year, week) plusDays (7)
       case DayEntry(year, month, day) => new LocalDate(year, month, day)
-      case _                          =>
+      case _ =>
         println("Illegal PeriodEntry: %s" format pe)
         new LocalDate(2100, 12, 31)
     }
@@ -71,14 +71,8 @@ object PeriodHelper {
   def getIsoDateLowerEqBound(pe: PeriodEntry) = {
     TimeHelper.isoDate(getFirstDayOfPeriod(pe))
   }
-  def getIsoDateLowerBound(pe: PeriodEntry) = {
-    TimeHelper.isoDate(getFirstDayOfPeriod(pe) minusDays 1)
-  }
   def getIsoDateUpperEqBound(pe: PeriodEntry) = {
     TimeHelper.isoDate(getLastDayOfPeriod(pe))
-  }
-  def getIsoDateUpperBound(pe: PeriodEntry) = {
-    TimeHelper.isoDate(getLastDayOfPeriod(pe) plusDays 1)
   }
 }
 
@@ -90,12 +84,21 @@ object BoundChecker {
       res = dateBound match {
         case EqBound(pe) => (basePe.toString() <= dateBound.upper) && (basePe.toString() >= dateBound.lower)
         case NeBound(pe) => (basePe.toString() <= dateBound.lower) && (basePe.toString() >= dateBound.upper)
-        case LtBound(pe) => basePe.toString() < dateBound.lower
+        case LtBound(pe) => (basePe.toString() < dateBound.lower) && (!dateBound.lower.startsWith(basePe.toString()))
         case LeBound(pe) => basePe.toString() <= dateBound.lower
         case GtBound(pe) => basePe.toString() > dateBound.upper
-        case GeBound(pe) => basePe.toString() >= dateBound.upper
+        case GeBound(pe) =>
+          val r = (basePe.toString() >= dateBound.lower) || (dateBound.lower.startsWith(basePe.toString()))
+          //          println("      %s >= %s = %s" format (basePe.toString(), dateBound.lower, r))
+          r
       }
-    } yield res
-    rs forall { _ == true }
+    } yield {
+      print("    (%s,  %s) " format (dateBound.lower, dateBound.upper))
+      res
+    }
+    val result = rs forall { _ == true }
+    print("%s withinBound %s => " format (basePe, dateBounds))
+    println(result)
+    result
   }
 }
