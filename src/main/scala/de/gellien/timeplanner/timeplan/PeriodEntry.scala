@@ -3,16 +3,17 @@ package de.gellien.timeplanner.timeplan
 import org.joda.time.LocalDate
 
 object BoundChecker {
+  // TODO: as method of DateBound
   def withinBounds(basePe: PeriodEntry, dateBounds: List[DateBound]) = {
     val rs = for {
       dateBound <- dateBounds
       res = dateBound match {
-        case EqBound(pe) => basePe.toString() == pe.toString()
-        case NeBound(pe) => basePe.toString() != pe.toString()
-        case LtBound(pe) => basePe.toString() < pe.toString()
-        case LeBound(pe) => basePe.toString() <= pe.toString()
-        case GtBound(pe) => basePe.toString() > pe.toString()
-        case GeBound(pe) => basePe.toString() >= pe.toString()
+        case EqBound(pe) => (basePe.toString() <= dateBound.upper) && (basePe.toString() >= dateBound.lower)
+        case NeBound(pe) => (basePe.toString() <= dateBound.lower) && (basePe.toString() >= dateBound.upper)
+        case LtBound(pe) => basePe.toString() < dateBound.lower
+        case LeBound(pe) => basePe.toString() <= dateBound.lower
+        case GtBound(pe) => basePe.toString() > dateBound.upper
+        case GeBound(pe) => basePe.toString() >= dateBound.upper
       }
     } yield res
     rs forall { _ == true }
