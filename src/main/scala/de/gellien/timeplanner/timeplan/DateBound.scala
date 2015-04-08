@@ -79,26 +79,49 @@ object PeriodHelper {
 object BoundChecker {
   // TODO: as method of DateBound
   def withinBounds(basePe: PeriodEntry, dateBounds: List[DateBound]) = {
+    val bp = basePe.toString()
     val rs = for {
       dateBound <- dateBounds
       res = dateBound match {
-        case EqBound(pe) => (basePe.toString() <= dateBound.upper) && (basePe.toString() >= dateBound.lower)
-        case NeBound(pe) => (basePe.toString() <= dateBound.lower) && (basePe.toString() >= dateBound.upper)
-        case LtBound(pe) => (basePe.toString() < dateBound.lower) && (!dateBound.lower.startsWith(basePe.toString()))
-        case LeBound(pe) => basePe.toString() <= dateBound.lower
-        case GtBound(pe) => basePe.toString() > dateBound.upper
+        case EqBound(pe) => (bp <= dateBound.upper) && (bp >= dateBound.lower)
+        case NeBound(pe) => (bp < dateBound.lower) && (bp > dateBound.upper)
+        case LtBound(pe) =>
+          val r1 = (bp < dateBound.lower)
+          val r2 = (!dateBound.lower.startsWith(bp))
+          val r = r1 && r2
+          print(" %5s  %s <  %s : " format (r, bp, pe))
+          print("      %s <  %s = %5s" format (bp, dateBound.lower, r1))
+          println("    &&  !%s startsWith %s = %5s" format (dateBound.lower, bp, r2))
+          r
+        case LeBound(pe) =>
+//          val r = (bp <= dateBound.upper) || (dateBound.upper.startsWith(bp))
+          val r1 = (bp <= dateBound.upper)
+          val r = r1
+          print(" %5s  %s <= %s : " format (r, bp, pe))
+          println("      %s <= %s = %5s" format (bp, dateBound.upper, r1))
+          r
+        case GtBound(pe) =>
+          val r1 = bp > dateBound.upper
+          val r = r1
+          print(" %5s  %s >  %s : " format (r, bp, pe))
+          println("      %s >  %s = %5s" format (bp, dateBound.upper, r1))
+          r
         case GeBound(pe) =>
-          val r = (basePe.toString() >= dateBound.lower) || (dateBound.lower.startsWith(basePe.toString()))
-          //          println("      %s >= %s = %s" format (basePe.toString(), dateBound.lower, r))
+          val r1 = (bp >= dateBound.lower)  // alone not sufficient
+          val r2 = dateBound.lower.startsWith(bp)
+          val r = r1 || r2
+          print(" %5s  %s >= %s : " format (r, bp, pe))
+          print("      %s >= %s = %5s" format (bp, dateBound.lower, r1))
+          println("    ||  !%s startsWith %s = %5s" format (dateBound.lower, bp, r2))
           r
       }
     } yield {
-      print("    (%s,  %s) " format (dateBound.lower, dateBound.upper))
+//      print("    (%s,  %s) " format (dateBound.lower, dateBound.upper))
       res
     }
     val result = rs forall { _ == true }
-    print("%s withinBound %s => " format (basePe, dateBounds))
-    println(result)
+//    print("%s withinBound %s => " format (basePe, dateBounds))
+//    println(result)
     result
   }
 }
