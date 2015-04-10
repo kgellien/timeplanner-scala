@@ -19,7 +19,7 @@ case class EqBound(override val base: PeriodEntry) extends DateBound(base) {
 case class NeBound(override val base: PeriodEntry) extends DateBound(base) {
   override def valid(pe: PeriodEntry) = {
     val bp = pe.toString()
-    (bp < lower) && (bp > upper)
+    (bp < lower) || (bp > upper)
   }
 }
 
@@ -44,8 +44,8 @@ case class LeBound(override val base: PeriodEntry) extends DateBound(base) {
   override def valid(pe: PeriodEntry) = {
     val bp = pe.toString()
     val r1 = (bp <= upper)
-//    val r2 = (upper.startsWith(bp))
-//    r1 || r2
+    //    val r2 = (upper.startsWith(bp))
+    //    r1 || r2
     r1
   }
 }

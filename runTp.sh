@@ -1,7 +1,7 @@
 #!/bin/bash
 
 LATEX="--callpdflatex"
-LATEX=""
+#LATEX=""
 
 TP_OPTS="--withSeparator"
 TP_OPTS="--daysPerWeek 7 --withOverview"

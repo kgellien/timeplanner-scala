@@ -3,7 +3,7 @@
 ###### regular
 D Meditation
 
-D1 = 2012-04 !2012-04-16 MondayGym April
+D1 =2012-04 !2012-04-16 MondayGym April
 D3 =2012-W16 WednesdayGym W16
 D5 =2012-04 <2012-04-27 FridayGym April
 
