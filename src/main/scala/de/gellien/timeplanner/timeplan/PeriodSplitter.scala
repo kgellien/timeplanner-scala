@@ -35,7 +35,6 @@ object PeriodSplitter {
       }
     }
     val allClassifiers = (appointmentMap.keySet ++ taskMap.keySet).toList.sorted
-    //    if (allClassifiers.size < 7) {
     if (allClassifiers.isEmpty) {
       period match {
         case Day(periodEntry, todo, header) =>
@@ -93,52 +92,5 @@ object PeriodSplitter {
           lsp.toList
       }
     }
-    //    } else {
-    //      splitPeriodOld(period)
-    //    }
   }
-
-  //  def splitPeriodOld(period: SinglePeriod): List[SinglePeriod] = {
-  //    // TODO: the following names should be configurable via localization / properties
-  //    val taskHeaderNameA = if (Locale.getDefault.toString().startsWith("de")) "Privat" else "Private"
-  //    val taskHeaderNameB = if (Locale.getDefault.toString().startsWith("de")) "Beruf" else "Business"
-  //    val taskHeaderNameC = if (Locale.getDefault.toString().startsWith("de")) "Sonstiges" else "Miscellaneous"
-  //    val taskHeaderClassifierA = "P"
-  //    val taskHeaderClassifierB = "B"
-  //    val (todoA, rest) = splitToDoLists(taskHeaderClassifierA, period.todo)
-  //    val (todoB, todoC) = splitToDoLists(taskHeaderClassifierB, rest)
-  //    period match {
-  //      case Day(periodEntry, todo, header) => // to be exhaustive; not used yet
-  //        List(Day(periodEntry, todoA, Some(taskHeaderNameA)), Day(periodEntry, todoC, Some(taskHeaderNameC)), Day(periodEntry, todoB, Some(taskHeaderNameB)))
-  //      case Week(periodEntry, todo, header) =>
-  //        List(Week(periodEntry, todoA, Some(taskHeaderNameA)), Week(periodEntry, todoC, Some(taskHeaderNameC)), Week(periodEntry, todoB, Some(taskHeaderNameB)))
-  //      case Month(periodEntry, todo, header) =>
-  //        List(Month(periodEntry, todoA, Some(taskHeaderNameA)), Month(periodEntry, todoC, Some(taskHeaderNameC)), Month(periodEntry, todoB, Some(taskHeaderNameB)))
-  //      case Quarter(periodEntry, todo, header) =>
-  //        List(Quarter(periodEntry, todoA, Some(taskHeaderNameA)), Quarter(periodEntry, todoC, Some(taskHeaderNameC)), Quarter(periodEntry, todoB, Some(taskHeaderNameB)))
-  //      case Year(periodEntry, todo, header) =>
-  //        List(Year(periodEntry, todoA, Some(taskHeaderNameA)), Year(periodEntry, todoC, Some(taskHeaderNameC)), Year(periodEntry, todoB, Some(taskHeaderNameB)))
-  //    }
-  //  }
-  //
-  //  def splitToDoLists(classifier: String, todo: ToDoList): (ToDoList, ToDoList) = {
-  //    val (appointmentsWithClassifier, appointmentsWithoutClassifier) = splitOnClassifier(classifier, todo.appointments)
-  //    val (tasksWithClassifier, tasksWithoutClassifier) = splitOnClassifier(classifier, todo.tasks)
-  //    (ToDoList(todo.anniversaries, appointmentsWithClassifier.map { _.asInstanceOf[Appointment] }, tasksWithClassifier.map { _.asInstanceOf[Task] }), ToDoList(todo.anniversaries, appointmentsWithoutClassifier.map { _.asInstanceOf[Appointment] }, tasksWithoutClassifier.map { _.asInstanceOf[Task] }))
-  //  }
-  //
-  //  def splitOnClassifier(classifier: String, list: List[ToDo]): (List[ToDo], List[ToDo]) = {
-  //    val withClassifier = new ListBuffer[ToDo]
-  //    val withoutClassifier = new ListBuffer[ToDo]
-  //    for (todo <- list) {
-  //      todo match {
-  //        case Appointment(_, Some(`classifier`), _, _, _) => withClassifier += todo
-  //        case Appointment(_, _, _, _, _) => withoutClassifier += todo
-  //        case Task(_, Some(`classifier`), _, _) => withClassifier += todo
-  //        case Task(_, _, _, _) => withoutClassifier += todo
-  //        case _ => ;
-  //      }
-  //    }
-  //    (withClassifier.toList, withoutClassifier.toList)
-  //  }
 }
