@@ -49,48 +49,21 @@ object PeriodSplitter {
           List(Year(periodEntry, todo, Some(miscHeader)))
       }
     } else {
-      period match {
-        case Day(periodEntry, todo, header) =>
-          val lsp = for {
-            classifier <- allClassifiers
-            appointments = appointmentMap.getOrElse(classifier, Nil)
-            tasks = taskMap.getOrElse(classifier, Nil)
-            toDoList = ToDoList(period.todo.anniversaries, appointments, tasks)
-          } yield Day(periodEntry, toDoList, Some(classifier))
-          lsp.toList
-        case Week(periodEntry, todo, header) =>
-          val lsp = for {
-            classifier <- allClassifiers
-            appointments = appointmentMap.getOrElse(classifier, Nil)
-            tasks = taskMap.getOrElse(classifier, Nil)
-            toDoList = ToDoList(period.todo.anniversaries, appointments, tasks)
-          } yield Week(periodEntry, toDoList, Some(classifier))
-          lsp.toList
-        case Month(periodEntry, todo, header) =>
-          val lsp = for {
-            classifier <- allClassifiers
-            appointments = appointmentMap.getOrElse(classifier, Nil)
-            tasks = taskMap.getOrElse(classifier, Nil)
-            toDoList = ToDoList(period.todo.anniversaries, appointments, tasks)
-          } yield Month(periodEntry, toDoList, Some(classifier))
-          lsp.toList
-        case Quarter(periodEntry, todo, header) =>
-          val lsp = for {
-            classifier <- allClassifiers
-            appointments = appointmentMap.getOrElse(classifier, Nil)
-            tasks = taskMap.getOrElse(classifier, Nil)
-            toDoList = ToDoList(period.todo.anniversaries, appointments, tasks)
-          } yield Quarter(periodEntry, toDoList, Some(classifier))
-          lsp.toList
-        case Year(periodEntry, todo, header) =>
-          val lsp = for {
-            classifier <- allClassifiers
-            appointments = appointmentMap.getOrElse(classifier, Nil)
-            tasks = taskMap.getOrElse(classifier, Nil)
-            toDoList = ToDoList(period.todo.anniversaries, appointments, tasks)
-          } yield Year(periodEntry, toDoList, Some(classifier))
-          lsp.toList
+      val lsp = for {
+        classifier <- allClassifiers
+        appointments = appointmentMap.getOrElse(classifier, Nil)
+        tasks = taskMap.getOrElse(classifier, Nil)
+        toDoList = ToDoList(period.todo.anniversaries, appointments, tasks)
+      } yield {
+        period match {
+          case Day(periodEntry, todo, header)     => Day(periodEntry, toDoList, Some(classifier))
+          case Week(periodEntry, todo, header)    => Week(periodEntry, toDoList, Some(classifier))
+          case Month(periodEntry, todo, header)   => Month(periodEntry, toDoList, Some(classifier))
+          case Quarter(periodEntry, todo, header) => Quarter(periodEntry, toDoList, Some(classifier))
+          case Year(periodEntry, todo, header)    => Year(periodEntry, toDoList, Some(classifier))
+        }
       }
+      lsp.toList
     }
   }
 }
