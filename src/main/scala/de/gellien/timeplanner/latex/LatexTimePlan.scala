@@ -5,7 +5,7 @@ import de.gellien.timeplanner.timeplan._
 import scala.collection.mutable.Map
 
 object LatexTimePlan {
-  val totalWidth = List(280, 275, 267, 262, 258, 255, 248.15)
+  val totalWidth = List(275, 272, 267, 262, 258, 255, 248.15)
   def getColumnWidth(numberOfColumns: Int) =
     "%4.2fmm" format (totalWidth(numberOfColumns - 1) / (numberOfColumns))
 }
@@ -64,9 +64,11 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   def renderSinglePeriods(height: String, textsize: String, singlePeriods: List[SinglePeriod]) = {
     val result = new ListBuffer[String]
     val width = LatexTimePlan.getColumnWidth(singlePeriods.size)
-    result += """\begin{multicols}{%d}""" format singlePeriods.size
+    if (singlePeriods.size > 1)
+      result += """\begin{multicols}{%d}""" format singlePeriods.size
     result ++= (for (singlePeriod <- singlePeriods) yield renderSinglePeriod(singlePeriod, height, width, textsize)).flatten
-    result += """\end{multicols}"""
+    if (singlePeriods.size > 1)
+      result += """\end{multicols}"""
     result
   }
 

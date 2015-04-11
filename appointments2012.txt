@@ -5,31 +5,35 @@ D Meditation
 
 D1 =2012-04 !2012-04-16 MondayGym April
 D2 >2012-04-10 <2012-04-20 20:00 Aikido
+D2 =2012-Q2 >=2012-04-24 Tuesdays in Q2
 D3 =2012-W16 WednesdayGym W16
 D5 =2012-04 <2012-04-27 FridayGym April
-
 D7 Re\-tro\-spek\-ti\-ve
 D7 Planning next week
 
-M [B] monthly retrospektive
-Q quarterly retrospektive
-Y [P] yearly retrospektive
-Q =2013 quarterly 2013
-
 W =2012-04 weekly aim April
 W =2012-Q1 weekly in Q1
-D2 =2012-Q2 >=2012-04-24 Tuesdays in Q2
 
-## April
-2012-04 [B] Monthly aim
-2012-W16 [P] weekly aim
+M [Business] monthly retrospektive
 
-2012-Q2 [P] quarterly private aim
+Q quarterly retrospektive
+Q =2013 quarterly 2013
+
+Y [Private] yearly retrospektive
+Y [Business] yearly retrospektive
 
 
-2012-04 [B] 16. -- 20.04. JAX in Mainz
+2012-W16 weekly task
+2012-W16 [Private] weekly task
+2012-W16 [Business] 16. -- 17. weekly appointment
+
+2012-04 [Business] 16. -- 20.04. JAX in Mainz
+2012-04 [Business] Monthly aim
+
+2012-Q2 [Private] quarterly private aim
+
 2012-04-16 09:00 JAX in Mainz
 2012-04-17 JAX in Mainz
 2012-04-18 JAX in Mainz
 2012-04-19 9:00 -- 18:00 JAX in Mainz
-2012-04-20 [B] JAX in Mainz
+2012-04-20 [Business] JAX in Mainz
