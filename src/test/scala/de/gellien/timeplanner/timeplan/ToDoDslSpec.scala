@@ -24,11 +24,11 @@ class ToDoDslSpec extends SpecificationWithJUnit {
   val specificDateWithClassifier = """2012-01-26 [aikido] classified task"""
   val specificDateExpectedWithClassifier = """Task(2012-01-26,Some(aikido),List(),classified task)"""
   val dailyWithTime = """D 11:00 daily task"""
-  val dailyWithTimeExpected = """Appointment(D,None,11:00,daily task)"""
+  val dailyWithTimeExpected = """Appointment(D,None,List(),11:00,daily task)"""
   val dailyWithTimePeriod = """D 11:00 -- 12:00 daily task"""
-  val dailyWithTimePeriodExpected = """Appointment(D,None,11:00 -- 12:00,daily task)"""
+  val dailyWithTimePeriodExpected = """Appointment(D,None,List(),11:00 -- 12:00,daily task)"""
   val dailyWithTimePeriod2 = """D 11:00 - 12:00 daily task"""
-  val dailyWithTimePeriod2Expected = """Appointment(D,None,11:00 - 12:00,daily task)"""
+  val dailyWithTimePeriod2Expected = """Appointment(D,None,List(),11:00 - 12:00,daily task)"""
 
   def getParseResultAsString(task: String, expected: String, debug: Boolean) = {
     if (debug) println("#  expected: " + expected)

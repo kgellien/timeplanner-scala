@@ -15,7 +15,7 @@ case class Anniversary(val periodEntry: PeriodEntry, val yearOpt: Option[Int], v
   }
 }
 
-case class Appointment(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val timeInfo: String, val info: String) extends ToDo {
+case class Appointment(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val dateBounds: List[DateBound], val timeInfo: String, val info: String) extends ToDo {
   def toLatex = "%s %s" format (timeInfo, info)
   def toLatexWithClassifier = classifierOpt match {
     case Some(classifier) => "[%s] %s %s" format (classifier, timeInfo, info)
@@ -39,7 +39,8 @@ object ToDoHelper {
     for (todo <- todos; pb <- pe :: (pes.toList)) {
       todo match {
         case Anniversary(`pb`, y, i)     => anniversaries += todo.asInstanceOf[Anniversary]
-        case Appointment(`pb`, c, tp, i) => appointments += todo.asInstanceOf[Appointment]
+        case Appointment(`pb`, c, Nil, tp, i) => appointments += todo.asInstanceOf[Appointment]
+        case Appointment(`pb`, c, lst, tp, i) => if (pe.withinBounds(lst)) appointments += todo.asInstanceOf[Appointment]
         case Task(`pb`, c, Nil, i)       => tasks += todo.asInstanceOf[Task]
         case Task(`pb`, c, lst, i)       => if (pe.withinBounds(lst)) tasks += todo.asInstanceOf[Task]
         case _                           => ;

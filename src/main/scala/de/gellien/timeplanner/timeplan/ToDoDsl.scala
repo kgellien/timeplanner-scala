@@ -17,8 +17,8 @@ class ToDoDsl extends JavaTokenParsers {
       case _   => Task(d, Some(c.head), db, i)
     }
     case d ~ c ~ db ~ t ~ i => c match {
-      case Nil => Appointment(d, None, t.mkString, i)
-      case _   => Appointment(d, Some(c.head), t.mkString, i)
+      case Nil => Appointment(d, None, db, t.mkString, i)
+      case _   => Appointment(d, Some(c.head), db, t.mkString, i)
     }
   }
 
