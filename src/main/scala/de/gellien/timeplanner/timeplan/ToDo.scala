@@ -38,12 +38,12 @@ object ToDoHelper {
     val tasks = new ListBuffer[Task]
     for (todo <- todos; pb <- pe :: (pes.toList)) {
       todo match {
-        case Anniversary(`pb`, y, i)     => anniversaries += todo.asInstanceOf[Anniversary]
+        case Anniversary(`pb`, y, i)          => anniversaries += todo.asInstanceOf[Anniversary]
         case Appointment(`pb`, c, Nil, tp, i) => appointments += todo.asInstanceOf[Appointment]
         case Appointment(`pb`, c, lst, tp, i) => if (pe.withinBounds(lst)) appointments += todo.asInstanceOf[Appointment]
-        case Task(`pb`, c, Nil, i)       => tasks += todo.asInstanceOf[Task]
-        case Task(`pb`, c, lst, i)       => if (pe.withinBounds(lst)) tasks += todo.asInstanceOf[Task]
-        case _                           => ;
+        case Task(`pb`, c, Nil, i)            => tasks += todo.asInstanceOf[Task]
+        case Task(`pb`, c, lst, i)            => if (pe.withinBounds(lst)) tasks += todo.asInstanceOf[Task]
+        case _                                => ;
       }
     }
     ToDoList(anniversaries.toList, appointments.toList, tasks.toList)
