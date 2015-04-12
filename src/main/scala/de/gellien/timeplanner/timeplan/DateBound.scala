@@ -4,22 +4,20 @@ import org.joda.time.LocalDate
 
 sealed abstract class DateBound(val base: PeriodEntry) {
   // TODO find better way/names
-  val lower = PeriodHelper.getIsoDateLowerEqBound(base)
-  val upper = PeriodHelper.getIsoDateUpperEqBound(base)
+  val lower = base.lower
+  val upper = base.upper
   def valid(pe: PeriodEntry): Boolean = false
 }
 
 case class EqBound(override val base: PeriodEntry) extends DateBound(base) {
   override def valid(pe: PeriodEntry) = {
-    val bp = pe.toString()
-    (bp <= upper) && (bp >= lower)
+    (pe.upper <= upper) && (pe.lower >= lower)
   }
 }
 
 case class NeBound(override val base: PeriodEntry) extends DateBound(base) {
   override def valid(pe: PeriodEntry) = {
-    val bp = pe.toString()
-    (bp < lower) || (bp > upper)
+    (pe.upper < lower) || (pe.lower > upper)
   }
 }
 

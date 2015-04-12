@@ -28,6 +28,8 @@ case class WeekDayEntry(weekDay: Int) extends PeriodBase {
 
 abstract sealed class PeriodEntry extends PeriodBase {
   def withinBounds(dateBounds: List[DateBound]): Boolean
+  val lower = PeriodHelper.getIsoDateLowerEqBound(this)
+  val upper = PeriodHelper.getIsoDateUpperEqBound(this)
 }
 
 

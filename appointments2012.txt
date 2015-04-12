@@ -12,7 +12,7 @@ D7 Re\-tro\-spek\-ti\-ve
 D7 Planning next week
 
 W =2012-04 weekly aim April
-W =2012-Q1 weekly in Q1
+W [Business] =2012-Q2 weekly in Q2
 
 M [Business] monthly retrospektive
 
