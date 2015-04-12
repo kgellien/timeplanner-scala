@@ -8,14 +8,14 @@ case class ToDoList(val anniversaries: List[Anniversary], val appointments: List
 
 abstract sealed class ToDo
 
-case class Anniversary(val periodEntry: PeriodEntry, val yearOpt: Option[Int], val info: String) extends ToDo {
+case class Anniversary(val periodEntry: PeriodBase, val yearOpt: Option[Int], val info: String) extends ToDo {
   def toLatex = yearOpt match {
     case Some(year) => "%s (%s)" format (info, year)
     case _          => info
   }
 }
 
-case class Appointment(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val dateBounds: List[DateBound], val timeInfo: String, val info: String) extends ToDo {
+case class Appointment(val periodEntry: PeriodBase, val classifierOpt: Option[String], val dateBounds: List[DateBound], val timeInfo: String, val info: String) extends ToDo {
   def toLatex = "%s %s" format (timeInfo, info)
   def toLatexWithClassifier = classifierOpt match {
     case Some(classifier) => "[%s] %s %s" format (classifier, timeInfo, info)
@@ -23,7 +23,7 @@ case class Appointment(val periodEntry: PeriodEntry, val classifierOpt: Option[S
   }
 }
 
-case class Task(val periodEntry: PeriodEntry, val classifierOpt: Option[String], val dateBounds: List[DateBound], val info: String) extends ToDo {
+case class Task(val periodEntry: PeriodBase, val classifierOpt: Option[String], val dateBounds: List[DateBound], val info: String) extends ToDo {
   def toLatex = info
   def toLatexWithClassifier = classifierOpt match {
     case Some(classifier) => "[%s] %s" format (classifier, info)
@@ -32,7 +32,7 @@ case class Task(val periodEntry: PeriodEntry, val classifierOpt: Option[String],
 }
 
 object ToDoHelper {
-  def extractTodosForPeriod(pe: PeriodEntry, todos: List[ToDo], pes: PeriodEntry*): ToDoList = {
+  def extractTodosForPeriod(pe: PeriodEntry, todos: List[ToDo], pes: PeriodBase*): ToDoList = {
     val anniversaries = new ListBuffer[Anniversary]
     val appointments = new ListBuffer[Appointment]
     val tasks = new ListBuffer[Task]

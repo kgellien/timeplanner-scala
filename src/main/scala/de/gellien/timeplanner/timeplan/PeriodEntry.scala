@@ -2,58 +2,56 @@ package de.gellien.timeplanner.timeplan
 
 import org.joda.time.LocalDate
 
-abstract sealed class PeriodEntry {
-  def withinBounds(dateBounds: List[DateBound]) = false
-}
+abstract sealed class PeriodBase
 
-case class AnniversaryEntry(month: Int, day: Int) extends PeriodEntry
+case class AnniversaryEntry(month: Int, day: Int) extends PeriodBase
 
-// TODO: better/clearer hierarchy: *Entry should have common base class
-
-abstract sealed class YearBase extends PeriodEntry
-case class YearlyEntry() extends YearBase {
+case class YearlyEntry() extends PeriodBase {
   override def toString = "Y"
 }
-case class YearEntry(year: Int) extends YearBase {
+case class QuarterlyEntry() extends PeriodBase {
+  override def toString = "Q"
+}
+case class MonthlyEntry() extends PeriodBase {
+  override def toString = "M"
+}
+case class WeeklyEntry() extends PeriodBase {
+  override def toString = "W"
+}
+case class DailyEntry() extends PeriodBase {
+  override def toString = "D"
+}
+case class WeekDayEntry(weekDay: Int) extends PeriodBase {
+  override def toString = "D%d" format weekDay
+}
+
+
+abstract sealed class PeriodEntry extends PeriodBase {
+  def withinBounds(dateBounds: List[DateBound]): Boolean
+}
+
+
+case class YearEntry(year: Int) extends PeriodEntry {
   override def toString = "%d" format (year)
   override def withinBounds(dateBounds: List[DateBound]) = BoundChecker.withinBounds(this, dateBounds)
 }
 
-abstract sealed class QuarterBase extends PeriodEntry
-case class QuarterlyEntry() extends QuarterBase {
-  override def toString = "Q"
-}
-case class QuarterEntry(year: Int, quarter: Int) extends QuarterBase {
+case class QuarterEntry(year: Int, quarter: Int) extends PeriodEntry {
   override def toString = "%d-Q%d" format (year, quarter)
   override def withinBounds(dateBounds: List[DateBound]) = BoundChecker.withinBounds(this, dateBounds)
 }
 
-abstract sealed class MonthBase extends PeriodEntry
-case class MonthlyEntry() extends MonthBase {
-  override def toString = "M"
-}
-case class MonthEntry(year: Int, month: Int) extends MonthBase {
+case class MonthEntry(year: Int, month: Int) extends PeriodEntry {
   override def toString = "%d-%02d" format (year, month)
   override def withinBounds(dateBounds: List[DateBound]) = BoundChecker.withinBounds(this, dateBounds)
 }
 
-abstract sealed class WeekBase extends PeriodEntry
-case class WeeklyEntry() extends WeekBase {
-  override def toString = "W"
-}
-case class WeekEntry(year: Int, week: Int) extends WeekBase {
+case class WeekEntry(year: Int, week: Int) extends PeriodEntry {
   override def toString = "%d-W%02d" format (year, week)
   override def withinBounds(dateBounds: List[DateBound]) = BoundChecker.withinBounds(this, dateBounds)
 }
-
-abstract sealed class DayBase extends PeriodEntry
-case class DailyEntry() extends DayBase {
-  override def toString = "D"
-}
-case class DayEntry(year: Int, month: Int, day: Int) extends DayBase {
+case class DayEntry(year: Int, month: Int, day: Int) extends PeriodEntry {
   override def toString = "%d-%02d-%02d" format (year, month, day)
   override def withinBounds(dateBounds: List[DateBound]) = BoundChecker.withinBounds(this, dateBounds)
 }
-case class WeekDayEntry(weekDay: Int) extends DayBase {
-  override def toString = "D%d" format weekDay
-}
+
