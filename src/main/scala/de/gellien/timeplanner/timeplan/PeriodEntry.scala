@@ -27,23 +27,33 @@ abstract sealed class PeriodEntry extends PeriodBase {
   def withinBounds(dateBounds: List[DateBound]): Boolean = BoundChecker.withinBounds(this, dateBounds)
   val lower = TimeHelper.isoDate(TimeHelper.getFirstDayOfPeriod(this))
   val upper = TimeHelper.isoDate(TimeHelper.getLastDayOfPeriod(this))
+  def header: String
 }
 
 case class YearEntry(year: Int) extends PeriodEntry {
   override def toString = "%d" format (year)
+  override val header = "%d" format year
 }
 
 case class QuarterEntry(year: Int, quarter: Int) extends PeriodEntry {
   override def toString = "%d-Q%d" format (year, quarter)
+  override val header = "Q%d" format quarter
 }
 
 case class MonthEntry(year: Int, month: Int) extends PeriodEntry {
   override def toString = "%d-%02d" format (year, month)
+  override val header = "%s" format (TimeHelper.monthName(month))
 }
 
 case class WeekEntry(year: Int, week: Int) extends PeriodEntry {
   override def toString = "%d-W%02d" format (year, week)
+  override val header = {
+    val (from, to) = TimeHelper.fromToWeek(year, week)
+    "W%02d: %s -- %s" format (week, from, to)
+  }
 }
+
 case class DayEntry(year: Int, month: Int, day: Int) extends PeriodEntry {
   override def toString = "%d-%02d-%02d" format (year, month, day)
+  override val header = TimeHelper.displayDay(year, month, day)
 }

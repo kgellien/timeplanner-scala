@@ -6,12 +6,13 @@ class ToDoDsl extends JavaTokenParsers {
 
   lazy val toDoItem = (anniversary | appointmentOrTask)
 
+  // TODO: check whether zero or once is possible with rep
   lazy val anniversary = anniversaryEntry ~ rep(yearNo) ~ info ^^ {
     case a ~ Nil ~ i => Anniversary(a, None, i)
     case a ~ y ~ i   => Anniversary(a, Some(y.head), i)
   }
 
-  lazy val appointmentOrTask = dateInfo ~ rep(classifier) ~ rep(dateBound) ~ rep(timespan) ~ info ^^ { // TODO: check whether zero or once is possible with rep
+  lazy val appointmentOrTask = dateInfo ~ rep(classifier) ~ rep(dateBound) ~ rep(timespan) ~ info ^^ {
     case d ~ c ~ db ~ Nil ~ i => c match {
       case Nil => Task(d, None, db, i)
       case _   => Task(d, Some(c.head), db, i)
@@ -22,35 +23,27 @@ class ToDoDsl extends JavaTokenParsers {
     }
   }
 
-  lazy val periodEntry = (calDay | calWeek | calMonth | calQuarter | calYear)
+  lazy val dateInfo = (anniversaryEntry | weekDay | daily | weekly | monthly | quarterly | yearly | calDate)
 
-  lazy val dateInfo = (anniversaryEntry | day | week | month | quarter | year)
+  lazy val calDate = (calDay | calWeek | calMonth | calQuarter | calYear)
 
-  lazy val day = (weekDay | daily | calDay)
-  lazy val week = (weekly | calWeek)
-  lazy val month = (monthly | calMonth)
-  lazy val quarter = (quarterly | calQuarter)
-  lazy val year = (yearly | calYear)
+  lazy val calDay = yearNo ~ "-" ~ monthNo ~ "-" ~ dayNo ^^ { case yearNo ~ s1 ~ monthNo ~ s2 ~ dayNo => DayEntry(yearNo, monthNo, dayNo) }
+  lazy val calWeek = yearNo ~ "-W" ~ weekNo ^^ { case year ~ str ~ weekNo => WeekEntry(year, weekNo) }
+  lazy val calMonth = yearNo ~ "-" ~ monthNo ^^ { case year ~ str ~ monthNo => MonthEntry(year, monthNo) }
+  lazy val calQuarter = yearNo ~ "-Q" ~ quarterNo ^^ { case year ~ str ~ quarterNo => QuarterEntry(year, quarterNo) }
+  lazy val calYear = yearNo ^^ { case year => YearEntry(year) }
 
   lazy val timespan = (clockspan | datespan)
 
   lazy val anniversaryEntry = monthNo ~ "-" ~ dayNo ^^ { case monthNo ~ str ~ dayNo => AnniversaryEntry(monthNo, dayNo) }
 
-  lazy val daily = "D" ^^ { case _ => DailyEntry() }
-  lazy val calDay = yearNo ~ "-" ~ monthNo ~ "-" ~ dayNo ^^ { case yearNo ~ s1 ~ monthNo ~ s2 ~ dayNo => DayEntry(yearNo, monthNo, dayNo) }
   lazy val weekDay = """D\d""".r ^? ({ case i if ((1 to 7) contains i.tail.toInt) => WeekDayEntry(i.tail.toInt) }, (i => "week day needs to be in the range of 1 to 7"))
 
+  lazy val daily = "D" ^^ { case _ => DailyEntry() }
   lazy val weekly = "W" ^^ { case _ => WeeklyEntry() }
-  lazy val calWeek = yearNo ~ "-W" ~ weekNo ^^ { case year ~ str ~ weekNo => WeekEntry(year, weekNo) }
-
   lazy val monthly = "M" ^^ { case _ => MonthlyEntry() }
-  lazy val calMonth = yearNo ~ "-" ~ monthNo ^^ { case year ~ str ~ monthNo => MonthEntry(year, monthNo) }
-
   lazy val quarterly = "Q" ^^ { case _ => QuarterlyEntry() }
-  lazy val calQuarter = yearNo ~ "-Q" ~ quarterNo ^^ { case year ~ str ~ quarterNo => QuarterEntry(year, quarterNo) }
-
   lazy val yearly = "Y" ^^ { case _ => YearlyEntry() }
-  lazy val calYear = yearNo ^^ { case year => YearEntry(year) }
 
   lazy val clockspan = """\d\d?:\d{2}( --? \d\d?:\d{2})?""".r ^^ { case t => t.toString }
   lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?.\d\d?\.)?""".r ^^ { case t => t.toString }
@@ -73,18 +66,11 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val dateBound = (eqBound | neBound | ltBound | gtBound | leBound | geBound)
 
   lazy val eqBound = "=" ~> calDate ^^ { case pe => EqBound(pe) }
-
   lazy val neBound = "!" ~> calDate ^^ { case pe => NeBound(pe) }
-
   lazy val ltBound = "<" ~> calDate ^^ { case pe => LtBound(pe) }
-
   lazy val gtBound = ">" ~> calDate ^^ { case pe => GtBound(pe) }
-
   lazy val leBound = "<=" ~> calDate ^^ { case pe => LeBound(pe) }
-
   lazy val geBound = ">=" ~> calDate ^^ { case pe => GeBound(pe) }
-
-  lazy val calDate = (calDay | calWeek | calMonth | calQuarter | calYear)
 }
 
 object ToDoDsl {
@@ -104,7 +90,7 @@ object ToDoDsl {
 
   def getPeriodEntry(line: String): Option[PeriodEntry] = {
     val tdld = new ToDoDsl()
-    val result = tdld.parseAll(tdld.periodEntry, line) match {
+    val result = tdld.parseAll(tdld.calDate, line) match {
       case tdld.Success(pe, _) => Some(pe)
       case tdld.Failure(msg, _) =>
         println("Failure parsing line >%s<: %s" format (line, msg))

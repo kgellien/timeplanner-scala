@@ -36,15 +36,7 @@ object PeriodSplitter {
       appointments = appointmentMap.getOrElse(classifier, Nil)
       tasks = taskMap.getOrElse(classifier, Nil)
       toDoList = ToDoList(period.todo.anniversaries, appointments, tasks)
-    } yield {
-      period match {
-        case Day(periodEntry, todo, header)     => Day(periodEntry, toDoList, Some(classifier))
-        case Week(periodEntry, todo, header)    => Week(periodEntry, toDoList, Some(classifier))
-        case Month(periodEntry, todo, header)   => Month(periodEntry, toDoList, Some(classifier))
-        case Quarter(periodEntry, todo, header) => Quarter(periodEntry, toDoList, Some(classifier))
-        case Year(periodEntry, todo, header)    => Year(periodEntry, toDoList, Some(classifier))
-      }
-    }
+    } yield SinglePeriod(period.periodEntry, toDoList, Some(classifier))
     lsp.toList
   }
 }

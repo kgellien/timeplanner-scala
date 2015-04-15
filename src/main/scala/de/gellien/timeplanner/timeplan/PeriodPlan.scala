@@ -37,46 +37,46 @@ object PeriodPlan {
       case periodEntry @ DayEntry(y, m, d) => {
         val pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(periodEntry)), AnniversaryEntry(periodEntry.month, periodEntry.day))
         val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, pes: _*)
-        val period = Day(periodEntry, todoList)
+        val period = SinglePeriod(periodEntry, todoList)
         val periodSpecifics = List()
         DayPlan(periodEntry, period, periodSpecifics, withOverview)
       }
       case periodEntry @ WeekEntry(y, w) => {
         val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, WeeklyEntry())
-        val period = Week(periodEntry, todoList)
+        val period = SinglePeriod(periodEntry, todoList)
         val periodSpecifics = for {
           currentDay <- TimeHelper.daysInWeek(periodEntry.year, periodEntry.week) take daysPerWeek
           pe = DayEntry(currentDay.getYear, currentDay.getMonthOfYear, currentDay.getDayOfMonth)
           pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(pe)), AnniversaryEntry(pe.month, pe.day))
           psTodos = ToDoHelper.extractTodosForPeriod(pe, todos, pes: _*)
-        } yield Day(pe, psTodos)
+        } yield SinglePeriod(pe, psTodos)
         WeekPlan(periodEntry, period, periodSpecifics, withOverview)
       }
       case periodEntry @ MonthEntry(y, m) => {
         val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, MonthlyEntry())
-        val period = Month(periodEntry, todoList)
+        val period = SinglePeriod(periodEntry, todoList)
         val periodSpecifics = for {
           (weekYear, week) <- TimeHelper.weeksInMonth(periodEntry.year, periodEntry.month)
           pe = WeekEntry(weekYear, week)
-        } yield Week(pe, ToDoHelper.extractTodosForPeriod(pe, todos, WeeklyEntry()))
+        } yield SinglePeriod(pe, ToDoHelper.extractTodosForPeriod(pe, todos, WeeklyEntry()))
         MonthPlan(periodEntry, period, periodSpecifics, withOverview)
       }
       case periodEntry @ QuarterEntry(y, q) => {
         val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, QuarterlyEntry())
-        val period = Quarter(periodEntry, todoList)
+        val period = SinglePeriod(periodEntry, todoList)
         val periodSpecifics = for {
           month <- TimeHelper.monthsInQuarter(periodEntry.year, periodEntry.quarter)
           pe = MonthEntry(periodEntry.year, month)
-        } yield Month(pe, ToDoHelper.extractTodosForPeriod(pe, todos, MonthlyEntry()))
+        } yield SinglePeriod(pe, ToDoHelper.extractTodosForPeriod(pe, todos, MonthlyEntry()))
         QuarterPlan(periodEntry, period, periodSpecifics, withOverview)
       }
       case periodEntry @ YearEntry(y) => {
         val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, YearlyEntry())
-        val period = Year(periodEntry, todoList)
+        val period = SinglePeriod(periodEntry, todoList)
         val periodSpecifics = for {
           quarter <- (1 to 4).toList
           pe = QuarterEntry(periodEntry.year, quarter)
-        } yield Quarter(pe, ToDoHelper.extractTodosForPeriod(pe, todos, QuarterlyEntry()))
+        } yield SinglePeriod(pe, ToDoHelper.extractTodosForPeriod(pe, todos, QuarterlyEntry()))
         YearPlan(periodEntry, period, periodSpecifics, withOverview)
       }
     }
