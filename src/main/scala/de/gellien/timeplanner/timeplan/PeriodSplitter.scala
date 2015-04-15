@@ -1,11 +1,10 @@
 package de.gellien.timeplanner.timeplan
 
 import java.util.Locale
-import scala.collection.mutable.{ ListBuffer, HashMap, Map }
+import scala.collection.mutable.{ HashMap, Map }
 
 object PeriodSplitter {
-
-  def splitPeriod(period: SinglePeriod): List[SinglePeriod] = {
+  def apply(period: SinglePeriod): List[SinglePeriod] = {
     def append[T](theMap: Map[String, List[T]], entry: T, classifier: String, dummy: T) = {
       if (theMap.isDefinedAt(classifier))
         theMap += (classifier -> theMap.getOrElse(classifier, List(dummy)))
@@ -36,7 +35,7 @@ object PeriodSplitter {
       appointments = appointmentMap.getOrElse(classifier, Nil)
       tasks = taskMap.getOrElse(classifier, Nil)
       toDoList = ToDoList(period.todo.anniversaries, appointments, tasks)
-    } yield SinglePeriod(period.periodEntry, toDoList, Some(classifier))
+    } yield SinglePeriod(period.periodEntry, toDoList, classifier)
     lsp.toList
   }
 }
