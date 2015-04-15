@@ -11,6 +11,8 @@ abstract sealed class SinglePeriod(val periodEntry: PeriodEntry, val todo: ToDoL
 
 // TODO: collect format strings used for toString methods at one place!
 
+// TODO: check whether defaultHeader may become method of periodEntry - then case classes may become superfluous
+
 case class Day(override val periodEntry: DayEntry, override val todo: ToDoList,
                headerOpt: Option[String] = None) extends SinglePeriod(periodEntry, todo, headerOpt) {
   override val defaultHeader = TimeHelper.displayDay(periodEntry.year, periodEntry.month, periodEntry.day)

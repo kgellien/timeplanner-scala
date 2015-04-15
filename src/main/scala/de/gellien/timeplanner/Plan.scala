@@ -63,17 +63,21 @@ object Plan {
     val inputEncoding = latin1
     val outputEncoding = latin1
 
-    val todoList = for {
-      line <- readFiles(inputFiles, inputEncoding)
-      td <- ToDoDsl.getToDo(line)
-    } yield td
-
     val properties = new Properties()
     properties.load(new FileInputStream("timeplan.properties"))
     val pdflatexFullPath = properties.getProperty(os + ".pdflatex")
     println("Path to pdflatex: >%s<" format pdflatexFullPath)
 
-    val periodPlans = buildPeriodPlans(inputDsl, todoList, inputEncoding, withOverview, daysPerWeek, debug)
+    val todoList = for {
+      line <- readFiles(inputFiles, inputEncoding)
+      td <- ToDoDsl.getToDo(line)
+    } yield td
+
+    val periodPlans = for {
+      line <- getFilteredLines(inputDsl, inputEncoding)
+      pe <- ToDoDsl.getPeriodEntry(line)
+    } yield PeriodPlan(pe, todoList, withOverview)(daysPerWeek)
+
     //    val parms = Map("periodPlans" -> periodPlans)
     //    import org.fusesource.scalate._
     //    val engine = new TemplateEngine
@@ -92,14 +96,6 @@ object Plan {
     if (callPdfLatex) {
       io.callPdfLaTeX(pdflatexFullPath, texoutput)
     }
-  }
-
-  def buildPeriodPlans(inputDsl: String, todoList: List[ToDo], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
-    for {
-      line <- getFilteredLines(inputDsl, inputEncoding)
-      pe <- ToDoDsl.getPeriodEntry(line)
-      tp = TimePlan(pe)(daysPerWeek)
-    } yield tp.createPeriodPlan(todoList, withOverview)
   }
 
   def readFiles(fileNames: List[String], encoding: String) = {

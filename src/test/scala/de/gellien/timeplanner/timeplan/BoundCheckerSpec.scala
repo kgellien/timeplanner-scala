@@ -149,7 +149,6 @@ class BoundCheckerSpec extends SpecificationWithJUnit {
     val includedDay = DayEntry(2012, 4, 17)
     val task = Task(WeekDayEntry(2), None, List(gtb, ltb), "tuesdays in april")
     val appointment = Appointment(WeekDayEntry(2), None, List(gtb, ltb), "20:00", "tuesdays in april")
-    val wtp = WeekTimePlan(WeekEntry(2012, 16))(7)
 //    val todos: List[ToDo] = List(task)
     val todos: List[ToDo] = List(appointment)
     "return empty list for period outside bounds" in {
