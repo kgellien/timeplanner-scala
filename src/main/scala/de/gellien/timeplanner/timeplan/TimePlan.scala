@@ -7,7 +7,7 @@ abstract sealed class TimePlan(val periodEntry: PeriodEntry) {
 case class DayTimePlan(override val periodEntry: DayEntry)(implicit val daysPerWeek: Int) extends TimePlan(periodEntry) {
   override def createPeriodPlan(todos: List[ToDo], withOverview: Boolean): PeriodPlan = {
     val pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(periodEntry)), AnniversaryEntry(periodEntry.month, periodEntry.day))
-    val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, pes:_*)
+    val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, pes: _*)
     val periodSpecifics = List()
     DayPlan(periodEntry, Day(periodEntry, todoList), periodSpecifics, withOverview)
   }
@@ -21,7 +21,7 @@ case class WeekTimePlan(override val periodEntry: WeekEntry)(implicit val daysPe
       currentDay <- TimeHelper.daysInWeek(periodEntry.year, periodEntry.week) take daysPerWeek
       pe = DayEntry(currentDay.getYear, currentDay.getMonthOfYear, currentDay.getDayOfMonth)
       pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(pe)), AnniversaryEntry(pe.month, pe.day))
-      psTodos = ToDoHelper.extractTodosForPeriod(pe, todos, pes:_*)
+      psTodos = ToDoHelper.extractTodosForPeriod(pe, todos, pes: _*)
     } yield Day(pe, psTodos)
     WeekPlan(periodEntry, Week(periodEntry, todoList), periodSpecifics, withOverview)
   }
@@ -62,4 +62,16 @@ case class YearTimePlan(override val periodEntry: YearEntry) extends TimePlan(pe
     YearPlan(periodEntry, Year(periodEntry, todoList), periodSpecifics, withOverview)
   }
   override def toString = "YearTimePlan(%s)" format (periodEntry)
+}
+
+object TimePlan {
+  def apply(periodEntry: PeriodEntry)(implicit daysPerWeek: Int) = {
+    periodEntry match {
+      case pe @ DayEntry(y, m, d)  => DayTimePlan(pe)
+      case pe @ WeekEntry(y, w)    => WeekTimePlan(pe)
+      case pe @ MonthEntry(y, m)   => MonthTimePlan(pe)
+      case pe @ QuarterEntry(y, q) => QuarterTimePlan(pe)
+      case pe @ YearEntry(y)       => YearTimePlan(pe)
+    }
+  }
 }

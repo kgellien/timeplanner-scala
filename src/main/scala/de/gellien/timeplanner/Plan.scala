@@ -96,10 +96,17 @@ object Plan {
 
   def buildPeriodPlans(inputDsl: String, todoList: List[ToDo], inputEncoding: String, withOverview: Boolean, daysPerWeek: Int, debug: Boolean) = {
     val lines = getFilteredLines(inputDsl, inputEncoding)
-    for {
+    val pes = for {
       line <- lines
-      tp <- TimePlanDsl.getTimePlan(line, daysPerWeek)
+    } yield ToDoDsl.getPeriodEntry(line)
+    val tps = for {
+      ope <- pes
+      pe <- ope
+    } yield TimePlan(pe)(daysPerWeek)
+    val pps = for {
+      tp <- tps
     } yield tp.createPeriodPlan(todoList, withOverview)
+    pps
   }
 
   def readFiles(fileNames: List[String], encoding: String) = {

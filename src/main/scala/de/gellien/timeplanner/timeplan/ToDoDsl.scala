@@ -22,6 +22,8 @@ class ToDoDsl extends JavaTokenParsers {
     }
   }
 
+  lazy val periodEntry = (calDay | calWeek | calMonth | calQuarter | calYear)
+
   lazy val dateInfo = (anniversaryEntry | day | week | month | quarter | year)
 
   lazy val day = (weekDay | daily | calDay)
@@ -90,6 +92,20 @@ object ToDoDsl {
     val tdld = new ToDoDsl()
     val result = tdld.parseAll(tdld.toDoItem, line) match {
       case tdld.Success(toDoItem, _) => Some(toDoItem)
+      case tdld.Failure(msg, _) =>
+        println("Failure parsing line >%s<: %s" format (line, msg))
+        None
+      case tdld.Error(msg, _) =>
+        println("Error parsing line >%s<: %s" format (line, msg))
+        None
+    }
+    result
+  }
+
+  def getPeriodEntry(line: String): Option[PeriodEntry] = {
+    val tdld = new ToDoDsl()
+    val result = tdld.parseAll(tdld.periodEntry, line) match {
+      case tdld.Success(pe, _) => Some(pe)
       case tdld.Failure(msg, _) =>
         println("Failure parsing line >%s<: %s" format (line, msg))
         None
