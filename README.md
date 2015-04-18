@@ -37,7 +37,12 @@ according to your needs.
 - Internationalisation
 - use logging instead of println
 - try template engine (e.g. scalate) for latex output
-- started to experiment further with ToDoListDsl		
+- set (configurabe) amount of different classifiers displayed in overview; collapse single entries into miscellaneous?
+- remove absolute paths
+- Documentation!
+- make use of ISO8601 calender consistent
+- test properly under Win 7 and Linux
+- find a way to distinguish between birthdays and anniversaries
 
 
 ## Revision History
@@ -49,7 +54,8 @@ according to your needs.
  - new parameter daysPerWeek, so that instead of 7-day-week e.g. a 5 or 6 day work week is possible
  - Format for timeplan.txt changed: Year, Quarter, Month, Week now analogous to the Task/Appointment entries
  - --withOverview now only as global Option; at the moment not settable at the PeriodPlan level
- - tried to make structure more regular
+ - structure made simpler and more regular
+ - classifier introduced; these are used for headings in overview
 
 
 ### 0.7.5
