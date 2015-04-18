@@ -24,19 +24,17 @@
 #for (periodPlan <- periodPlans)
     
 #{
-  val (left, middle, right) = periodPlan match {
-    case WeekPlan(year, week, workList, full) =>
-      val (start, end) = TimeHelper.fromToWeek(year, week)
-      val middle = "%s -- %s" format (start, end); ("%d" format year, middle, "W%02d" format week)
-    case MonthPlan(year, month, workList, full) =>
-      ("%d" format year, "", "%s" format (TimeHelper.monthName(month)))
-    case QuarterPlan(year, quarter, workList, full) => ("%d" format year, "", "%s" format "Q%d" format quarter)
-    case YearPlan(year, workList, full) => ("%d" format year, "", "")
-    case _ => ("left", "middle", "right")
-  }
+  val (left, middle, right) = periodPlan.header
 }#
     
     {\Large \bf ${left} \hfill ${middle} \hfill ${right}}
+
+    #if (periodPlan.withOverview)
+      %renderSinglePeriods("6cm", """\normalsize""", periodPlan.periodOverview)
+      %renderSinglePeriods("10cm", """\small""", periodPlan.periodSpecifics)
+    #else
+      %renderSinglePeriods("17cm", """\small""", periodPlan.periodSpecifics)
+    #end
 
 
   \newpage

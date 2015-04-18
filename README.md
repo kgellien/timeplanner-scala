@@ -47,6 +47,9 @@ according to your needs.
 
 ## Revision History
 
+### 0.7.7-SNAPSHOT
+ - further experimentation with templating
+
 ### 0.7.6
  - refactoring (extraction of constants; preparation for cleanup)
  - Week KW-%02d -> W%02d

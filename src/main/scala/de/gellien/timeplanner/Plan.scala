@@ -23,24 +23,34 @@ object Plan {
       pe <- ToDoDsl.getPeriodEntry(line)
     } yield PeriodPlan(pe, todoList, modifier.withOverview)(modifier.daysPerWeek)
 
-    //    val parms = Map("periodPlans" -> periodPlans)
-    //    import org.fusesource.scalate._
-    //    val engine = new TemplateEngine
-    //    val output = engine.layout("timeplan.tex.ssp", parms)
-    //    def saveString(fileName: String, string: String) {
-    //      val fos = new FileOutputStream(fileName)
-    //      val osw = new OutputStreamWriter(fos, outputEncoding)
-    //      osw.write(string + "\n")
-    //      osw.close()
-    //    }
-    //    io.saveString("mytimeplan.tex", output)
-    val ltp = new LatexTimePlan(periodPlans, modifier.withSeparator)
-    val latexSource = ltp.render
     val io = new Io(modifier.quote, encodings.outputEncoding, modifier.debug)
-    io.saveStringList(fileNames.texoutput, latexSource)
+
+    //    val latexSourceViaTemplate = "mytimeplan.tex"
+    //    createTexOutputViaTemplate(latexSourceViaTemplate, periodPlans, io)
+
+    //    val latexSource = fileNames.texoutput
+    //    createTexOutputViaTemplate(latexSource, periodPlans, io)
+
+    val latexSource = fileNames.texoutput
+    createTexOutput(latexSource, periodPlans, io, modifier.withSeparator)
+
     if (modifier.callPdfLatex) {
-      io.callPdfLaTeX(fileNames.pdflatexFullPath, fileNames.texoutput)
+      io.callPdfLaTeX(fileNames.pdflatexFullPath, latexSource)
     }
+  }
+
+  def createTexOutput(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, withSeparator: Boolean) = {
+    val ltp = new LatexTimePlan(periodPlans, withSeparator)
+    val latexSource = ltp.render
+    io.saveStringList(outputFileName, latexSource)
+  }
+
+  def createTexOutputViaTemplate(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
+    val parms = Map("periodPlans" -> periodPlans)
+    import org.fusesource.scalate._
+    val engine = new TemplateEngine
+    val output = engine.layout("timeplan.tex.ssp", parms)
+    io.saveString(outputFileName, output)
   }
 
   def readFiles(fileNames: List[String], encoding: String) = {

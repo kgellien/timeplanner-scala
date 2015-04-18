@@ -50,6 +50,13 @@ class Io(quote: String, encoding: String, debug: Boolean) {
     executeAndSaveArr(cmd.toArray, filePrefix = "%s/pdflatex" format outputDir) // ignore exitValue
   }
 
+  def saveString(fileName: String, string: String) {
+    val fos = new FileOutputStream(fileName)
+    val osw = new OutputStreamWriter(fos, encoding)
+    osw.write(string + "\n")
+    osw.close()
+  }
+
   def saveStringList(fileName: String, list: Seq[String]) {
     val fos = new FileOutputStream(fileName)
     val osw = new OutputStreamWriter(fos, encoding)
