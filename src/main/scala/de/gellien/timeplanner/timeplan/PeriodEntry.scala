@@ -59,3 +59,6 @@ case class QuarterlyEntry() extends PeriodBase {
 case class YearlyEntry() extends PeriodBase {
   override def toString = "Y"
 }
+
+
+case class DayMonth(day: Int, month: Int)

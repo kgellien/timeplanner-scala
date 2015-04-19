@@ -47,14 +47,18 @@ class ToDoDsl extends JavaTokenParsers {
 
   lazy val clockspan = """\d\d?:\d{2}( --? \d\d?:\d{2})?""".r ^^ { case t => t.toString }
 
-//    lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?.\d\d?\.)?""".r ^^ { case t => t.toString }
-    //lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?\.\d?\d?\.)?""".r ^^ { case t => t.toString }
-    lazy val datespan = """(\d\d?)\.(\d\d?)?\.? -- (\d\d?)?\.?(\d\d?)?\.?""".r ^^ { case t => t.toString }
-//  lazy val datespan = from
-//
-//  lazy val from = fromDay ~ "--" ~ fromDay ^^ { case from ~ s ~ to => "%2d. -- %2d." format (from, to) }
-//  lazy val fromDay = dayNo <~ "."
-//  lazy val fromMonth = monthNo <~ "."
+  //    lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?.\d\d?\.)?""".r ^^ { case t => t.toString }
+  //lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?\.\d?\d?\.)?""".r ^^ { case t => t.toString }
+  lazy val datespan = """(\d\d?)\.(\d\d?)?\.? -- (\d\d?)?\.?(\d\d?)?\.?""".r ^^ { case t => t.toString }
+  //  lazy val datespan = from
+  //
+  //  lazy val from = fromDay ~ "--" ~ fromDay ^^ { case from ~ s ~ to => "%2d. -- %2d." format (from, to) }
+  //  lazy val fromDay = dayNo <~ "."
+  //  lazy val fromMonth = monthNo <~ "."
+
+  lazy val dayMonth = day ~ month ^^ { case d ~ m => DayMonth(d, m) }
+  lazy val day = dayNo ~ "." ^^ {case d ~ s => d}
+  lazy val month = monthNo ~ "." ^^ {case m ~ s => m}
 
   lazy val classifier = "[" ~> text <~ "]" //^^ { case str => Some(str) }
   lazy val text = """\w*""".r

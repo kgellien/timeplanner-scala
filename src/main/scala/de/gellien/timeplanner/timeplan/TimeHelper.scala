@@ -2,6 +2,7 @@ package de.gellien.timeplanner.timeplan
 
 import java.util.Calendar
 import org.joda.time.LocalDate
+import scala.collection.mutable.ListBuffer
 
 object TimeHelper {
   def getDayOfWeek(periodEntry: DayEntry): Int = {
@@ -9,22 +10,17 @@ object TimeHelper {
     currentDay.getDayOfWeek
   }
 
-  def isoDate(date: LocalDate): String = {
+  def isoDate(date: LocalDate): String =
     "%4d-%02d-%02d" format (date.getYear, date.getMonthOfYear, date.getDayOfMonth)
-  }
 
-  def monthName(month: Int) = { // year and day do not matter
+  def monthName(month: Int) = // year and day do not matter
     new LocalDate(2004, month, 1).monthOfYear.getAsText
-  }
 
-  def displayDay(day: LocalDate) = {
+  def displayDay(day: LocalDate): String =
     "%s, %02d.%02d." format (day.dayOfWeek.getAsText, day.getDayOfMonth, day.getMonthOfYear)
-  }
 
-  def displayDay(year: Int, month: Int, day: Int) = {
-    val date = new LocalDate(year, month, day)
-    "%s, %02d.%02d." format (date.dayOfWeek.getAsText, date.getDayOfMonth, date.getMonthOfYear)
-  }
+  def displayDay(year: Int, month: Int, day: Int): String =
+    displayDay(new LocalDate(year, month, day))
 
   def getFirstDayInWeek(year: Int, isoWeek: Int): LocalDate = {
     val calendar = Calendar.getInstance()
@@ -34,27 +30,45 @@ object TimeHelper {
     new LocalDate(calendar)
   }
 
+  def daysInPeriod(startDay: LocalDate, endDay: LocalDate): List[LocalDate] = {
+    val result = new ListBuffer[LocalDate]
+    var currentDay = startDay
+    while (currentDay.compareTo(endDay) <= 0) {
+      result += currentDay
+      currentDay = currentDay plusDays 1
+    }
+    result.toList
+  }
+
+  def dayEntry2LocalDate(dayEntry: DayEntry): LocalDate =
+    new LocalDate(dayEntry.year, dayEntry.month, dayEntry.day)
+
+  def localDate2DayEntry(date: LocalDate): DayEntry =
+    DayEntry(date.getYear, date.getMonthOfYear, date.getDayOfMonth)
+
+  def daysInPeriod(startDay: DayEntry, endDay: DayEntry): List[DayEntry] =
+    for {
+      day <- daysInPeriod(dayEntry2LocalDate(startDay), dayEntry2LocalDate(endDay))
+    } yield localDate2DayEntry(day)
+
   def daysInWeek(year: Int, week: Int): List[LocalDate] = {
     val startDay = getFirstDayInWeek(year, week)
-    (for {
-      i <- 0 until 7
-      currentDay = startDay plusDays i
-    } yield currentDay).toList
+    daysInPeriod(startDay, startDay plusDays 6)
+    //    (for {
+    //      i <- 0 until 7
+    //      currentDay = startDay plusDays i
+    //    } yield currentDay).toList
   }
 
   def weeksInYear(year: Int): Int = {
     val date = new LocalDate(year, 12, 31)
-    val result =
-      if (date.getWeekOfWeekyear == 1) (date minusWeeks 1).getWeekOfWeekyear
-      else date.getWeekOfWeekyear
-    result
+    if (date.getWeekOfWeekyear == 1) (date minusWeeks 1).getWeekOfWeekyear
+    else date.getWeekOfWeekyear
   }
 
-  def weeksInQuarter(year: Int, quarter: Int): List[(Int, Int)] = {
-    val miq = monthsInQuarter(year, quarter)
-    (for (month <- miq)
+  def weeksInQuarter(year: Int, quarter: Int): List[(Int, Int)] =
+    (for (month <- monthsInQuarter(year, quarter))
       yield weeksInMonth(year, month)).flatten
-  }
 
   def weeksInMonth(year: Int, month: Int): List[(Int, Int)] = {
     val firstOfMonth = new LocalDate(year, month, 1)
@@ -94,7 +108,7 @@ object TimeHelper {
     (start to (start + 2)).toList
   }
 
-  def getFirstDayOfPeriod(pe: PeriodEntry) = {
+  def getFirstDayOfPeriod(pe: PeriodEntry): LocalDate = {
     pe match {
       case YearEntry(year)             => new LocalDate(year, 1, 1)
       case QuarterEntry(year, quarter) => new LocalDate(year, TimeHelper.monthsInQuarter(year, quarter).head, 1)
@@ -104,7 +118,7 @@ object TimeHelper {
     }
   }
 
-  def getLastDayOfPeriod(pe: PeriodEntry) = {
+  def getLastDayOfPeriod(pe: PeriodEntry): LocalDate = {
     pe match {
       case YearEntry(year) => new LocalDate(year, 12, 31)
       case QuarterEntry(year, quarter) =>
@@ -113,7 +127,7 @@ object TimeHelper {
       case MonthEntry(year, month) =>
         val ld = new LocalDate(year, month, 1)
         ld plusMonths (1) minusDays (1)
-      case WeekEntry(year, week)      => TimeHelper.getFirstDayInWeek(year, week) plusDays (7)
+      case WeekEntry(year, week)      => TimeHelper.getFirstDayInWeek(year, week) plusDays (6)
       case DayEntry(year, month, day) => new LocalDate(year, month, day)
     }
   }

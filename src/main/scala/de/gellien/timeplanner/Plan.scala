@@ -21,7 +21,7 @@ object Plan {
     val periodPlans = for {
       line <- getFilteredLines(fileNames.inputDsl, encodings.inputEncoding)
       pe <- ToDoDsl.getPeriodEntry(line)
-    } yield PeriodPlan(pe, todoList, modifier.withOverview)(modifier.daysPerWeek)
+    } yield PeriodPlan(pe, todoList, modifier.withOverview)(modifier.daysPerWeek, modifier.withAdditionalTasks)
 
     val io = new Io(modifier.quote, encodings.outputEncoding, modifier.debug)
 
@@ -116,6 +116,7 @@ object Plan {
     val inputFiles = options('input).asInstanceOf[List[String]].reverse // must exist - see above; reverse in case sequence matters
     val withSeparator = options contains 'withSeparator
     val withOverview = options contains 'withOverview
+    val withAdditionalTasks = options contains 'withAdditionalTasks
     val inputEncoding = latin1
     val outputEncoding = latin1
 
@@ -126,7 +127,7 @@ object Plan {
 
     (Encodings(inputEncoding, outputEncoding),
       FileNames(inputFiles, inputDsl, pdflatexFullPath, texoutput),
-      Modifier(quote, daysPerWeek, withSeparator, withOverview, callPdfLatex, debug))
+      Modifier(quote, daysPerWeek, withSeparator, withOverview, callPdfLatex, debug, withAdditionalTasks))
   }
 
   // modeled after http://stackoverflow.com/questions/2315912/scala-best-way-to-parse-command-line-parameters-cli (pjotrp)
@@ -144,6 +145,7 @@ object Plan {
         case "--debug" :: tail                 => nextOption(map ++ Map('debug -> true), tail)
         case "-d" :: tail                      => nextOption(map ++ Map('debug -> true), tail)
         case "--withSeparator" :: tail         => nextOption(map ++ Map('withSeparator -> true), tail)
+        case "--withAdditionalTasks" :: tail   => nextOption(map ++ Map('withAdditionalTasks -> true), tail)
         case "-s" :: tail                      => nextOption(map ++ Map('withSeparator -> true), tail)
         case "--withOverview" :: tail          => nextOption(map ++ Map('withOverview -> true), tail)
         case "-v" :: tail                      => nextOption(map ++ Map('withOverview -> true), tail)
@@ -159,7 +161,7 @@ object Plan {
 }
 
 sealed abstract class Config
-case class Modifier(quote: String, daysPerWeek: Int, withSeparator: Boolean, withOverview: Boolean, callPdfLatex: Boolean, debug: Boolean) extends Config
+case class Modifier(quote: String, daysPerWeek: Int, withSeparator: Boolean, withOverview: Boolean, callPdfLatex: Boolean, debug: Boolean, withAdditionalTasks: Boolean) extends Config
 case class FileNames(inputFiles: List[String], inputDsl: String, pdflatexFullPath: String, texoutput: String) extends Config
 case class Encodings(inputEncoding: String, outputEncoding: String) extends Config
 

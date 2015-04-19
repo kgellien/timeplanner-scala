@@ -33,7 +33,7 @@ case class YearPlan(override val periodEntry: YearEntry, override val period: Si
 }
 
 object PeriodPlan {
-  def apply(pe: PeriodEntry, todos: List[ToDo], withOverview: Boolean)(implicit daysPerWeek: Int): PeriodPlan = {
+  def apply(pe: PeriodEntry, todos: List[ToDo], withOverview: Boolean)(implicit daysPerWeek: Int, withAdditionalTasks: Boolean): PeriodPlan = {
     pe match {
       case periodEntry @ DayEntry(y, m, d) => {
         val pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(periodEntry)), AnniversaryEntry(periodEntry.month, periodEntry.day))
@@ -45,12 +45,12 @@ object PeriodPlan {
       case periodEntry @ WeekEntry(y, w) => {
         val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, WeeklyEntry())
         val period = SinglePeriod(periodEntry, todoList, periodEntry.header)
-//        val additionalTasks = for {
-//          appointment <- todoList.appointments
-//          additionalTask <- appointment.extractSubTasks()
-//        } yield additionalTask
-//        val augmentedTodos = todos ++ additionalTasks
-        val augmentedTodos = todos
+        val additionalTasks = if (withAdditionalTasks) for {
+          appointment <- todoList.appointments
+          additionalTask <- appointment.extractSubTasks()
+        } yield additionalTask
+        else Nil
+        val augmentedTodos = todos ++ additionalTasks
         val periodSpecifics = for {
           currentDay <- TimeHelper.daysInWeek(periodEntry.year, periodEntry.week) take daysPerWeek
           pe = DayEntry(currentDay.getYear, currentDay.getMonthOfYear, currentDay.getDayOfMonth)
