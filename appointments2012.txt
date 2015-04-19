@@ -24,8 +24,10 @@ Y [Business] yearly retrospektive
 
 
 2012-W16 weekly task
+2012-W16 weekly task 2
 2012-W16 [Private] weekly task
 2012-W16 [Business] 16. -- 17. weekly appointment
+2012-W16 [Business] 19. -- 20. weekly appointment
 
 2012-04 [Business] 16. -- 20.04. JAX in Mainz
 2012-04 [Business] Monthly aim

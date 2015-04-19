@@ -25,8 +25,6 @@ case class Appointment(val periodEntry: PeriodBase, val classifierOpt: Option[St
     // periodEntry here is known to be of type PeriodEntry
     val first = TimeHelper.getFirstDayOfPeriod(pe)
     val last = TimeHelper.getLastDayOfPeriod(pe)
-    println(first)
-    println(last)
     val (fromDay, fromMonth, toDay, toMonth) = try {
       val re = """(\d\d?)\.(\d\d?)?\.? -- (\d\d?)?\.?(\d\d?)?\.?""".r
       val re(fds, fms, tds, tms) = timeInfo
@@ -54,12 +52,14 @@ case class Appointment(val periodEntry: PeriodBase, val classifierOpt: Option[St
         val toM = toMonth.getOrElse(monthLast)
         val from = DayEntry(yearFirst, fromM, fromD)
         val to = DayEntry(yearLast, toM, toD)
-        println(from)
-        println(to)
+//    println(first)
+//    println(last)
+//        println(from)
+//        println(to)
         val lst = for {
           day <- TimeHelper.daysInPeriod(from, to)
         } yield Task(day, classifierOpt, dateBounds, info)
-        lst foreach println
+//        lst foreach println
         lst
       }
       case _ => Nil

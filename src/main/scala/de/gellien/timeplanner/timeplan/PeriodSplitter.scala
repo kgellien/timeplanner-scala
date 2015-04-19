@@ -7,7 +7,7 @@ object PeriodSplitter {
   def apply(period: SinglePeriod): List[SinglePeriod] = {
     def append[T](theMap: Map[String, List[T]], entry: T, classifier: String, dummy: T) = {
       if (theMap.isDefinedAt(classifier))
-        theMap += (classifier -> theMap.getOrElse(classifier, List(dummy)))
+        theMap += (classifier -> (entry :: theMap.getOrElse(classifier, List(dummy))))
       else theMap += (classifier -> List(entry))
     }
     val miscHeader = if (Locale.getDefault.toString().startsWith("de")) "Sonstiges" else "Miscellaneous"
