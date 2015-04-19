@@ -46,7 +46,15 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val yearly = "Y" ^^ { case _ => YearlyEntry() }
 
   lazy val clockspan = """\d\d?:\d{2}( --? \d\d?:\d{2})?""".r ^^ { case t => t.toString }
-  lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?.\d\d?\.)?""".r ^^ { case t => t.toString }
+
+//    lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?.\d\d?\.)?""".r ^^ { case t => t.toString }
+    //lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?\.\d?\d?\.)?""".r ^^ { case t => t.toString }
+    lazy val datespan = """(\d\d?)\.(\d\d?)?\.? -- (\d\d?)?\.?(\d\d?)?\.?""".r ^^ { case t => t.toString }
+//  lazy val datespan = from
+//
+//  lazy val from = fromDay ~ "--" ~ fromDay ^^ { case from ~ s ~ to => "%2d. -- %2d." format (from, to) }
+//  lazy val fromDay = dayNo <~ "."
+//  lazy val fromMonth = monthNo <~ "."
 
   lazy val classifier = "[" ~> text <~ "]" //^^ { case str => Some(str) }
   lazy val text = """\w*""".r
@@ -54,13 +62,9 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val info = """.*""".r
 
   lazy val dayNo = """\d\d?""".r ^? ({ case dayNo if ((1 to 31) contains dayNo.toInt) => dayNo.toInt }, (dayNo => "day needs to be in the range of 1 to 31"))
-
   lazy val weekNo = """\d\d?""".r ^? ({ case weekNo if ((1 to 53) contains weekNo.toInt) => weekNo.toInt }, (weekNo => "week needs to be in the range of 1 to 53"))
-
   lazy val monthNo = """\d\d?""".r ^? ({ case monthNo if ((1 to 12) contains monthNo.toInt) => monthNo.toInt }, (monthNo => "month needs to be in the range of 1 to 12"))
-
   lazy val quarterNo = """\d\d?""".r ^? ({ case quarterNo if ((1 to 4) contains quarterNo.toInt) => quarterNo.toInt }, (quarterNo => "quarter needs to be in the range of 1 to 4"))
-
   lazy val yearNo = """\d{4}""".r ^^ { case year => year.toInt }
 
   lazy val dateBound = (eqBound | neBound | ltBound | gtBound | leBound | geBound)

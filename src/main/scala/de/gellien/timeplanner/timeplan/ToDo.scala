@@ -21,6 +21,74 @@ case class Appointment(val periodEntry: PeriodBase, val classifierOpt: Option[St
     case Some(classifier) => "[%s] %s %s" format (classifier, timeInfo, info)
     case _                => "%s %s" format (timeInfo, info)
   }
+  def extractSubTasks(): List[Task] = {
+    println("-----\nextractSubTasks: %s" format this)
+    println("timeInfo: %s" format timeInfo)
+
+    val (fromDay, fromMonth, toDay, toMonth) = try {
+      val re = """(\d\d?)\.(\d\d?)?\.? -- (\d\d?)?\.?(\d\d?)?\.?""".r
+      val re(fds, fms, tds, tms) = timeInfo
+      println("from: %s(%s)  to: %s(%s)" format (fds, fms, tds, tms))
+      val fd = if (fds == null) None else Some(fds.toInt)
+      val fm = if (fms == null) None else Some(fds.toInt)
+      val td = if (tds == null) None else Some(tds.toInt)
+      val tm = if (tms == null) None else Some(tms.toInt)
+      (fd, fm, td, tm)
+    } catch {
+      case me: scala.MatchError => {
+        println("ERROR in extractSubTasks for %s" format this)
+        (None, None, None, None)
+      }
+    }
+
+    println("from: %s.%s  to: %s.%s" format (fromDay, fromMonth, toDay, toMonth))
+    val result = periodEntry match {
+      case pe @ WeekEntry(y, w) => {
+        val first = TimeHelper.getFirstDayOfPeriod(pe)
+        val last = TimeHelper.getLastDayOfPeriod(pe)
+        val month = first.getMonthOfYear
+        val year = first.getYear
+        val from = fromDay.getOrElse(0)
+        val to = toDay.getOrElse(-1)
+        val lstX = for {
+          day <- from to to
+          pb = DayEntry(year, month, day)
+        } yield Task(pb, classifierOpt, dateBounds, info)
+        val lst = lstX.toList
+        println(this)
+        lst foreach println
+        lst
+      }
+      case _ => Nil
+    }
+    result
+  }
+  def extractSubTasksDayOnly(): List[Task] = {
+    println("timeInfo: %s" format timeInfo)
+    //    val re = """(\d\d?)\.\d?\d?\.?( --? \d\d?.\d\d?\.)?""".r
+    val re = """(\d\d?)\. -- (\d\d?)\.""".r
+    val re(f, t) = timeInfo
+    val from = f.toInt
+    val to = t.toInt
+    println("from: %2d - to: %2d" format (from, to))
+    val result = periodEntry match {
+      case pe @ WeekEntry(y, w) => {
+        val first = TimeHelper.getFirstDayOfPeriod(pe)
+        val last = TimeHelper.getLastDayOfPeriod(pe)
+        val month = first.getMonthOfYear
+        val year = first.getYear
+        val lst = (for {
+          day <- from to to
+          pb = DayEntry(year, month, day)
+        } yield Task(pb, classifierOpt, dateBounds, info)).toList
+        println(this)
+        lst foreach println
+        lst
+      }
+      case _ => Nil
+    }
+    result
+  }
 }
 
 case class Task(val periodEntry: PeriodBase, val classifierOpt: Option[String], val dateBounds: List[DateBound], val info: String) extends ToDo {

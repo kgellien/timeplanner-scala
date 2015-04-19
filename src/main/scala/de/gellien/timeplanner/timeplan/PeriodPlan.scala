@@ -45,11 +45,17 @@ object PeriodPlan {
       case periodEntry @ WeekEntry(y, w) => {
         val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, WeeklyEntry())
         val period = SinglePeriod(periodEntry, todoList, periodEntry.header)
+//        val additionalTasks = for {
+//          appointment <- todoList.appointments
+//          additionalTask <- appointment.extractSubTasks()
+//        } yield additionalTask
+//        val augmentedTodos = todos ++ additionalTasks
+        val augmentedTodos = todos
         val periodSpecifics = for {
           currentDay <- TimeHelper.daysInWeek(periodEntry.year, periodEntry.week) take daysPerWeek
           pe = DayEntry(currentDay.getYear, currentDay.getMonthOfYear, currentDay.getDayOfMonth)
           pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(pe)), AnniversaryEntry(pe.month, pe.day))
-          psTodos = ToDoHelper.extractTodosForPeriod(pe, todos, pes: _*)
+          psTodos = ToDoHelper.extractTodosForPeriod(pe, augmentedTodos, pes: _*)
         } yield SinglePeriod(pe, psTodos, pe.header)
         WeekPlan(periodEntry, period, periodSpecifics, withOverview)
       }
