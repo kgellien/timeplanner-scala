@@ -22,7 +22,7 @@
 #import(de.gellien.timeplanner.timeplan._)
 <%@ var periodPlans: List[PeriodPlan] %>
 #for (periodPlan <- periodPlans)
-    
+
 #{
   val (left, middle, right) = periodPlan.header
 }#
@@ -31,9 +31,17 @@
 
     #if (periodPlan.withOverview)
       %renderSinglePeriods("6cm", """\normalsize""", periodPlan.periodOverview)
+#{
+  val (height, width, textsize, singlePeriods) = ("6cm", 200, """\normalsize""", periodPlan.periodOverview)
+}#
+${include("timeplan-SinglePeriod.tex.ssp")}
       %renderSinglePeriods("10cm", """\small""", periodPlan.periodSpecifics)
     #else
       %renderSinglePeriods("17cm", """\small""", periodPlan.periodSpecifics)
+#{
+  val (height, width, textsize, singlePeriods) = ("17cm", 200, """\small""", periodPlan.periodSpecifics)
+}#
+${include("timeplan-SinglePeriod.tex.ssp")}
     #end
 
 
