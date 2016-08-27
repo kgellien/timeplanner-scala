@@ -66,7 +66,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val width = LatexTimePlan.getColumnWidth(singlePeriods.size)
     if (singlePeriods.size > 1)
       result += """\begin{multicols}{%d}""" format singlePeriods.size
-    result ++= (for (singlePeriod <- singlePeriods) yield renderSinglePeriod(singlePeriod, height, width, textsize)).flatten
+    result ++= singlePeriods.flatMap(singlePeriod => renderSinglePeriod(singlePeriod, height, width, textsize))
     if (singlePeriods.size > 1)
       result += """\end{multicols}"""
     result
@@ -89,7 +89,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
       result += todo.anniversaries.map { a => "$*$%s" format a.toLatex }.mkString("\n\n")
       result += """{\center \rule{0.5\linewidth}{0.3mm}\\ } \vspace*{1em}"""
     }
-    result += todo.appointments.map { a => "%s" format a.toLatex }.mkString("\n\n")
+    result += todo.appointments.sortBy(_.timeInfo).map { a => "%s" format a.toLatex }.mkString("\n\n")
     if (withSeparator) {
       result += """{\center \rule{0.5\linewidth}{0.3mm}\\ }"""
     }
