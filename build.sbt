@@ -12,7 +12,7 @@ libraryDependencies ++= Seq(
   "org.scalatra.scalate" %% "scalate-core" % "1.7.0" withSources(),
   "joda-time" % "joda-time" % "2.3",
   "org.joda" % "joda-convert" % "1.6"
-}
+)
 
 // activate for HTML-Reports in target/specs2-reports
 //testOptions in Test += Tests.Argument("html")
