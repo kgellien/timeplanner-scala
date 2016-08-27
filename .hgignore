@@ -15,3 +15,7 @@ target
 pdflatex.stderr
 pdflatex.stdout
 timeplan.properties
+.cache-main
+.cache-tests
+.idea/
+*.iml
