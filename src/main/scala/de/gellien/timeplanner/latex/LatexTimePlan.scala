@@ -33,6 +33,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     result += "\\usepackage{times}"
     result += "\\usepackage{multicol}"
     result += "\\usepackage{rotating}"
+    result += "\\usepackage{amssymb}"
     result += preamble
     result += """\begin{document}"""
     for (plan <- plans)
@@ -55,7 +56,8 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   }
 
   def renderHeader(plan: PeriodPlan) = {
-    val (left, middle, right) = plan.header
+    val (left, middle, rightCandidate) = plan.header
+    val right = if (rightCandidate == "") """\phantom{.}""" else rightCandidate
     val result = new ListBuffer[String]
     result += """{\Large \bf %s \hfill %s \hfill %s}""" format (left, middle, right)
     result
@@ -94,7 +96,9 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
       result += """{\center \rule{0.5\linewidth}{0.3mm}\\ }"""
     }
     result += """\vfill"""
-    result += todo.tasks.map { a => "- %s" format a.toLatex }.mkString("\n\n")
+//    result += todo.tasks.map { a => "- %s" format a.toLatex }.mkString("\n\n")
+    result += todo.tasks.map { a => """$\square$ %s""" format a.toLatex }.mkString("\n\n")
+//    result += todo.tasks.map { a => """\makebox[0pt][l]{$\square$}{\raisebox{0.1\height}{$\times$}} %s""" format a.toLatex }.mkString("\n\n")
     result
   }
 
