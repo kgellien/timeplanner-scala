@@ -9,7 +9,6 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-parser-combinators" % "2.11.0-M4",
-  "org.scalatra.scalate" %% "scalate-core" % "1.7.0" withSources(),
   "joda-time" % "joda-time" % "2.3",
   "org.joda" % "joda-convert" % "1.6"
 )

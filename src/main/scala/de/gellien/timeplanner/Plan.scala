@@ -45,14 +45,6 @@ object Plan {
     io.saveStringList(outputFileName, latexSource)
   }
 
-  def createTexOutputViaTemplate(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
-    val parms = Map("periodPlans" -> periodPlans)
-    import org.fusesource.scalate._
-    val engine = new TemplateEngine
-    val output = engine.layout("timeplan.tex.ssp", parms)
-    io.saveString(outputFileName, output)
-  }
-
   def readFiles(fileNames: List[String], encoding: String) = {
     val result = new ListBuffer[String]
     for (fileName <- fileNames) {
@@ -164,4 +156,3 @@ sealed abstract class Config
 case class Modifier(quote: String, daysPerWeek: Int, withSeparator: Boolean, withOverview: Boolean, callPdfLatex: Boolean, debug: Boolean, withAdditionalTasks: Boolean) extends Config
 case class FileNames(inputFiles: List[String], inputDsl: String, pdflatexFullPath: String, texoutput: String) extends Config
 case class Encodings(inputEncoding: String, outputEncoding: String) extends Config
-
