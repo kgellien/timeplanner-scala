@@ -25,12 +25,6 @@ object Plan {
 
     val io = new Io(modifier.quote, encodings.outputEncoding, modifier.debug)
 
-    //    val latexSourceViaTemplate = "mytimeplan.tex"
-    //    createTexOutputViaTemplate(latexSourceViaTemplate, periodPlans, io)
-
-    //    val latexSource = fileNames.texoutput
-    //    createTexOutputViaTemplate(latexSource, periodPlans, io)
-
     val latexSource = fileNames.texoutput
     createTexOutput(latexSource, periodPlans, io, modifier.withSeparator)
 
