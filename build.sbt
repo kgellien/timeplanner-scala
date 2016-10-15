@@ -1,6 +1,6 @@
 name := "timeplanner"
 
-version := "0.7.7"
+version := "0.7.8-SNAPSHOT"
 
 scalaVersion := "2.11.5"
 
