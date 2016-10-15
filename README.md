@@ -47,8 +47,10 @@ according to your needs.
 
 ## Revision History
 
-### 0.7.7-SNAPSHOT
- - further experimentation with templating
+### 0.7.7
+ - further experimentation with templating (stopped, because working with different template files was more inconvenient than staying with LatexTimePlan)
+ - Tasks now with checkbox
+ - some clean-up (Maven-Support removed)
 
 ### 0.7.6
  - refactoring (extraction of constants; preparation for cleanup)
