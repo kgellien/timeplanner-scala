@@ -86,19 +86,19 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   }
 
   def renderTodoList(todo: ToDoList) = {
+    val centeredLine = """{\center \rule{0.5\linewidth}{0.3mm}\\[1.5em] }"""
     val result = new ListBuffer[String]
-    if (!todo.anniversaries.isEmpty) {
-      result += todo.anniversaries.map { a => "$*$%s" format a.toLatex }.mkString("\n\n")
-      result += """{\center \rule{0.5\linewidth}{0.3mm}\\ } \vspace*{1em}"""
-    }
     result += todo.appointments.sortBy(_.timeInfo).map { a => "%s" format a.toLatex }.mkString("\n\n")
-    if (withSeparator) {
-      result += """{\center \rule{0.5\linewidth}{0.3mm}\\ }"""
+    if (!todo.anniversaries.isEmpty) {
+      result += """\vfill"""
+      result += centeredLine
+      result += todo.anniversaries.map { a => "$*$%s" format a.toLatex }.mkString("\n", "\n\n", "\n")
+    }
+    if (withSeparator || !todo.anniversaries.isEmpty) {
+      result += centeredLine
     }
     result += """\vfill"""
-//    result += todo.tasks.map { a => "- %s" format a.toLatex }.mkString("\n\n")
     result += todo.tasks.map { a => """$\square$ %s""" format a.toLatex }.mkString("\n\n")
-//    result += todo.tasks.map { a => """\makebox[0pt][l]{$\square$}{\raisebox{0.1\height}{$\times$}} %s""" format a.toLatex }.mkString("\n\n")
     result
   }
 
