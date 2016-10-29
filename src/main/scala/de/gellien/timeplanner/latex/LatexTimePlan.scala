@@ -92,13 +92,13 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     if (!todo.anniversaries.isEmpty) {
       result += """\vfill"""
       result += centeredLine
-      result += todo.anniversaries.map { a => "$*$%s" format a.toLatex }.mkString("\n", "\n\n", "\n")
+      result += todo.anniversaries.sortBy(_.info).map { a => "$*$%s" format a.toLatex }.mkString("\n", "\n\n", "\n")
     }
     if (withSeparator || !todo.anniversaries.isEmpty) {
       result += centeredLine
     }
     result += """\vfill"""
-    result += todo.tasks.map { a => """$\square$ %s""" format a.toLatex }.mkString("\n\n")
+    result += todo.tasks.sortBy(_.info).map { a => """$\square$ %s""" format a.toLatex }.mkString("\n\n")
     result
   }
 

@@ -59,6 +59,7 @@ according to your needs.
  - single - in timeInfo will be expanded to -- for LaTeX
  - datespan might now just be one date
  - Birthdays now centered between Appointments and Tasks
+ - Tasks and Birthdays now also sorted
 
 
 ### 0.7.7
