@@ -3,7 +3,7 @@ import org.specs2.mutable.SpecificationWithJUnit
 
 class AppointmentSpec extends SpecificationWithJUnit {
   val line = "2015-W17 4. -- 6. Aikido seminar in Ffm"
-  val lineWithMonth = "2015-W17 24.04. -- 26.04. Aikido seminar in Ffm"
+  val lineWithMonth = "2015-W17 24.04. - 26.04. Aikido seminar in Ffm"
   val lineBetweenMonths = "2015-W18 30.04. -- 1.05. Aikido seminar in Ffm"
   val lineEom = "2015-W22 [Aikido] 30. -- 31. Aikido seminar in Ffm"
 
@@ -21,8 +21,9 @@ class AppointmentSpec extends SpecificationWithJUnit {
       subs.size must_== 3
     }
 
-    "have 3 SubTasks for 24.04. -- 26.04." in {
+    "have 3 SubTasks for 24.04. - 26.04." in {
       val subs = getSubs(lineWithMonth)
+      println(subs)
       subs.size must_== 3
     }
 

@@ -34,7 +34,7 @@ case class Appointment(
     val first = TimeHelper.getFirstDayOfPeriod(pe)
     val last = TimeHelper.getLastDayOfPeriod(pe)
     val (fromDay, fromMonth, toDay, toMonth) = try {
-      val re = """(\d\d?)\.(\d\d?)?\.? -- (\d\d?)?\.?(\d\d?)?\.?""".r
+      val re = """(\d\d?)\.(\d\d?)?\.? --? (\d\d?)?\.?(\d\d?)?\.?""".r
       val re(fds, fms, tds, tms) = timeInfo
       val fd = if (fds == null) None else Some(fds.toInt)
       val fm = if (fms == null) None else Some(fms.toInt)

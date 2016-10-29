@@ -45,6 +45,7 @@ class Io(quote: String, encoding: String, debug: Boolean) {
   }
 
   def callPdfLaTeX(pdflatexFullPath: String, source: String) {
+    println("callPdfLaTeX...")
     val outputDir = new File(source).getAbsoluteFile.getParentFile.getCanonicalPath
     val cmd = pdflatexFullPath :: ("-output-directory=%s" format outputDir) :: quote + source + quote :: Nil
     executeAndSaveArr(cmd.toArray, filePrefix = "%s/pdflatex" format outputDir) // ignore exitValue
