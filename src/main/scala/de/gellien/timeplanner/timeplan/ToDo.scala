@@ -24,10 +24,11 @@ case class Appointment(
     val dateBounds: List[DateBound],
     val timeInfo: String,
     val info: String) extends ToDo {
-  def toLatex = "%s %s" format (timeInfo, info)
+  val timeInfoForLatex = timeInfo.replace(" - ", " -- ")
+  def toLatex = "%s %s" format (timeInfoForLatex, info)
   def toLatexWithClassifier = classifierOpt match {
-    case Some(classifier) => "[%s] %s %s" format (classifier, timeInfo, info)
-    case _                => "%s %s" format (timeInfo, info)
+    case Some(classifier) => "[%s] %s" format (classifier, toLatex)
+    case _                => toLatex
   }
   def extractSubTaskPeriodEntry(pe: PeriodEntry): List[Task] = {
     // periodEntry here is known to be of type PeriodEntry
