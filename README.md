@@ -30,13 +30,18 @@ according to your needs.
 - pdflatex
 
 
+## Known Problems / Errors
+
+- call to pdflatex sometimes does not return; explicit call afterwards does work
+
+
 ## To Do
 
 - Make it easy to provide ones own inputfiles *outside* of this project directory
   (see runTp.sh)
 - Internationalisation
 - use logging instead of println
-- try template engine (e.g. scalate) for latex output
+- try template engine (e.g. scalate) for latex output (DONE: for now not worth the effort)
 - set (configurabe) amount of different classifiers displayed in overview; collapse single entries into miscellaneous?
 - remove absolute paths
 - Documentation!
@@ -47,12 +52,24 @@ according to your needs.
 
 ## Revision History
 
+### 0.7.8-SNAPSHOT
+
+ - removed Scalatra-Template-Engine
+ - timespan now accepts single - too
+ - single - in timeInfo will be expanded to -- for LaTeX
+ - datespan might now just be one date
+ - Birthdays now centered between Appointments and Tasks
+
+
 ### 0.7.7
+
  - further experimentation with templating (stopped, because working with different template files was more inconvenient than staying with LatexTimePlan)
  - Tasks now with checkbox
  - some clean-up (Maven-Support removed)
 
+
 ### 0.7.6
+
  - refactoring (extraction of constants; preparation for cleanup)
  - Week KW-%02d -> W%02d
  - runTp.sh added to demonstrate call via SBT
@@ -64,7 +81,6 @@ according to your needs.
 
 
 ### 0.7.5
-
 
 ## Maven (not any longer actively supported)
 
