@@ -88,7 +88,10 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   def renderTodoList(todo: ToDoList) = {
     val centeredLine = """{\center \rule{0.5\linewidth}{0.3mm}\\[1.5em] }"""
     val result = new ListBuffer[String]
-    result += todo.appointments.sortBy(_.timeInfo).map { a => "%s" format a.toLatex }.mkString("\n\n")
+    result += todo.appointments.sortBy(_.timeInfo).map { a =>
+      //      ToDoHelper.printTimeInfo(a)
+      "%s" format a.toLatex
+    }.mkString("\n\n")
     if (!todo.anniversaries.isEmpty) {
       result += """\vfill"""
       result += centeredLine

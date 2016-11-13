@@ -6,12 +6,12 @@ import TimeHelper._
 
 case class ToDoList(val anniversaries: List[Anniversary], val appointments: List[Appointment], val tasks: List[Task])
 
-abstract sealed class ToDo
+abstract sealed class ToDo(val periodEntry: PeriodBase)
 
 case class Anniversary(
-    val periodEntry: PeriodBase,
+    override val periodEntry: PeriodBase,
     val yearOpt: Option[Int],
-    val info: String) extends ToDo {
+    val info: String) extends ToDo(periodEntry) {
   def toLatex = yearOpt match {
     case Some(year) => "%s (%s)" format (info, year)
     case _          => info
@@ -19,11 +19,11 @@ case class Anniversary(
 }
 
 case class Appointment(
-    val periodEntry: PeriodBase,
+    override val periodEntry: PeriodBase,
     val classifierOpt: Option[String],
     val dateBounds: List[DateBound],
     val timeInfo: String,
-    val info: String) extends ToDo {
+    val info: String) extends ToDo(periodEntry) {
   val timeInfoForLatex = timeInfo.replace(" - ", " -- ")
   def toLatex = "%s %s" format (timeInfoForLatex, info)
   def toLatexWithClassifier = classifierOpt match {
@@ -79,10 +79,10 @@ case class Appointment(
 }
 
 case class Task(
-    val periodEntry: PeriodBase,
+    override val periodEntry: PeriodBase,
     val classifierOpt: Option[String],
     val dateBounds: List[DateBound],
-    val info: String) extends ToDo {
+    val info: String) extends ToDo(periodEntry) {
   def toLatex = info
   def toLatexWithClassifier = classifierOpt match {
     case Some(classifier) => "[%s] %s" format (classifier, info)
@@ -107,5 +107,60 @@ object ToDoHelper {
       }
     }
     ToDoList(anniversaries.toList, appointments.toList, tasks.toList)
+  }
+
+  def getDatespan(dateInfo: String) = {
+    //    val datespan = """(\d\d?)\.(\d\d?)?\.?(\d\d\d\d)?( --? (\d\d?)?\.?(\d\d?)?\.?(\d\d\d\d)?)?""".r
+    val datespan = """(\d\d?)\.(\d\d?)?\.?(\d\d\d\d)?( --? (\d\d?)\.(\d\d?)\.(\d\d\d\d)?)?""".r
+    val datespan(fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = dateInfo
+    (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear)
+  }
+
+  def toIsoDate(day: String, month: String, year: String, pe: PeriodEntry) = {
+    pe match {
+      case we: WeekEntry =>
+        val yyyy = if (year != null) year.toInt else pe.year
+        val MM = if (month != null) month.toInt else if (pe.lower.day <= day.toInt || pe.upper.day < day.toInt) pe.lower.month else pe.upper.month
+        val dd = day.toInt
+        IsoDate(yyyy, MM, dd)
+      case _ =>
+        val yyyy = if (year != null) year.toInt else pe.year
+        val MM = if (month != null) month.toInt else if (pe.lower.day <= day.toInt || pe.upper.day < day.toInt) pe.lower.month else pe.upper.month
+        val dd = day.toInt
+        IsoDate(yyyy, MM, dd)
+    }
+  }
+
+  def extractTimeInfo(a: Appointment) = {
+    if (!a.timeInfo.contains(":")) { // No Time; date only
+      val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = getDatespan(a.timeInfo)
+      //      println(fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear)
+      val fromIso = toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
+      val toIso = try {
+        toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
+      } catch {
+        case e: NumberFormatException => fromIso
+      }
+      //      val cols = a.timeInfo.split("-")
+      a.periodEntry match {
+        case pe: PeriodEntry =>
+          (Some(fromIso), Some(toIso))
+        case pb: PeriodBase =>
+          (None, None)
+      }
+    } else (None, None)
+  }
+
+  def printTimeInfo(a: Appointment) = {
+    if (!a.timeInfo.contains(":")) { // No Time; date only
+      val (fromIso, toIso) = extractTimeInfo(a)
+      val prefix = a.periodEntry match {
+        case pe: PeriodEntry =>
+          f"${pe} (${pe.lower} - ${pe.upper})"
+        case pb: PeriodBase =>
+          f"${pb}"
+      }
+      println(f"${prefix}) : ${a.timeInfo} : ${fromIso} - ${toIso}")
+    }
   }
 }

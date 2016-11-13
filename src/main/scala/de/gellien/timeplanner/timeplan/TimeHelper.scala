@@ -4,14 +4,19 @@ import java.util.Calendar
 import org.joda.time.LocalDate
 import scala.collection.mutable.ListBuffer
 
+sealed case class IsoDate(year: Int, month: Int, day: Int) extends Ordered[IsoDate] {
+  override def toString = "%4d-%02d-%02d" format (year, month, day)
+  def compare(that: IsoDate) = toString.compare(that.toString)
+}
+
 object TimeHelper {
   def getDayOfWeek(periodEntry: DayEntry): Int = {
     val currentDay = new LocalDate(periodEntry.year, periodEntry.month, periodEntry.day)
     currentDay.getDayOfWeek
   }
 
-  def isoDate(date: LocalDate): String =
-    "%4d-%02d-%02d" format (date.getYear, date.getMonthOfYear, date.getDayOfMonth)
+  def isoDate(date: LocalDate): IsoDate =
+    IsoDate(date.getYear, date.getMonthOfYear, date.getDayOfMonth)
 
   def monthName(month: Int) = // year and day do not matter
     new LocalDate(2004, month, 1).monthOfYear.getAsText

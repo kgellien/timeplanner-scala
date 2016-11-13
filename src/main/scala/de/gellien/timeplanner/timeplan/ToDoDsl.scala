@@ -48,11 +48,6 @@ class ToDoDsl extends JavaTokenParsers {
 
   lazy val clockspan = """\d\d?:\d{2}( --? \d\d?:\d{2})?""".r ^^ { case t => t.toString }
 
-  //    lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?.\d\d?\.)?""".r ^^ { case t => t.toString }
-  //lazy val datespan = """\d\d?\.\d?\d?\.?( --? \d\d?\.\d?\d?\.)?""".r ^^ { case t => t.toString }
-  //  lazy val datespan = """(\d\d?)\.(\d\d?)?\.? -- (\d\d?)?\.?(\d\d?)?\.?""".r ^^ { case t => t.toString }
-  //  lazy val datespan = """(\d\d?)\.(\d?\d?)\.?( --? (\d\d?)\.(\d?\d?)\.)?""".r ^^ { case t => t.toString }
-  //  lazy val datespan = """(\d\d?)\.(\d\d?)?\.? --? (\d\d?)?\.?(\d\d?)?\.?""".r ^^ { case t => t.toString }
   lazy val datespan = """(\d\d?)\.(\d\d?)?\.?( --? (\d\d?)?\.?(\d\d?)?\.?)?""".r ^^ { case t => t.toString }
   //  lazy val datespan = from
   //
