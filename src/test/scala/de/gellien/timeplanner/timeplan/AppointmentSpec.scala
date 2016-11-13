@@ -3,13 +3,13 @@ import org.specs2.mutable.SpecificationWithJUnit
 
 class AppointmentSpec extends SpecificationWithJUnit {
   val lineW52 = "2016-W52 23. - 27.12. Aikido seminar in Ffm"
-  val lineW1 = "2015-W01 4. -- 6.1. Aikido seminar in Ffm"
-  val line = "2015-W17 4. -- 6.04. Aikido seminar in Ffm"
+  val lineW1 = "2015-W01 4. - 6.1. Aikido seminar in Ffm"
+  val line = "2015-W17 4. - 6.04. Aikido seminar in Ffm"
   val lineWithoutToDate = "2015-W17 4.04. Aikido seminar in Ffm"
   val lineWithMonth = "2015-W17 24.04. - 26.04. Aikido seminar in Ffm"
   val lineWithOneMonth = "2015-W17 24. - 26.04. Aikido seminar in Ffm"
   val lineBetweenMonths = "2015-W18 30.04. - 1.05. Aikido seminar in Ffm"
-  val lineEom = "2015-W22 [Aikido] 30. -- 31. Aikido seminar in Ffm"
+  val lineEom = "2015-W22 [Aikido] 30. - 31. Aikido seminar in Ffm"
 
   def getSubs(line: String) = {
     val todo = ToDoDsl.getToDo(line).get
@@ -20,7 +20,7 @@ class AppointmentSpec extends SpecificationWithJUnit {
   }
 
   "Appointments" should {
-    "have 3 SubTasks for 4. -- 6." in {
+    "have 3 SubTasks for 4. - 6." in {
       val subs = getSubs(line)
       subs.size must_== 3
     }
@@ -36,7 +36,7 @@ class AppointmentSpec extends SpecificationWithJUnit {
       subs.size must_== 2
     }
 
-    "have 2 SubTasks for 30. -- 31. in May" in {
+    "have 2 SubTasks for 30. - 31. in May" in {
       val subs = getSubs(lineEom)
       subs.size must_== 2
     }

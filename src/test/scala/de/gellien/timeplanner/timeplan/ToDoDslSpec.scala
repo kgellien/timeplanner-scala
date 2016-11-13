@@ -25,8 +25,8 @@ class ToDoDslSpec extends SpecificationWithJUnit {
   val specificDateExpectedWithClassifier = """Task(2012-01-26,Some(aikido),List(),classified task)"""
   val dailyWithTime = """D 11:00 daily task"""
   val dailyWithTimeExpected = """Appointment(D,None,List(),11:00,daily task)"""
-  val dailyWithTimePeriod = """D 11:00 -- 12:00 daily task"""
-  val dailyWithTimePeriodExpected = """Appointment(D,None,List(),11:00 -- 12:00,daily task)"""
+  val dailyWithTimePeriod = """D 11:00 - 12:00 daily task"""
+  val dailyWithTimePeriodExpected = """Appointment(D,None,List(),11:00 - 12:00,daily task)"""
   val dailyWithTimePeriod2 = """D 11:00 - 12:00 daily task"""
   val dailyWithTimePeriod2Expected = """Appointment(D,None,List(),11:00 - 12:00,daily task)"""
 

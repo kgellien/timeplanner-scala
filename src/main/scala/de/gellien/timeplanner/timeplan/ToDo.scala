@@ -110,8 +110,7 @@ object ToDoHelper {
   }
 
   def getDatespan(dateInfo: String) = {
-    //    val datespan = """(\d\d?)\.(\d\d?)?\.?(\d\d\d\d)?( --? (\d\d?)?\.?(\d\d?)?\.?(\d\d\d\d)?)?""".r
-    val datespan = """(\d\d?)\.(\d\d?)?\.?(\d\d\d\d)?( --? (\d\d?)\.(\d\d?)\.(\d\d\d\d)?)?""".r
+    val datespan = """(\d\d?)\.(\d\d?)?\.?(\d\d\d\d)?( - (\d\d?)\.(\d\d?)\.(\d\d\d\d)?)?""".r
     val datespan(fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = dateInfo
     (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear)
   }
