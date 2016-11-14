@@ -13,6 +13,10 @@ Both projects can read from multiple input files which will be consolidated into
 
 There I differentiate between tasks (keyed by date without associated time), appointment (date with time) and anniversaries (date without year).
 
+This distinction is not thought through properly.
+Currently, everything with either time or date before the info text of an entry is considered an appointment.
+
+In the generated PDF the appointments start at the top, whereas the tasks go to the bottom.
 
 Look at anniversaries.txt and appointments2012.txt for example input, whereas timeplan.txt defines which specific plans should be generated.
 
@@ -23,6 +27,17 @@ For this call seemingly the full path to pdflatex is needed. To adjust your pers
 change something in the checked in files, copy `timeplan.properties.template` to `timeplan.properties` which is listed in .hgignore / .gitignore and change the entries
 according to your needs.
 
+## Appointments/Tasks
+
+It is possible to enter a date or a date range, e.g.
+
+    2012-W16 [Business] 16. - 17.04. weekly appointment
+
+or
+
+    2012-W16 [Business] 18.04. weekly appointment
+
+To make interpretation easier, in the current version at least one month is required. 
 
 ## Prerequisites
 

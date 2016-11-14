@@ -59,10 +59,6 @@ object TimeHelper {
   def daysInWeek(year: Int, week: Int): List[LocalDate] = {
     val startDay = getFirstDayInWeek(year, week)
     daysInPeriod(startDay, startDay plusDays 6)
-    //    (for {
-    //      i <- 0 until 7
-    //      currentDay = startDay plusDays i
-    //    } yield currentDay).toList
   }
 
   def weeksInYear(year: Int): Int = {

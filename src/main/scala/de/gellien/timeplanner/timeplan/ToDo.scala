@@ -1,9 +1,5 @@
 package de.gellien.timeplanner.timeplan
 
-import scala.collection.mutable.ListBuffer
-import org.joda.time.LocalDate
-import TimeHelper._
-
 case class ToDoList(val anniversaries: List[Anniversary], val appointments: List[Appointment], val tasks: List[Task])
 
 abstract sealed class ToDo(val periodEntry: PeriodBase)
@@ -87,79 +83,5 @@ case class Task(
   def toLatexWithClassifier = classifierOpt match {
     case Some(classifier) => "[%s] %s" format (classifier, info)
     case _                => info
-  }
-}
-
-object ToDoHelper {
-  def extractTodosForPeriod(pe: PeriodEntry, todos: List[ToDo], pes: PeriodBase*): ToDoList = {
-    val anniversaries = new ListBuffer[Anniversary]
-    val appointments = new ListBuffer[Appointment]
-    val tasks = new ListBuffer[Task]
-    // TODO: try groupBy and filter
-    for (todo <- todos; pb <- pe :: (pes.toList)) {
-      todo match {
-        case td @ Anniversary(`pb`, y, i)          => anniversaries += td
-        case td @ Appointment(`pb`, c, Nil, tp, i) => appointments += td
-        case td @ Appointment(`pb`, c, lst, tp, i) => if (pe.withinBounds(lst)) appointments += td
-        case td @ Task(`pb`, c, Nil, i)            => tasks += td
-        case td @ Task(`pb`, c, lst, i)            => if (pe.withinBounds(lst)) tasks += td
-        case _                                     => ;
-      }
-    }
-    ToDoList(anniversaries.toList, appointments.toList, tasks.toList)
-  }
-
-  def getDatespan(dateInfo: String) = {
-    val datespan = """(\d\d?)\.(\d\d?)?\.?(\d\d\d\d)?( - (\d\d?)\.(\d\d?)\.(\d\d\d\d)?)?""".r
-    val datespan(fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = dateInfo
-    (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear)
-  }
-
-  def toIsoDate(day: String, month: String, year: String, pe: PeriodEntry) = {
-    pe match {
-      case we: WeekEntry =>
-        val yyyy = if (year != null) year.toInt else pe.year
-        val MM = if (month != null) month.toInt else if (pe.lower.day <= day.toInt || pe.upper.day < day.toInt) pe.lower.month else pe.upper.month
-        val dd = day.toInt
-        IsoDate(yyyy, MM, dd)
-      case _ =>
-        val yyyy = if (year != null) year.toInt else pe.year
-        val MM = if (month != null) month.toInt else if (pe.lower.day <= day.toInt || pe.upper.day < day.toInt) pe.lower.month else pe.upper.month
-        val dd = day.toInt
-        IsoDate(yyyy, MM, dd)
-    }
-  }
-
-  def extractTimeInfo(a: Appointment) = {
-    if (!a.timeInfo.contains(":")) { // No Time; date only
-      val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = getDatespan(a.timeInfo)
-      //      println(fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear)
-      val fromIso = toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
-      val toIso = try {
-        toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
-      } catch {
-        case e: NumberFormatException => fromIso
-      }
-      //      val cols = a.timeInfo.split("-")
-      a.periodEntry match {
-        case pe: PeriodEntry =>
-          (Some(fromIso), Some(toIso))
-        case pb: PeriodBase =>
-          (None, None)
-      }
-    } else (None, None)
-  }
-
-  def printTimeInfo(a: Appointment) = {
-    if (!a.timeInfo.contains(":")) { // No Time; date only
-      val (fromIso, toIso) = extractTimeInfo(a)
-      val prefix = a.periodEntry match {
-        case pe: PeriodEntry =>
-          f"${pe} (${pe.lower} - ${pe.upper})"
-        case pb: PeriodBase =>
-          f"${pb}"
-      }
-      println(f"${prefix}) : ${a.timeInfo} : ${fromIso} - ${toIso}")
-    }
   }
 }
