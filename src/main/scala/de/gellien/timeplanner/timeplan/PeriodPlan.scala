@@ -47,14 +47,14 @@ object PeriodPlan {
         val period = SinglePeriod(periodEntry, todoList, periodEntry.header)
         val additionalTasks = if (withAdditionalTasks) for {
           appointment <- todoList.appointments
-          additionalTask <- appointment.extractSubTasks()
+          additionalTask <- Appointment.extractSubTasks(appointment)
         } yield additionalTask
         else Nil
-//        println("todoList.appointments:")
-//        todoList.appointments foreach {app => println("   %s" format app)}
-//        println("additionalTasks:")
-//        additionalTasks foreach {task => println("   %s" format task)}
-//        println(period)
+        //        println("todoList.appointments:")
+        //        todoList.appointments foreach {app => println("   %s" format app)}
+        //        println("additionalTasks:")
+        //        additionalTasks foreach {task => println("   %s" format task)}
+        //        println(period)
         val augmentedTodos = todos ++ additionalTasks
         val periodSpecifics = for {
           currentDay <- TimeHelper.daysInWeek(periodEntry.year, periodEntry.week) take daysPerWeek
@@ -63,7 +63,7 @@ object PeriodPlan {
           psTodos = ToDoHelper.extractTodosForPeriod(pe, augmentedTodos, pes: _*)
         } yield SinglePeriod(pe, psTodos, pe.header)
         val result = WeekPlan(periodEntry, period, periodSpecifics, withOverview)
-//        println(result.periodOverview)
+        //        println(result.periodOverview)
         result
       }
       case periodEntry @ MonthEntry(y, m) => {

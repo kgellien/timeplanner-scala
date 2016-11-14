@@ -54,20 +54,23 @@ object ToDoHelper {
             case None               => fromIso
           }
           (fromIso, toIso)
-        } else (None, None)
+        } else {
+          println(a)
+          (None, None)
+        }
       case pb: PeriodBase =>
         (None, None)
     }
   }
 
   def printTimeInfo(a: Appointment) = {
-    if (!a.timeInfo.contains(":")) { // No Time; date only
-      val (fromIso, toIso) = extractTimeInfo(a)
-      val prefix = a.periodEntry match {
-        case pe: PeriodEntry => f"${pe} (${pe.lower} - ${pe.upper})"
-        case pb: PeriodBase  => f"${pb}"
-      }
-      println(f"${prefix}) : ${a.timeInfo} : ${fromIso} - ${toIso}")
+    //    if (!a.timeInfo.contains(":")) { // No Time; date only
+    val (fromIso, toIso) = extractTimeInfo(a)
+    val prefix = a.periodEntry match {
+      case pe: PeriodEntry => f"${pe} (${pe.lower} - ${pe.upper})"
+      case pb: PeriodBase  => f"${pb}"
     }
+    println(f"${prefix}) : ${a.timeInfo} : ${fromIso} - ${toIso}")
+    //    }
   }
 }

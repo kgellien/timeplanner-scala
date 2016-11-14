@@ -48,7 +48,7 @@ To make interpretation easier, in the current version at least one month is requ
 ## Known Problems / Errors
 
 - call to pdflatex sometimes does not return; explicit call afterwards does work
-
+- Option --withAdditionalTasks currently broken
 
 ## To Do
 

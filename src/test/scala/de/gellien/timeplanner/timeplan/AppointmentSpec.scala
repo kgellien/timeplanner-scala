@@ -14,7 +14,7 @@ class AppointmentSpec extends SpecificationWithJUnit {
   def getSubs(line: String) = {
     val todo = ToDoDsl.getToDo(line).get
     todo match {
-      case app @ Appointment(pe, cl, db, ti, info) => app.extractSubTasks()
+      case app @ Appointment(pe, cl, db, ti, info) => Appointment.extractSubTasks(app)
       case _                                       => Nil
     }
   }
@@ -64,8 +64,8 @@ class AppointmentSpec extends SpecificationWithJUnit {
           val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
           val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
           val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          fromIso must_== IsoDate(2015, 1, 4)
-          toIso must_== IsoDate(2015, 1, 6)
+          fromIso must_== Some(IsoDate(2015, 1, 4))
+          toIso must_== Some(IsoDate(2015, 1, 6))
         case _ => println("Appointment expected")
       }
       td.periodEntry.hashCode must_== 500287211
@@ -79,8 +79,8 @@ class AppointmentSpec extends SpecificationWithJUnit {
           val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
           val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
           val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          fromIso must_== IsoDate(2015, 4, 24)
-          toIso must_== IsoDate(2015, 4, 26)
+          fromIso must_== Some(IsoDate(2015, 4, 24))
+          toIso must_== Some(IsoDate(2015, 4, 26))
         case _ => println("Appointment expected")
       }
       td.periodEntry.hashCode must_== 134469318
@@ -94,8 +94,8 @@ class AppointmentSpec extends SpecificationWithJUnit {
           val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
           val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
           val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          fromIso must_== IsoDate(2016, 12, 23)
-          toIso must_== IsoDate(2016, 12, 27)
+          fromIso must_== Some(IsoDate(2016, 12, 23))
+          toIso must_== Some(IsoDate(2016, 12, 27))
         case _ => println("Appointment expected")
       }
       td.periodEntry.hashCode must_== -1237712040

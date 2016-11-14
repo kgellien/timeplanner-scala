@@ -4,6 +4,7 @@ LATEX="--callpdflatex"
 #LATEX=""
 
 TP_OPTS="--withSeparator"
+TP_OPTS="--withAdditionalTasks --daysPerWeek 7 --withOverview"
 TP_OPTS="--daysPerWeek 7 --withOverview"
 
 TODOS="anniversaries.txt appointments2012.txt"

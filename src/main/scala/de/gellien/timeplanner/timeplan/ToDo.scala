@@ -26,13 +26,28 @@ case class Appointment(
     case Some(classifier) => "[%s] %s" format (classifier, toLatex)
     case _                => toLatex
   }
-  def extractSubTaskPeriodEntry(pe: PeriodEntry): List[Task] = {
+}
+
+case class Task(
+    override val periodEntry: PeriodBase,
+    val classifierOpt: Option[String],
+    val dateBounds: List[DateBound],
+    val info: String) extends ToDo(periodEntry) {
+  def toLatex = info
+  def toLatexWithClassifier = classifierOpt match {
+    case Some(classifier) => "[%s] %s" format (classifier, info)
+    case _                => info
+  }
+}
+
+object Appointment {
+  def extractSubTaskPeriodEntry(pe: PeriodEntry, a: Appointment): List[Task] = {
     // periodEntry here is known to be of type PeriodEntry
     val first = TimeHelper.getFirstDayOfPeriod(pe)
     val last = TimeHelper.getLastDayOfPeriod(pe)
     val (fromDay, fromMonth, toDay, toMonth) = try {
       val re = """(\d\d?)\.(\d\d?)?\.? --? (\d\d?)?\.?(\d\d?)?\.?""".r
-      val re(fds, fms, tds, tms) = timeInfo
+      val re(fds, fms, tds, tms) = a.timeInfo
       val fd = if (fds == null) None else Some(fds.toInt)
       val fm = if (fms == null) None else Some(fms.toInt)
       val td = if (tds == null) None else Some(tds.toInt)
@@ -44,7 +59,7 @@ case class Appointment(
         (None, None, None, None)
       }
     }
-    val result = periodEntry match {
+    val result = a.periodEntry match {
       case pe @ WeekEntry(y, w) => {
         // TODO: check questionable logic! Just good enough for *current* uses
         val monthFirst = first.getMonthOfYear
@@ -59,29 +74,17 @@ case class Appointment(
         val to = DayEntry(yearLast, toM, toD)
         val lst = for {
           day <- TimeHelper.daysInPeriod(from, to)
-        } yield Task(day, classifierOpt, dateBounds, info)
+        } yield Task(day, a.classifierOpt, a.dateBounds, a.info)
         lst
       }
       case _ => Nil
     }
     result
   }
-  def extractSubTasks(): List[Task] = {
-    periodEntry match {
-      case pe: PeriodEntry => extractSubTaskPeriodEntry(pe)
+  def extractSubTasks(a: Appointment): List[Task] = {
+    a.periodEntry match {
+      case pe: PeriodEntry => extractSubTaskPeriodEntry(pe, a)
       case _               => Nil
     }
-  }
-}
-
-case class Task(
-    override val periodEntry: PeriodBase,
-    val classifierOpt: Option[String],
-    val dateBounds: List[DateBound],
-    val info: String) extends ToDo(periodEntry) {
-  def toLatex = info
-  def toLatexWithClassifier = classifierOpt match {
-    case Some(classifier) => "[%s] %s" format (classifier, info)
-    case _                => info
   }
 }
