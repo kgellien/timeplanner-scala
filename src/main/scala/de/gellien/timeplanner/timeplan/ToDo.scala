@@ -2,12 +2,12 @@ package de.gellien.timeplanner.timeplan
 
 case class ToDoList(val anniversaries: List[Anniversary], val appointments: List[Appointment], val tasks: List[Task])
 
-abstract sealed class ToDo(val periodEntry: PeriodBase)
+abstract sealed class ToDo(val periodEntry: PeriodBase, val info: String)
 
 case class Anniversary(
     override val periodEntry: PeriodBase,
     val yearOpt: Option[Int],
-    val info: String) extends ToDo(periodEntry) {
+    override val info: String) extends ToDo(periodEntry, info) {
   def toLatex = yearOpt match {
     case Some(year) => "%s (%s)" format (info, year)
     case _          => info
@@ -19,7 +19,7 @@ case class Appointment(
     val classifierOpt: Option[String],
     val dateBounds: List[DateBound],
     val timeInfo: String,
-    val info: String) extends ToDo(periodEntry) {
+    override val info: String) extends ToDo(periodEntry, info) {
   val timeInfoForLatex = timeInfo.replace(" - ", " -- ")
   def toLatex = "%s %s" format (timeInfoForLatex, info)
   def toLatexWithClassifier = classifierOpt match {
@@ -32,7 +32,7 @@ case class Task(
     override val periodEntry: PeriodBase,
     val classifierOpt: Option[String],
     val dateBounds: List[DateBound],
-    val info: String) extends ToDo(periodEntry) {
+    override val info: String) extends ToDo(periodEntry, info) {
   def toLatex = info
   def toLatexWithClassifier = classifierOpt match {
     case Some(classifier) => "[%s] %s" format (classifier, info)
