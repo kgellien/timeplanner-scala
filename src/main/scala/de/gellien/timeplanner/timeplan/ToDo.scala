@@ -27,6 +27,7 @@ case class Task(
 
 object Appointment {
   def extractSubTaskPeriodEntry(pe: PeriodEntry, a: Appointment): List[Task] = {
+//  	println(a)
     // periodEntry here is known to be of type PeriodEntry
     val first = TimeHelper.getFirstDayOfPeriod(pe)
     val last = TimeHelper.getLastDayOfPeriod(pe)
@@ -54,14 +55,18 @@ object Appointment {
         val monthLast = last.getMonthOfYear
         val yearLast = last.getYear
         val fromD = fromDay.getOrElse(0)
-        val toD = toDay.getOrElse(-1)
         val fromM = fromMonth.getOrElse(monthFirst)
-        val toM = toMonth.getOrElse(monthLast)
         val from = DayEntry(yearFirst, fromM, fromD)
-        val to = DayEntry(yearLast, toM, toD)
+        val to = toDay match {
+        	case Some(toD) =>
+              val toM = toMonth.getOrElse(monthLast)
+        	  DayEntry(yearLast, toM, toD)
+        	case None     => from
+        }
         val lst = for {
           day <- TimeHelper.daysInPeriod(from, to)
         } yield Task(day, a.classifierOpt, a.dateBounds, a.info)
+//        for (task <- lst) println("  " + task)
         lst
       }
       case _ => Nil
