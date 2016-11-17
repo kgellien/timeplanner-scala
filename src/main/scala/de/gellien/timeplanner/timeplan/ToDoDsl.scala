@@ -23,7 +23,6 @@ class ToDoDsl extends JavaTokenParsers {
     }
   }
 
-  //  lazy val dateInfo = (anniversaryEntry | weekDay | daily | weekly | monthly | quarterly | yearly | calDate)
   lazy val dateInfo = (weekDay | daily | weekly | monthly | quarterly | yearly | calDate)
 
   lazy val calDate = (calDay | calWeek | calMonth | calQuarter | calYear)
@@ -48,12 +47,7 @@ class ToDoDsl extends JavaTokenParsers {
 
   lazy val clockspan = """\d\d?:\d{2}( - \d\d?:\d{2})?""".r ^^ { case t => t.toString }
 
-  lazy val datespan = """(\d\d?)\.(\d\d?)?\.?( - (\d\d?)?\.?(\d\d?)?\.?)?""".r ^^ { case t => t.toString }
-  //  lazy val datespan = from
-  //
-  //  lazy val from = fromDay ~ "-" ~ fromDay ^^ { case from ~ s ~ to => "%2d. - %2d." format (from, to) }
-  //  lazy val fromDay = dayNo <~ "."
-  //  lazy val fromMonth = monthNo <~ "."
+  lazy val datespan = """(\d\d?)\.(\d\d?)?\.?( - (\d\d?)\.(\d\d?)\.)?""".r ^^ { case t => t.toString }
 
   lazy val dayMonth = day ~ month ^^ { case d ~ m => DayMonth(d, m) }
   lazy val day = dayNo ~ "." ^^ { case d ~ s => d }

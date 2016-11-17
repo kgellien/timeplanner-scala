@@ -45,18 +45,20 @@ object Appointment {
     // periodEntry here is known to be of type PeriodEntry
     val first = TimeHelper.getFirstDayOfPeriod(pe)
     val last = TimeHelper.getLastDayOfPeriod(pe)
-    val (fromDay, fromMonth, toDay, toMonth) = try {
-      val re = """(\d\d?)\.(\d\d?)?\.? --? (\d\d?)?\.?(\d\d?)?\.?""".r
-      val re(fds, fms, tds, tms) = a.timeInfo
+    val (fromDay, fromMonth, fromYear, toDay, toMonth, toYear) = try {
+      val re = """(\d\d?)\.((\d\d?)\.)?(\d\d\d\d)?( - (\d\d?)\.(\d\d?)\.(\d\d\d\d)?)?""".r
+      val re(fds, _, fms, fys, to, tds, tms, tys) = a.timeInfo
       val fd = if (fds == null) None else Some(fds.toInt)
       val fm = if (fms == null) None else Some(fms.toInt)
+      val fy = if (fys == null) None else Some(fys.toInt)
       val td = if (tds == null) None else Some(tds.toInt)
       val tm = if (tms == null) None else Some(tms.toInt)
-      (fd, fm, td, tm)
+      val ty = if (tys == null) None else Some(tys.toInt)
+      (fd, fm, fy, td, tm, ty)
     } catch {
       case me: scala.MatchError => {
         println("ERROR in extractSubTasks for %s" format this)
-        (None, None, None, None)
+        (None, None, None, None, None, None)
       }
     }
     val result = a.periodEntry match {

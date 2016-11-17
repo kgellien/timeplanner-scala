@@ -9,7 +9,7 @@ class AppointmentSpec extends SpecificationWithJUnit {
   val lineWithMonth = "2015-W17 24.04. - 26.04. Aikido seminar in Ffm"
   val lineWithOneMonth = "2015-W17 24. - 26.04. Aikido seminar in Ffm"
   val lineBetweenMonths = "2015-W18 30.04. - 1.05. Aikido seminar in Ffm"
-  val lineEom = "2015-W22 [Aikido] 30. - 31. Aikido seminar in Ffm"
+  val lineEom = "2015-W22 [Aikido] 30. - 31.5. Aikido seminar in Ffm"
 
   def getSubs(line: String) = {
     val todo = ToDoDsl.getToDo(line).get
@@ -36,7 +36,7 @@ class AppointmentSpec extends SpecificationWithJUnit {
       subs.size must_== 2
     }
 
-    "have 2 SubTasks for 30. - 31. in May" in {
+    "have 2 SubTasks for 30. - 31.5." in {
       val subs = getSubs(lineEom)
       subs.size must_== 2
     }
@@ -49,8 +49,8 @@ class AppointmentSpec extends SpecificationWithJUnit {
           val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
           val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
           val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          fromIso must_== IsoDate(2015, 4, 30)
-          toIso must_== IsoDate(2015, 5, 1)
+          fromIso must_== Some(IsoDate(2015, 4, 30))
+          toIso must_== Some(IsoDate(2015, 5, 1))
         case _ => println("Appointment expected")
       }
       td.periodEntry.hashCode must_== -402402315
