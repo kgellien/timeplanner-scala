@@ -90,18 +90,25 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val result = new ListBuffer[String]
     result += todo.appointments.sortBy(_.timeInfo).map { a =>
       //      ToDoHelper.printTimeInfo(a)
-      "%s" format a.toLatex
+      s"${a.timeInfo.replace(" - ", " -- ")} ${a.info}"
     }.mkString("\n\n")
     if (!todo.anniversaries.isEmpty) {
       result += """\vfill"""
       result += centeredLine
-      result += todo.anniversaries.sortBy(_.info).map { a => "$*$%s" format a.toLatex }.mkString("\n", "\n\n", "\n")
+      result += todo.anniversaries.sortBy(_.info).map { a =>
+        s"$$*$$${a.info}" + (a.yearOpt match {
+          case Some(year) => f" (${year}%d)"
+          case _          => ""
+        })
+      }.mkString("\n", "\n\n", "\n")
     }
     if (withSeparator || !todo.anniversaries.isEmpty) {
       result += centeredLine
     }
     result += """\vfill"""
-    result += todo.tasks.sortBy(_.info).map { a => """$\square$ %s""" format a.toLatex }.mkString("\n\n")
+    result += todo.tasks.sortBy(_.info).map { a =>
+      s"""$$\\square$$ ${a.info}"""
+    }.mkString("\n\n")
     result
   }
 

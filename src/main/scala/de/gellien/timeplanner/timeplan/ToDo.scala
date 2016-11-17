@@ -8,10 +8,6 @@ case class Anniversary(
     override val periodEntry: PeriodBase,
     val yearOpt: Option[Int],
     override val info: String) extends ToDo(periodEntry, info) {
-  def toLatex = yearOpt match {
-    case Some(year) => "%s (%s)" format (info, year)
-    case _          => info
-  }
 }
 
 case class Appointment(
@@ -20,12 +16,6 @@ case class Appointment(
     val dateBounds: List[DateBound],
     val timeInfo: String,
     override val info: String) extends ToDo(periodEntry, info) {
-  val timeInfoForLatex = timeInfo.replace(" - ", " -- ")
-  def toLatex = "%s %s" format (timeInfoForLatex, info)
-  def toLatexWithClassifier = classifierOpt match {
-    case Some(classifier) => "[%s] %s" format (classifier, toLatex)
-    case _                => toLatex
-  }
 }
 
 case class Task(
@@ -33,11 +23,6 @@ case class Task(
     val classifierOpt: Option[String],
     val dateBounds: List[DateBound],
     override val info: String) extends ToDo(periodEntry, info) {
-  def toLatex = info
-  def toLatexWithClassifier = classifierOpt match {
-    case Some(classifier) => "[%s] %s" format (classifier, info)
-    case _                => info
-  }
 }
 
 object Appointment {

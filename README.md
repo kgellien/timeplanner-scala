@@ -75,6 +75,7 @@ To make interpretation easier, in the current version at least one month is requ
  - datespan might now just be one date
  - Birthdays now centered between Appointments and Tasks
  - Tasks and Birthdays now also sorted
+ - no LaTeX specific code outside of LatexTimePlan
 
 
 ### 0.7.7
