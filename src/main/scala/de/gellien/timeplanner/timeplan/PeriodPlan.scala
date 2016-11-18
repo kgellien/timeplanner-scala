@@ -5,32 +5,34 @@ case class SinglePeriod(val periodEntry: PeriodEntry, val todo: ToDoList, header
 }
 
 abstract sealed class PeriodPlan(val periodEntry: PeriodEntry, val period: SinglePeriod, val periodSpecifics: List[SinglePeriod], val withOverview: Boolean) {
-  val header: (String, String, String)
+  val left = periodEntry.year.toString
+  def middle = ""
+  def right = ""
+  val header = (left, middle, right)
   def periodOverview: List[SinglePeriod] = PeriodSplitter(period)
 }
 
 case class DayPlan(override val periodEntry: DayEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
-  override val header = (periodEntry.year.toString, "", TimeHelper.monthName(periodEntry.month))
+  override def right = TimeHelper.monthName(periodEntry.month)
 }
 
 case class WeekPlan(override val periodEntry: WeekEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean)(implicit val daysPerWeek: Int) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
-  override val header = {
+  override def middle = {
     val (start, end) = TimeHelper.fromToWeek(periodEntry.year, periodEntry.week)
-    (periodEntry.year.toString, s"${start} - ${end}", f"W${periodEntry.week}%02d")
+    s"${start} - ${end}"
   }
+  override def right = f"W${periodEntry.week}%02d"
 }
 
 case class MonthPlan(override val periodEntry: MonthEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
-  override val header = (periodEntry.year.toString, "", TimeHelper.monthName(periodEntry.month))
+  override def right = TimeHelper.monthName(periodEntry.month)
 }
 
 case class QuarterPlan(override val periodEntry: QuarterEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
-  override val header = (periodEntry.year.toString, "", f"Q${periodEntry.quarter}%d")
+  override def right = f"Q${periodEntry.quarter}%d"
 }
 
-case class YearPlan(override val periodEntry: YearEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
-  override val header = (periodEntry.year.toString, "", "")
-}
+case class YearPlan(override val periodEntry: YearEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview)
 
 object PeriodPlan {
   def apply(pe: PeriodEntry, todos: List[ToDo], withOverview: Boolean)(implicit daysPerWeek: Int, withAdditionalTasks: Boolean): PeriodPlan = {

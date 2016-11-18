@@ -24,7 +24,7 @@ case class WeekEntry(override val year: Int, week: Int) extends PeriodEntry(year
 
 case class MonthEntry(override val year: Int, month: Int) extends PeriodEntry(year) {
   override def toString = "%d-%02d" format (year, month)
-  override val header = "%s" format (TimeHelper.monthName(month))
+  override val header = TimeHelper.monthName(month)
 }
 
 case class QuarterEntry(override val year: Int, quarter: Int) extends PeriodEntry(year) {
@@ -34,7 +34,7 @@ case class QuarterEntry(override val year: Int, quarter: Int) extends PeriodEntr
 
 case class YearEntry(override val year: Int) extends PeriodEntry(year) {
   override def toString = "%d" format (year)
-  override val header = "%d" format year
+  override val header = year.toString
 }
 
 case class AnniversaryEntry(month: Int, day: Int) extends PeriodBase
