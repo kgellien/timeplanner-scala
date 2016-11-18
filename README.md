@@ -76,6 +76,8 @@ To make interpretation easier, in the current version at least one month is requ
  - Birthdays now centered between Appointments and Tasks
  - Tasks and Birthdays now also sorted
  - no LaTeX specific code outside of LatexTimePlan
+ - --withAdditionalTasks works for Weekly Appointment to Daily Tasks
+ - experimental --withAdditionalTasks: Weekly Appointments to additional Daily Appointments
 
 
 ### 0.7.7

@@ -59,7 +59,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val (left, middle, rightCandidate) = plan.header
     val right = if (rightCandidate == "") """\phantom{.}""" else rightCandidate
     val result = new ListBuffer[String]
-    result += """{\Large \bf %s \hfill %s \hfill %s}""" format (left, middle, right)
+    result += """{\Large \bf %s \hfill %s \hfill %s}""" format (left, middle.replace(" - ", " -- "), right)
     result
   }
 

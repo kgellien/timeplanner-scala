@@ -1,7 +1,7 @@
 package de.gellien.timeplanner.timeplan
 
 case class SinglePeriod(val periodEntry: PeriodEntry, val todo: ToDoList, header: String) {
-  override def toString = "%s: %s" format (periodEntry, todo)
+  override def toString = s"${periodEntry}: ${todo}"
 }
 
 abstract sealed class PeriodPlan(val periodEntry: PeriodEntry, val period: SinglePeriod, val periodSpecifics: List[SinglePeriod], val withOverview: Boolean) {
@@ -10,26 +10,26 @@ abstract sealed class PeriodPlan(val periodEntry: PeriodEntry, val period: Singl
 }
 
 case class DayPlan(override val periodEntry: DayEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
-  override val header = ("%d" format periodEntry.year, "", "%s" format (TimeHelper.monthName(periodEntry.month)))
+  override val header = (periodEntry.year.toString, "", TimeHelper.monthName(periodEntry.month))
 }
 
 case class WeekPlan(override val periodEntry: WeekEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean)(implicit val daysPerWeek: Int) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
   override val header = {
     val (start, end) = TimeHelper.fromToWeek(periodEntry.year, periodEntry.week)
-    ("%d" format periodEntry.year, "%s -- %s" format (start, end), "W%02d" format periodEntry.week)
+    (periodEntry.year.toString, s"${start} - ${end}", f"W${periodEntry.week}%02d")
   }
 }
 
 case class MonthPlan(override val periodEntry: MonthEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
-  override val header = ("%d" format periodEntry.year, "", "%s" format (TimeHelper.monthName(periodEntry.month)))
+  override val header = (periodEntry.year.toString, "", TimeHelper.monthName(periodEntry.month))
 }
 
 case class QuarterPlan(override val periodEntry: QuarterEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
-  override val header = ("%d" format periodEntry.year, "", "%s" format "Q%d" format periodEntry.quarter)
+  override val header = (periodEntry.year.toString, "", f"Q${periodEntry.quarter}%d")
 }
 
 case class YearPlan(override val periodEntry: YearEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
-  override val header = ("%d" format periodEntry.year, "", "")
+  override val header = (periodEntry.year.toString, "", "")
 }
 
 object PeriodPlan {
@@ -50,11 +50,6 @@ object PeriodPlan {
           additionalTask <- Appointment.extractSubTasks(appointment)
         } yield additionalTask
         else Nil
-        //        println("todoList.appointments:")
-        //        todoList.appointments foreach {app => println("   %s" format app)}
-        //        println("additionalTasks:")
-        //        additionalTasks foreach {task => println("   %s" format task)}
-        //        println(period)
         val augmentedTodos = todos ++ additionalTasks
         val periodSpecifics = for {
           currentDay <- TimeHelper.daysInWeek(periodEntry.year, periodEntry.week) take daysPerWeek
@@ -63,7 +58,6 @@ object PeriodPlan {
           psTodos = ToDoHelper.extractTodosForPeriod(pe, augmentedTodos, pes: _*)
         } yield SinglePeriod(pe, psTodos, pe.header)
         val result = WeekPlan(periodEntry, period, periodSpecifics, withOverview)
-        //        println(result.periodOverview)
         result
       }
       case periodEntry @ MonthEntry(y, m) => {
