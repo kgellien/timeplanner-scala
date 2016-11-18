@@ -89,7 +89,6 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val centeredLine = """{\center \rule{0.5\linewidth}{0.3mm}\\[1.5em] }"""
     val result = new ListBuffer[String]
     result += todo.appointments.sortBy(_.timeInfo).map { a =>
-      //      ToDoHelper.printTimeInfo(a)
       s"${a.timeInfo.replace(" - ", " -- ")} ${a.info}"
     }.mkString("\n\n")
     if (!todo.anniversaries.isEmpty) {
@@ -115,7 +114,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   def renderHeading(singlePeriod: SinglePeriod) = {
     val result = new ListBuffer[String]
     result += """\begin{center}"""
-    result += """{\bf %s} \\""" format singlePeriod.header
+    result += """{\bf %s} \\""" format singlePeriod.header.replace(" - ", " -- ")
     result += """\rule{\linewidth}{0.3mm} \\"""
     result += """\end{center}"""
     result

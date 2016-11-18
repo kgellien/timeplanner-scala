@@ -18,7 +18,7 @@ case class WeekEntry(override val year: Int, week: Int) extends PeriodEntry(year
   override def toString = "%d-W%02d" format (year, week)
   override val header = {
     val (from, to) = TimeHelper.fromToWeek(year, week)
-    "W%02d: %s -- %s" format (week, from, to)
+    "W%02d: %s - %s" format (week, from, to)
   }
 }
 
