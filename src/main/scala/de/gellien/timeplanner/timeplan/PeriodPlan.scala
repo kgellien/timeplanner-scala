@@ -59,8 +59,7 @@ object PeriodPlan {
           pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(pe)), AnniversaryEntry(pe.month, pe.day))
           psTodos = ToDoHelper.extractTodosForPeriod(pe, augmentedTodos, pes: _*)
         } yield SinglePeriod(pe, psTodos, pe.header)
-        val result = WeekPlan(periodEntry, period, periodSpecifics, withOverview)
-        result
+        WeekPlan(periodEntry, period, periodSpecifics, withOverview)
       }
       case periodEntry @ MonthEntry(y, m) => {
         val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, MonthlyEntry())

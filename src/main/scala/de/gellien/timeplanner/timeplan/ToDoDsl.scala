@@ -4,7 +4,7 @@ import scala.util.parsing.combinator.JavaTokenParsers
 
 class ToDoDsl extends JavaTokenParsers {
 
-  lazy val toDoItem = (anniversary | appointmentOrTask)
+  lazy val toDoItem = (anniversary | appointment | task)
 
   // TODO: check whether zero or once is possible with rep
   lazy val anniversary = anniversaryEntry ~ rep(yearNo) ~ info ^^ {
@@ -12,14 +12,17 @@ class ToDoDsl extends JavaTokenParsers {
     case a ~ y ~ i   => Anniversary(a, Some(y.head), i)
   }
 
-  lazy val appointmentOrTask = dateInfo ~ rep(classifier) ~ rep(dateBound) ~ rep(timespan) ~ info ^^ {
-    case d ~ c ~ db ~ Nil ~ i => c match {
+  lazy val appointment = dateInfo ~ rep(classifier) ~ rep(dateBound) ~ timespan ~ info ^^ {
+    case d ~ c ~ db ~ t ~ i => c match {
+      case Nil => Appointment(d, None, db, t, i)
+      case _   => Appointment(d, Some(c.head), db, t, i)
+    }
+  }
+
+  lazy val task = dateInfo ~ rep(classifier) ~ rep(dateBound) ~ info ^^ {
+    case d ~ c ~ db ~ i => c match {
       case Nil => Task(d, None, db, i)
       case _   => Task(d, Some(c.head), db, i)
-    }
-    case d ~ c ~ db ~ t ~ i => c match {
-      case Nil => Appointment(d, None, db, t.mkString, i)
-      case _   => Appointment(d, Some(c.head), db, t.mkString, i)
     }
   }
 
@@ -33,8 +36,6 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val calQuarter = yearNo ~ "-Q" ~ quarterNo ^^ { case year ~ str ~ quarterNo => QuarterEntry(year, quarterNo) }
   lazy val calYear = yearNo ^^ { case year => YearEntry(year) }
 
-  lazy val timespan = (clockspan | datespan)
-
   lazy val anniversaryEntry = monthNo ~ "-" ~ dayNo ^^ { case monthNo ~ str ~ dayNo => AnniversaryEntry(monthNo, dayNo) }
 
   lazy val weekDay = """D\d""".r ^? ({ case i if ((1 to 7) contains i.tail.toInt) => WeekDayEntry(i.tail.toInt) }, (i => "week day needs to be in the range of 1 to 7"))
@@ -45,9 +46,25 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val quarterly = "Q" ^^ { case _ => QuarterlyEntry() }
   lazy val yearly = "Y" ^^ { case _ => YearlyEntry() }
 
-  lazy val clockspan = """\d\d?:\d{2}( - \d\d?:\d{2})?""".r ^^ { case t => t.toString }
+  lazy val timespan = (clockspan | datespan)
 
-  lazy val datespan = """(\d\d?)\.(\d\d?)?\.?( - (\d\d?)\.(\d\d?)\.)?""".r ^^ { case t => t.toString }
+  lazy val clockspan = hhmm ~ opt("-") ~ opt(hhmm) ^^ {
+    case from ~ Some(str) ~ Some(to) => Range(from, to)
+    case from ~ str ~ None           => Range(from, from)
+  }
+  lazy val hhmm = hours ~ ":" ~ minutes ^^ { case hh ~ str ~ mm => Time(hh, mm) }
+  lazy val minutes = """\d\d?""".r ^? ({ case minutes if ((0 to 59) contains minutes.toInt) => minutes.toInt }, (minutes => "day needs to be in the range of 0 to 59"))
+  lazy val hours = """\d\d?""".r ^? ({ case hours if ((0 to 23) contains hours.toInt) => hours.toInt }, (hours => "hours needs to be in the range of 0 to 23"))
+
+  lazy val datespan = ddmmyyyy ~ opt("-") ~ opt(ddmmyyyy) ^^ {
+    case from ~ Some(str) ~ Some(to) => Range(from, to)
+    case from ~ str ~ None           => Range(from, from)
+  }
+  lazy val ddmmyyyy = day ~ opt(month) ~ opt(yearNo) ^^ {
+    case day ~ Some(month) ~ Some(year) => Date(year, month, day)
+    case day ~ Some(month) ~ None       => Date(0, month, day)
+    case day ~ None ~ None              => Date(0, 0, day)
+  }
 
   lazy val dayMonth = day ~ month ^^ { case d ~ m => DayMonth(d, m) }
   lazy val day = dayNo ~ "." ^^ { case d ~ s => d }

@@ -89,7 +89,12 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val centeredLine = """{\center \rule{0.5\linewidth}{0.3mm}\\[1.5em] }"""
     val result = new ListBuffer[String]
     result += todo.appointments.sortBy(_.timeInfo).map { a =>
-      s"${a.timeInfo.replace(" - ", " -- ")} ${a.info}"
+      // TODO: Shorten TimeInfo output!
+      if (a.timeInfo.from == a.timeInfo.to) {
+        s"${a.timeInfo.from.short} ${a.info}"
+      } else {
+        s"${a.timeInfo.from.short} -- ${a.timeInfo.to.short} ${a.info}"
+      }
     }.mkString("\n\n")
     if (!todo.anniversaries.isEmpty) {
       result += """\vfill"""

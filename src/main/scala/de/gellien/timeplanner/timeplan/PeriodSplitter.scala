@@ -20,7 +20,7 @@ object PeriodSplitter {
       }
       append(taskMap, task, classifier, dummyTask)
     }
-    val dummyAppointment = Appointment(YearlyEntry(), None, Nil, "09:00", "DummyAppointment")
+    val dummyAppointment = Appointment(YearlyEntry(), None, Nil, Range(Time(9, 0), Time(9, 0)), "DummyAppointment")
     val appointmentMap = new HashMap[String, List[Appointment]]()
     for (appointment <- period.todo.appointments) {
       val classifier = appointment match {

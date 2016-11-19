@@ -44,62 +44,59 @@ class AppointmentSpec extends SpecificationWithJUnit {
     "printTimeInfo should work with lineBetweenMonths" in {
       val td = ToDoDsl.getToDo(lineBetweenMonths).get
       td match {
-        case a: Appointment =>
+        case a @ Appointment(periodEntry, classifierOpt, dateBounds, timeInfo @ Range(from: Date, to: Date), info) =>
           ToDoHelper.printTimeInfo(a)
-          val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
-          val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          fromIso must_== Some(IsoDate(2015, 4, 30))
-          toIso must_== Some(IsoDate(2015, 5, 1))
-        case _ => println("Appointment expected")
+          from.asIso must_== IsoDate(2015, 4, 30)
+          to.asIso must_== IsoDate(2015, 5, 1)
+        case _ => println("Appointment (with Date-Range) expected")
       }
       td.periodEntry.hashCode must_== -402402315
     }
 
-    "printTimeInfo should work with lineW1" in {
-      val td = ToDoDsl.getToDo(lineW1).get
-      td match {
-        case a: Appointment =>
-          ToDoHelper.printTimeInfo(a)
-          val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
-          val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          fromIso must_== Some(IsoDate(2015, 1, 4))
-          toIso must_== Some(IsoDate(2015, 1, 6))
-        case _ => println("Appointment expected")
-      }
-      td.periodEntry.hashCode must_== 500287211
-    }
-
-    "printTimeInfo should work with lineWithOneMonth" in {
-      val td = ToDoDsl.getToDo(lineWithOneMonth).get
-      td match {
-        case a: Appointment =>
-          ToDoHelper.printTimeInfo(a)
-          val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
-          val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          fromIso must_== Some(IsoDate(2015, 4, 24))
-          toIso must_== Some(IsoDate(2015, 4, 26))
-        case _ => println("Appointment expected")
-      }
-      td.periodEntry.hashCode must_== 134469318
-    }
-
-    "printTimeInfo should work with lineW52" in {
-      val td = ToDoDsl.getToDo(lineW52).get
-      td match {
-        case a: Appointment =>
-          ToDoHelper.printTimeInfo(a)
-          val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
-          val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
-          fromIso must_== Some(IsoDate(2016, 12, 23))
-          toIso must_== Some(IsoDate(2016, 12, 27))
-        case _ => println("Appointment expected")
-      }
-      td.periodEntry.hashCode must_== -1237712040
-    }
+    //    "printTimeInfo should work with lineW1" in {
+    //      val td = ToDoDsl.getToDo(lineW1).get
+    //      td match {
+    //        case a: Appointment =>
+    //          ToDoHelper.printTimeInfo(a)
+    //          val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
+    //          val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
+    //          val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
+    //          fromIso must_== Some(IsoDate(2015, 1, 4))
+    //          toIso must_== Some(IsoDate(2015, 1, 6))
+    //        case _ => println("Appointment expected")
+    //      }
+    //      td.periodEntry.hashCode must_== 500287211
+    //    }
+    //
+    //    "printTimeInfo should work with lineWithOneMonth" in {
+    //      val td = ToDoDsl.getToDo(lineWithOneMonth).get
+    //      td match {
+    //        case a: Appointment =>
+    //          ToDoHelper.printTimeInfo(a)
+    //          val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
+    //          val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
+    //          val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
+    //          fromIso must_== Some(IsoDate(2015, 4, 24))
+    //          toIso must_== Some(IsoDate(2015, 4, 26))
+    //        case _ => println("Appointment expected")
+    //      }
+    //      td.periodEntry.hashCode must_== 134469318
+    //    }
+    //
+    //    "printTimeInfo should work with lineW52" in {
+    //      val td = ToDoDsl.getToDo(lineW52).get
+    //      td match {
+    //        case a: Appointment =>
+    //          ToDoHelper.printTimeInfo(a)
+    //          val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = ToDoHelper.getDatespan(a.timeInfo)
+    //          val fromIso = ToDoHelper.toIsoDate(fromDay, fromMonth, fromYear, a.periodEntry.asInstanceOf[PeriodEntry])
+    //          val toIso = ToDoHelper.toIsoDate(toDay, toMonth, toYear, a.periodEntry.asInstanceOf[PeriodEntry])
+    //          fromIso must_== Some(IsoDate(2016, 12, 23))
+    //          toIso must_== Some(IsoDate(2016, 12, 27))
+    //        case _ => println("Appointment expected")
+    //      }
+    //      td.periodEntry.hashCode must_== -1237712040
+    //    }
 
     "printTimeInfo should work with lineWithoutToDate" in {
       val td = ToDoDsl.getToDo(lineWithoutToDate).get

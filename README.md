@@ -27,6 +27,11 @@ For this call seemingly the full path to pdflatex is needed. To adjust your pers
 change something in the checked in files, copy `timeplan.properties.template` to `timeplan.properties` which is listed in .hgignore / .gitignore and change the entries
 according to your needs.
 
+## Dates and Times
+
+Dates in the first column are basically in ISO-format, i.e. yyyy-MM-dd.
+Dates inside an appointment are according to german usage, i.e. dd.(MM.(yyyy))
+
 ## Appointments/Tasks
 
 It is possible to enter a date or a date range, e.g.

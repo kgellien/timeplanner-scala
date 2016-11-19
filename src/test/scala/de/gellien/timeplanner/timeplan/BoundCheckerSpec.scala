@@ -148,15 +148,15 @@ class BoundCheckerSpec extends SpecificationWithJUnit {
     val excludedDay = DayEntry(2012, 4, 24)
     val includedDay = DayEntry(2012, 4, 17)
     val task = Task(WeekDayEntry(2), None, List(gtb, ltb), "tuesdays in april")
-    val appointment = Appointment(WeekDayEntry(2), None, List(gtb, ltb), "20:00", "tuesdays in april")
-//    val todos: List[ToDo] = List(task)
+    val appointment = Appointment(WeekDayEntry(2), None, List(gtb, ltb), Range(Time(20, 0), Time(20, 0)), "tuesdays in april")
+    //    val todos: List[ToDo] = List(task)
     val todos: List[ToDo] = List(appointment)
     "return empty list for period outside bounds" in {
       val pe = excludedDay
       val pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(pe)), AnniversaryEntry(pe.month, pe.day))
       val psTodos = ToDoHelper.extractTodosForPeriod(pe, todos, pes: _*)
       println("out psTodos = %s" format psTodos)
-//      psTodos.tasks.size must_== 0
+      //      psTodos.tasks.size must_== 0
       psTodos.appointments.size must_== 0
     }
     "return one element list for period inside bounds" in {
@@ -164,7 +164,7 @@ class BoundCheckerSpec extends SpecificationWithJUnit {
       val pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(pe)), AnniversaryEntry(pe.month, pe.day))
       val psTodos = ToDoHelper.extractTodosForPeriod(pe, todos, pes: _*)
       println("in  psTodos = %s" format psTodos)
-//      psTodos.tasks.size must_== 1
+      //      psTodos.tasks.size must_== 1
       psTodos.appointments.size must_== 1
     }
   }

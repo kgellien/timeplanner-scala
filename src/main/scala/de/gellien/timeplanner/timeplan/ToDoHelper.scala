@@ -21,20 +21,14 @@ object ToDoHelper {
     ToDoList(anniversaries.toList, appointments.toList, tasks.toList)
   }
 
-  def getDatespan(dateInfo: String) = {
-    val datespan = """(\d\d?)\.((\d\d?)\.)?(\d\d\d\d)?( - (\d\d?)\.(\d\d?)\.(\d\d\d\d)?)?""".r
-    val datespan(fromDay, _, fromMonth, fromYear, to, toDay, toMonth, toYear) = dateInfo
-    (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear)
-  }
-
-  def toIsoDate(day: String, month: String, year: String, pe: PeriodEntry) = {
-    if (day == null) None
+  def toIsoDate(date: Date, pe: PeriodEntry) = {
+    if (date.day == 0) None
     else {
-      val dd = day.toInt
-      val yyyy = if (year != null) year.toInt else pe.year
+      val dd = date.day
+      val yyyy = if (date.year != 0) date.year else pe.year
       val MM =
-        if (month != null)
-          month.toInt
+        if (date.month != 0)
+          date.month
         else if (pe.lower.day <= dd || pe.upper.day < dd)
           pe.lower.month
         else
@@ -46,17 +40,12 @@ object ToDoHelper {
   def extractTimeInfo(a: Appointment) = {
     a.periodEntry match {
       case pe: PeriodEntry =>
-        if (!a.timeInfo.contains(":")) { // No Time; date only
-          val (fromDay, fromMonth, fromYear, to, toDay, toMonth, toYear) = getDatespan(a.timeInfo)
-          val fromIso = toIsoDate(fromDay, fromMonth, fromYear, pe)
-          val toIso = toIsoDate(toDay, toMonth, toYear, pe) match {
-            case to @ Some(isoDate) => to
-            case None               => fromIso
-          }
-          (fromIso, toIso)
-        } else {
-          println(a)
-          (None, None)
+        a.timeInfo match {
+          case Range(from @ Date(fromYear, fromMonth, fromDay), to @ Date(toYear, toMonth, toDay)) =>
+            val fromIso = toIsoDate(from, pe)
+            val toIso = toIsoDate(from, pe)
+            (fromIso, toIso)
+          case _ => (None, None)
         }
       case pb: PeriodBase =>
         (None, None)
@@ -69,6 +58,6 @@ object ToDoHelper {
       case pe: PeriodEntry => f"${pe} (${pe.lower} - ${pe.upper})"
       case pb: PeriodBase  => f"${pb}"
     }
-    println(f"${prefix}) : ${a.timeInfo} : ${fromIso} - ${toIso}")
+    println(f"TimeInfo: ${prefix}) : ${a.timeInfo} : ${fromIso} - ${toIso}")
   }
 }
