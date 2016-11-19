@@ -89,7 +89,6 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val centeredLine = """{\center \rule{0.5\linewidth}{0.3mm}\\[1.5em] }"""
     val result = new ListBuffer[String]
     result += todo.appointments.sortBy(_.timeInfo).map { a =>
-      // TODO: Shorten TimeInfo output!
       if (a.timeInfo.from == a.timeInfo.to) {
         s"${a.timeInfo.from.short} ${a.info}"
       } else {
