@@ -41,13 +41,53 @@ class AppointmentSpec extends SpecificationWithJUnit {
       subs.size must_== 2
     }
 
+    // ===============
+
+    def toIsoDate(date: Date, pe: PeriodEntry) = {
+      if (date.day == 0) None
+      else {
+        val dd = date.day
+        val yyyy = if (date.year != 0) date.year else pe.year
+        val MM =
+          if (date.month != 0)
+            date.month
+          else if (pe.lower.day <= dd || pe.upper.day < dd)
+            pe.lower.month
+          else
+            pe.upper.month
+        Some(IsoDate(yyyy, MM, dd))
+      }
+    }
+
+    def extractTimeInfo(a: Appointment) = {
+      a.periodEntry match {
+        case pe: PeriodEntry =>
+          a.timeInfo match {
+            case Range(from: Date, to: Date) =>
+              (toIsoDate(from, pe), toIsoDate(from, pe))
+            case _ => (None, None)
+          }
+        case pb: PeriodBase => (None, None)
+      }
+    }
+
+    def printTimeInfo(a: Appointment) = {
+      val (fromIso, toIso) = extractTimeInfo(a)
+      val prefix = a.periodEntry match {
+        case pe: PeriodEntry => f"${pe} (${pe.lower} - ${pe.upper})"
+        case pb: PeriodBase  => f"${pb}"
+      }
+      println(f"TimeInfo: ${prefix} # ${a.timeInfo} : ${fromIso} - ${toIso}")
+    }
+    // ===============
+
     "printTimeInfo should work with lineBetweenMonths" in {
       val td = ToDoDsl.getToDo(lineBetweenMonths).get
       td match {
         case a @ Appointment(periodEntry, classifierOpt, dateBounds, timeInfo @ Range(from: Date, to: Date), info) =>
-          ToDoHelper.printTimeInfo(a)
+          printTimeInfo(a)
           //
-          val (fromIso, toIso) = ToDoHelper.extractTimeInfo(a)
+          val (fromIso, toIso) = extractTimeInfo(a)
           println(fromIso + " - " + toIso)
           //
           println(from.asIso + " - " + to.asIso)
@@ -107,7 +147,7 @@ class AppointmentSpec extends SpecificationWithJUnit {
       val td = ToDoDsl.getToDo(lineWithoutToDate).get
       td match {
         case a: Appointment =>
-          val (fromIso, toIso) = ToDoHelper.extractTimeInfo(a)
+          val (fromIso, toIso) = extractTimeInfo(a)
           fromIso must_== Some(IsoDate(2015, 4, 4))
           toIso must_== Some(IsoDate(2015, 4, 4))
         case _ => println("Appointment expected")
