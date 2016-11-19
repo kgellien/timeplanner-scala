@@ -46,6 +46,11 @@ class AppointmentSpec extends SpecificationWithJUnit {
       td match {
         case a @ Appointment(periodEntry, classifierOpt, dateBounds, timeInfo @ Range(from: Date, to: Date), info) =>
           ToDoHelper.printTimeInfo(a)
+          //
+          val (fromIso, toIso) = ToDoHelper.extractTimeInfo(a)
+          println(fromIso + " - " + toIso)
+          //
+          println(from.asIso + " - " + to.asIso)
           from.asIso must_== IsoDate(2015, 4, 30)
           to.asIso must_== IsoDate(2015, 5, 1)
         case _ => println("Appointment (with Date-Range) expected")

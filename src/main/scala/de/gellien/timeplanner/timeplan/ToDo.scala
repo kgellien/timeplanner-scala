@@ -1,5 +1,7 @@
 package de.gellien.timeplanner.timeplan
 
+import org.joda.time.LocalDate
+
 abstract sealed trait DateTime extends Ordered[DateTime] {
   def short = toString
 }
@@ -58,9 +60,15 @@ object Appointment {
     val last = TimeHelper.getLastDayOfPeriod(pe)
     val result = a.periodEntry match {
       case pe @ WeekEntry(y, w) => {
-        def date2DayEntry(date: Date) = DayEntry(date.year, date.month, date.day)
+        def date2DayEntry(date: Date, local: LocalDate) = {
+          // TODO: further logic!
+          // check with ToDoHelper.extractTimeInfo
+          val year = if (date.year == 0) local.getYear else date.year
+          val month = if (date.month == 0) local.getMonthOfYear else date.month
+          DayEntry(year, month, date.day)
+        }
         val (from, to) = a.timeInfo match {
-          case Range(f: Date, t: Date) => (date2DayEntry(f), date2DayEntry(t))
+          case Range(f: Date, t: Date) => (date2DayEntry(f, first), date2DayEntry(t, last))
         }
         val lst = for {
           day <- TimeHelper.daysInPeriod(from, to)

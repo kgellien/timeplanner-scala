@@ -58,6 +58,6 @@ object ToDoHelper {
       case pe: PeriodEntry => f"${pe} (${pe.lower} - ${pe.upper})"
       case pb: PeriodBase  => f"${pb}"
     }
-    println(f"TimeInfo: ${prefix}) : ${a.timeInfo} : ${fromIso} - ${toIso}")
+    println(f"TimeInfo: ${prefix} # ${a.timeInfo} : ${fromIso} - ${toIso}")
   }
 }
