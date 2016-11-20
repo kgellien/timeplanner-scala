@@ -83,6 +83,7 @@ To make interpretation easier, in the current version at least one month is requ
  - no LaTeX specific code outside of LatexTimePlan
  - --withAdditionalTasks works for Weekly Appointment to Daily Tasks
  - experimental --withAdditionalTasks: Weekly Appointments to additional Daily Appointments
+ - appointments sorted
 
 
 ### 0.7.7

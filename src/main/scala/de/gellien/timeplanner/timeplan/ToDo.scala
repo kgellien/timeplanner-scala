@@ -50,11 +50,23 @@ case class Anniversary(
   override val info: String) extends ToDo(periodEntry, info)
 
 case class Appointment(
-  override val periodEntry: PeriodBase,
-  val classifierOpt: Option[String],
-  val dateBounds: List[DateBound],
-  val timeInfo: Range,
-  override val info: String) extends ToDo(periodEntry, info)
+    override val periodEntry: PeriodBase,
+    val classifierOpt: Option[String],
+    val dateBounds: List[DateBound],
+    val timeInfo: Range,
+    override val info: String) extends ToDo(periodEntry, info) {
+  val timeInfoSort = periodEntry match {
+    case pe: PeriodEntry => timeInfo.from match {
+      // TODO improve incomplete/questionable logic
+      case Date(0, 0, day)     => Date(pe.lower.year, pe.lower.month, day).asIso
+      case Date(0, month, day) => Date(pe.lower.year, month, day).asIso
+      case from: Date          => from.asIso
+      case from: Time          => from.toString
+      case from                => from.toString
+    }
+    case pb: PeriodBase => timeInfo.from.toString
+  }
+}
 
 case class Task(
   override val periodEntry: PeriodBase,
