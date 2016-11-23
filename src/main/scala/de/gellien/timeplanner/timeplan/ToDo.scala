@@ -58,11 +58,15 @@ case class Appointment(
   val timeInfoSort = periodEntry match {
     case pe: PeriodEntry => timeInfo.from match {
       // TODO improve incomplete/questionable logic
-      case Date(0, 0, day)     => Date(pe.lower.year, pe.lower.month, day).asIso
-      case Date(0, month, day) => Date(pe.lower.year, month, day).asIso
-      case from: Date          => from.asIso
-      case from: Time          => from.toString
-      case from                => from.toString
+      //      case Date(0, 0, day)     => Date(pe.lower.year, pe.lower.month, day).asIso
+      case Date(0, 0, day) =>
+        val monthTo = timeInfo.to.asInstanceOf[Date].month // must be of right type
+        // currently monthTo must be != 0; here just to be safe
+        val month = if (monthTo != 0) monthTo else pe.lower.month
+        Date(pe.lower.year, month, day).asIso
+      case Date(0, month, day)    => Date(pe.lower.year, month, day).asIso
+      case Date(year, month, day) => Date(year, month, day).asIso
+      case from: Time             => from.toString
     }
     case pb: PeriodBase => timeInfo.from.toString
   }
