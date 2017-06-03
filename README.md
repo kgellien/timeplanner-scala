@@ -84,6 +84,7 @@ To make interpretation easier, in the current version at least one month is requ
  - --withAdditionalTasks works for Weekly Appointment to Daily Tasks
  - experimental --withAdditionalTasks: Weekly Appointments to additional Daily Appointments
  - appointments sorted
+ - special days (e.g. X2012-05-01 Labour Day) introduced
 
 
 ### 0.7.7

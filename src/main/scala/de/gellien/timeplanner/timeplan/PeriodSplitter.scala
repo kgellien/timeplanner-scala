@@ -34,7 +34,7 @@ object PeriodSplitter {
       classifier <- classifiers
       appointments = appointmentMap.getOrElse(classifier, Nil)
       tasks = taskMap.getOrElse(classifier, Nil)
-      toDoList = ToDoList(period.todo.anniversaries, appointments, tasks)
+      toDoList = ToDoList(period.todo.specials, period.todo.anniversaries, appointments, tasks)
     } yield SinglePeriod(period.periodEntry, toDoList, classifier)
     lsp.toList
   }

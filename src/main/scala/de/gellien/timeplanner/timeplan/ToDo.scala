@@ -36,6 +36,7 @@ case class Range(
 }
 
 case class ToDoList(
+  val specials: List[Special],
   val anniversaries: List[Anniversary],
   val appointments: List[Appointment],
   val tasks: List[Task])
@@ -43,6 +44,10 @@ case class ToDoList(
 abstract sealed class ToDo(
   val periodEntry: PeriodBase,
   val info: String)
+
+case class Special(
+  override val periodEntry: PeriodBase,
+  override val info: String) extends ToDo(periodEntry, info)
 
 case class Anniversary(
   override val periodEntry: PeriodBase,

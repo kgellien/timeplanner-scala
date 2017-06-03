@@ -111,11 +111,11 @@ object TimeHelper {
 
   def getFirstDayOfPeriod(pe: PeriodEntry): LocalDate = {
     pe match {
-      case YearEntry(year)             => new LocalDate(year, 1, 1)
-      case QuarterEntry(year, quarter) => new LocalDate(year, TimeHelper.monthsInQuarter(year, quarter).head, 1)
-      case MonthEntry(year, month)     => new LocalDate(year, month, 1)
-      case WeekEntry(year, week)       => TimeHelper.getFirstDayInWeek(year, week)
-      case DayEntry(year, month, day)  => new LocalDate(year, month, day)
+      case YearEntry(year)               => new LocalDate(year, 1, 1)
+      case QuarterEntry(year, quarter)   => new LocalDate(year, TimeHelper.monthsInQuarter(year, quarter).head, 1)
+      case MonthEntry(year, month)       => new LocalDate(year, month, 1)
+      case WeekEntry(year, week)         => TimeHelper.getFirstDayInWeek(year, week)
+      case DayEntry(year, month, day, _) => new LocalDate(year, month, day)
     }
   }
 
@@ -128,8 +128,8 @@ object TimeHelper {
       case MonthEntry(year, month) =>
         val ld = new LocalDate(year, month, 1)
         ld plusMonths (1) minusDays (1)
-      case WeekEntry(year, week)      => TimeHelper.getFirstDayInWeek(year, week) plusDays (6)
-      case DayEntry(year, month, day) => new LocalDate(year, month, day)
+      case WeekEntry(year, week)         => TimeHelper.getFirstDayInWeek(year, week) plusDays (6)
+      case DayEntry(year, month, day, _) => new LocalDate(year, month, day)
     }
   }
 }

@@ -119,6 +119,13 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val result = new ListBuffer[String]
     result += """\begin{center}"""
     result += """{\bf %s} \\""" format singlePeriod.header.replace(" - ", " -- ")
+    val specials = singlePeriod.todo.specials
+//    result ++= specials map ("""%s \\""" format _.info)
+    for (special <- specials) {
+      result += """%s \\""" format special.info
+    }
+    if (specials.size == 0)
+      result += "\\"
     result += """\rule{\linewidth}{0.3mm} \\"""
     result += """\end{center}"""
     result

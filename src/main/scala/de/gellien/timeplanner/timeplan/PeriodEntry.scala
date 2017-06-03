@@ -9,9 +9,9 @@ abstract sealed class PeriodEntry(val year: Int) extends PeriodBase {
   def header: String
 }
 
-case class DayEntry(override val year: Int, month: Int, day: Int) extends PeriodEntry(year) {
+case class DayEntry(override val year: Int, month: Int, day: Int, headerSuffix: String = "") extends PeriodEntry(year) {
   override def toString = "%d-%02d-%02d" format (year, month, day)
-  override val header = TimeHelper.displayDay(year, month, day)
+  override val header = TimeHelper.displayDay(year, month, day) + headerSuffix
 }
 
 case class WeekEntry(override val year: Int, week: Int) extends PeriodEntry(year) {

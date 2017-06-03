@@ -1,6 +1,6 @@
 package de.gellien.timeplanner.timeplan
 
-case class SinglePeriod(val periodEntry: PeriodEntry, val todo: ToDoList, header: String) {
+case class SinglePeriod(val periodEntry: PeriodEntry, val todo: ToDoList, header: String, special: Option[String] = None) {
   override def toString = s"${periodEntry}: ${todo}"
 }
 
@@ -37,7 +37,7 @@ case class YearPlan(override val periodEntry: YearEntry, override val period: Si
 object PeriodPlan {
   def apply(pe: PeriodEntry, todos: List[ToDo], withOverview: Boolean)(implicit daysPerWeek: Int, withAdditionalTasks: Boolean): PeriodPlan = {
     pe match {
-      case periodEntry @ DayEntry(y, m, d) => {
+      case periodEntry @ DayEntry(y, m, d, s) => {
         val pes = List(DailyEntry(), WeekDayEntry(TimeHelper.getDayOfWeek(periodEntry)), AnniversaryEntry(periodEntry.month, periodEntry.day))
         val todoList = ToDoHelper.extractTodosForPeriod(periodEntry, todos, pes: _*)
         val period = SinglePeriod(periodEntry, todoList, periodEntry.header)

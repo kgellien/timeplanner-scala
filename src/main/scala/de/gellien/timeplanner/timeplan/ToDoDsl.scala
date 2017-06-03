@@ -4,7 +4,11 @@ import scala.util.parsing.combinator.JavaTokenParsers
 
 class ToDoDsl extends JavaTokenParsers {
 
-  lazy val toDoItem = (anniversary | appointment | task)
+  lazy val toDoItem = (special | anniversary | appointment | task)
+
+  lazy val special = "X" ~ calDate ~ info ^^ {
+  	case _ ~ d ~ i => Special(d, i)
+  }
 
   // TODO: check whether zero or once is possible with rep
   lazy val anniversary = anniversaryEntry ~ rep(yearNo) ~ info ^^ {
@@ -29,6 +33,9 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val dateInfo = (weekDay | daily | weekly | monthly | quarterly | yearly | calDate)
 
   lazy val calDate = (calDay | calWeek | calMonth | calQuarter | calYear)
+//  lazy val calDate = (calDayX | calDay | calWeek | calMonth | calQuarter | calYear)
+
+//  lazy val calDayX = yearNo ~ "-" ~ monthNo ~ "-" ~ dayNo ~ "X" ^^ { case yearNo ~ s1 ~ monthNo ~ s2 ~ dayNo => DayEntry(yearNo, monthNo, dayNo) }
 
   lazy val calDay = yearNo ~ "-" ~ monthNo ~ "-" ~ dayNo ^^ { case yearNo ~ s1 ~ monthNo ~ s2 ~ dayNo => DayEntry(yearNo, monthNo, dayNo) }
   lazy val calWeek = yearNo ~ "-W" ~ weekNo ^^ { case year ~ str ~ weekNo => WeekEntry(year, weekNo) }
