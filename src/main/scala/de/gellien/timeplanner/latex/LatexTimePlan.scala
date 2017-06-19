@@ -86,6 +86,9 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   }
 
   def renderTodoList(todo: ToDoList) = {
+    def escapeSpecialChars(txt : String) = {
+      txt.replace("&", "\\##").replace("##", "&")
+    }
     val centeredLine = """{\center \rule{0.5\linewidth}{0.3mm}\\[1.5em] }"""
     val result = new ListBuffer[String]
     result += todo.appointments.sortBy(_.timeInfoSort).map { a =>
@@ -110,7 +113,8 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     }
     result += """\vfill"""
     result += todo.tasks.sortBy(_.info).map { a =>
-      s"""$$\\square$$ ${a.info}"""
+      val txt = escapeSpecialChars(a.info)
+      s"""$$\\square$$ ${txt}"""
     }.mkString("\n\n")
     result
   }
