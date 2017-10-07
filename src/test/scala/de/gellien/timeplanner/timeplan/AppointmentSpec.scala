@@ -14,8 +14,8 @@ class AppointmentSpec extends SpecificationWithJUnit {
   def getSubs(line: String) = {
     val todo = ToDoDsl.getToDo(line).get
     todo match {
-      case app @ Appointment(pe, cl, db, ti, info) => Appointment.extractSubTasks(app)
-      case _                                       => Nil
+      case app@Appointment(pe, cl, db, ti, info) => Appointment.extractSubTasks(app)
+      case _                                     => Nil
     }
   }
 
@@ -27,7 +27,7 @@ class AppointmentSpec extends SpecificationWithJUnit {
 
     "have 3 SubTasks for 24.04. - 26.04." in {
       val subs = getSubs(lineWithMonth)
-      println(subs)
+      //      println(subs)
       subs.size must_== 3
     }
 
@@ -64,7 +64,7 @@ class AppointmentSpec extends SpecificationWithJUnit {
         case pe: PeriodEntry =>
           a.timeInfo match {
             case Range(from: Date, to: Date) =>
-              (toIsoDate(from, pe), toIsoDate(from, pe))
+              (toIsoDate(from, pe), toIsoDate(to, pe))
             case _ => (None, None)
           }
         case pb: PeriodBase => (None, None)
@@ -84,15 +84,17 @@ class AppointmentSpec extends SpecificationWithJUnit {
     "printTimeInfo should work with lineBetweenMonths" in {
       val td = ToDoDsl.getToDo(lineBetweenMonths).get
       td match {
-        case a @ Appointment(periodEntry, classifierOpt, dateBounds, timeInfo @ Range(from: Date, to: Date), info) =>
-          printTimeInfo(a)
+        case a@Appointment(periodEntry, classifierOpt, dateBounds, timeInfo@Range(from: Date, to: Date), info) =>
+          //          printTimeInfo(a)
           //
           val (fromIso, toIso) = extractTimeInfo(a)
-          println(fromIso + " - " + toIso)
+          //          println("fromIso-toIso: " + fromIso + " - " + toIso)
           //
-          println(from.asIso + " - " + to.asIso)
-          from.asIso must_== IsoDate(2015, 4, 30)
-          to.asIso must_== IsoDate(2015, 5, 1)
+          //          println("from.asIso-to.asIso: " + from.asIsoString + " - " + to.asIsoString)
+          fromIso must_== Some(IsoDate(2015, 4, 30))
+          toIso must_== Some(IsoDate(2015, 5, 1))
+          from.asIsoString must_== IsoDate(0, 4, 30).toString
+          to.asIsoString must_== IsoDate(0, 5, 1).toString
         case _ => println("Appointment (with Date-Range) expected")
       }
       td.periodEntry.hashCode must_== -402402315

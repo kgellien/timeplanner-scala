@@ -5,7 +5,7 @@ import org.joda.time.LocalDate
 import scala.collection.mutable.ListBuffer
 
 sealed case class IsoDate(year: Int, month: Int, day: Int) extends Ordered[IsoDate] {
-  override def toString = "%4d-%02d-%02d" format (year, month, day)
+  override def toString = "%04d-%02d-%02d" format (year, month, day)
   def compare(that: IsoDate) = toString.compare(that.toString)
 }
 

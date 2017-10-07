@@ -11,11 +11,11 @@ case class Date(
     month: Int,
     day: Int) extends DateTime {
   def compare(that: DateTime) = that match {
-    case d: Date => asIso.compare(d.asIso)
-    case t: Time => asIso.compare(t.toString) // should not be possibleÏ
+    case d: Date => asIsoString.compare(d.asIsoString)
+    case t: Time => asIsoString.compare(t.toString) // should not be possibleÏ
   }
   override def toString = f"${day}%02d.${month}%02d.${year}%04d"
-  def asIso = f"${year}%04d-${month}%02d-${day}%02d"
+  def asIsoString = f"${year}%04d-${month}%02d-${day}%02d"
   override def short =
     if (month == 0) f"${day}%02d."
     else if (year == 0) f"${day}%02d.${month}%02d."
@@ -68,9 +68,9 @@ case class Appointment(
         val monthTo = timeInfo.to.asInstanceOf[Date].month // must be of right type
         // currently monthTo must be != 0; here just to be safe
         val month = if (monthTo != 0) monthTo else pe.lower.month
-        Date(pe.lower.year, month, day).asIso
-      case Date(0, month, day)    => Date(pe.lower.year, month, day).asIso
-      case Date(year, month, day) => Date(year, month, day).asIso
+        Date(pe.lower.year, month, day).asIsoString
+      case Date(0, month, day)    => Date(pe.lower.year, month, day).asIsoString
+      case Date(year, month, day) => Date(year, month, day).asIsoString
       case from: Time             => from.toString
     }
     case pb: PeriodBase => timeInfo.from.toString
