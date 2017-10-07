@@ -52,7 +52,7 @@ To make interpretation easier, in the current version at least one month is requ
 
 ## Known Problems / Errors
 
-- call to pdflatex sometimes does not return; explicit call afterwards does work
+- call to pdflatex sometimes does not return; CTRL-C and explicit call afterwards does work
 - Option --withAdditionalTasks currently broken
 
 ## To Do
@@ -71,6 +71,10 @@ To make interpretation easier, in the current version at least one month is requ
 
 
 ## Revision History
+
+### 0.7.9-SNAPSHOT
+
+ - Update to Scala 2.12 and SBT 1.0
 
 ### 0.7.8-SNAPSHOT
 

@@ -1,24 +1,23 @@
 name := "timeplanner"
 
-version := "0.7.8-SNAPSHOT"
+version := "0.7.9-SNAPSHOT"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.12.2"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 
-libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-parser-combinators" % "2.11.0-M4",
-  "joda-time" % "joda-time" % "2.3",
-  "org.joda" % "joda-convert" % "1.6"
-)
+libraryDependencies ++= {
+  val specs2Version = "3.9.5"
+  Seq(
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.6",
+    "joda-time" % "joda-time" % "2.3",
+    "org.joda" % "joda-convert" % "1.6",
+    //
+    "org.specs2" %% "specs2-core" % specs2Version % "test",
+    "org.specs2" %% "specs2-junit" % specs2Version % "test"
+  )
+}
 
 // activate for HTML-Reports in target/specs2-reports
 //testOptions in Test += Tests.Argument("html")
-
-
-libraryDependencies ++= Seq(
-  "org.specs2" %% "specs2" % "2.3.12" % "test",
-  "org.pegdown" % "pegdown" % "1.4.2" % "test",
-  "junit" % "junit" % "4.11" % "test"
-)

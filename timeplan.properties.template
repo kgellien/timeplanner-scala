@@ -1,5 +1,4 @@
 
 Linux.pdflatex=/usr/bin/pdflatex
 Mac.pdflatex=/usr/texbin/pdflatex
-WinXP.pdflatex="c:/Program Files/MiKTeX 2.9/miktex/bin/pdfplatex.exe"
-Win7.pdflatex="c:/Program Files (x86)/MiKTeX 2.9/miktex/bin/pdfplatex.exe"
+Win7.pdflatex="c:/Progs/MiKTeX-2.9/miktex/bin/x64/pdflatex.exe"
