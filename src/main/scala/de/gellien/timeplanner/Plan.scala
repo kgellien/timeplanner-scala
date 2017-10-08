@@ -5,7 +5,7 @@ import java.util.Properties
 import scala.io.Source
 import scala.collection.mutable.ListBuffer
 import timeplan._
-import latex.LatexTimePlan
+import latex._
 
 object Plan {
   type OptionMap = Map[Symbol, Any]
@@ -13,17 +13,34 @@ object Plan {
   def main(args: Array[String]): Unit = {
     val (encodings, fileNames, modifier) = getConfigsAfterValidation(args)
 
+    val io = new Io(modifier.quote, encodings.outputEncoding, modifier.debug)
+
     val todoList = for {
       line <- readFiles(fileNames.inputFiles, encodings.inputEncoding)
       td <- ToDoDsl.getToDo(line)
     } yield td
 
-    val periodPlans = for {
+    val allPeriodPlans = for {
       line <- getFilteredLines(fileNames.inputDsl, encodings.inputEncoding)
       pe <- ToDoDsl.getPeriodEntry(line)
     } yield PeriodPlan(pe, todoList, modifier.withOverview)(modifier.daysPerWeek, modifier.withAdditionalTasks)
 
-    val io = new Io(modifier.quote, encodings.outputEncoding, modifier.debug)
+    //
+    val dayPlans = allPeriodPlans.filter {
+      case dp: DayPlan => true
+      case _           => false
+    }
+    println(dayPlans.size)
+    //    for (dayPlan <- dayPlans) {
+    //      println(dayPlan)
+    //    }
+    createTexOutputForDayPlans("tp.tex", dayPlans, io)
+    //
+
+    val periodPlans = allPeriodPlans.filter {
+      case dp: DayPlan => false
+      case _           => true
+    }
 
     val latexSource = fileNames.texoutput
     createTexOutput(latexSource, periodPlans, io, modifier.withSeparator)
@@ -31,6 +48,27 @@ object Plan {
     if (modifier.callPdfLatex) {
       io.callPdfLaTeX(fileNames.pdflatexFullPath, latexSource)
     }
+  }
+
+  def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
+    for (periodPlan <- periodPlans) {
+      periodPlan match {
+        case dp: DayPlan =>
+          println("DayPlan: " + dp)
+          //          case class DayPlan(override val periodEntry: DayEntry, override val period: SinglePeriod, override val periodSpecifics: List[SinglePeriod], override val withOverview: Boolean) extends PeriodPlan(periodEntry, period, periodSpecifics, withOverview) {
+          println("PeriodEntry: " + dp.periodEntry)
+          println("Period: " + dp.period)
+          println("List[SinglePeriod]: " + dp.periodSpecifics)
+          for (sp <- dp.periodSpecifics) {
+            println("  SinglePeriod: " + sp)
+          }
+        case pp => println(pp)
+      }
+    }
+    val dayPlans = for (periodPlan <- periodPlans) yield periodPlan.asInstanceOf[DayPlan]
+    val ldp = new LatexDayPlan(dayPlans, new ConfA4)
+    val latexSource = ldp.render
+    io.saveStringList(outputFileName, latexSource)
   }
 
   def createTexOutput(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, withSeparator: Boolean) = {
