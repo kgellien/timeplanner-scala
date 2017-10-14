@@ -28,6 +28,15 @@ case class Time(
   override def toString = f"${hh}%02d:${mm}%02d"
 }
 
+object DateTimeHelper {
+  def timeDiff(from: Time, to: Time) = {
+    //Pre: from < to and both on the same day
+    val toT = to.hh * 60 + to.mm
+    val fromT = from.hh * 60 + from.mm
+    (toT - fromT) / 60.0
+  }
+}
+
 // TODO: how do I guarantee that from and to are either both of type Date or of type Time?
 case class Range(
     from: DateTime,
@@ -88,7 +97,7 @@ object Appointment {
     val first = TimeHelper.getFirstDayOfPeriod(pe)
     val last = TimeHelper.getLastDayOfPeriod(pe)
     val result = a.periodEntry match {
-      case pe @ WeekEntry(y, w) => {
+      case pe@WeekEntry(y, w) => {
         def date2DayEntry(date: Date, local: LocalDate) = {
           // TODO: further logic!
           val year = if (date.year == 0) local.getYear else date.year

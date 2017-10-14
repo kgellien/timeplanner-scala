@@ -3,41 +3,7 @@ package de.gellien.timeplanner.latex
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
 
-class ConfA4 {
-  val left = 0.0
-  val pageWidth = 18.5
-  val pageHeight = 27.5
-  val bottom = 0.0
-
-  val maxHours = 15
-  val hours = 15 // 9
-  val firstHour = 8
-  val noOfDays = 2
-  val hourLineDelta = 1.60
-  val textSize = "\\normalsize"
-  val textHeight = 0.35
-  val hourTextSize = "\\Large"
-  val leftFullHourWidth = 0.30
-  val leftHalfHourWidth = 0.80
-  val leftContentWidth = 1.75
-
-  val lineWidth = pageWidth - 2.0 * left
-  val headerPos = pageHeight - 1.0
-
-  val leftFullHour = left + leftFullHourWidth
-  val leftHalfHour = left + leftHalfHourWidth
-  val leftContent = left + leftContentWidth
-  val right = pageWidth - left
-  val middle = leftContent + (right - leftContent) / 2
-  val hourLength = lineWidth - (leftContent - left)
-  val halfHourLength = lineWidth - (leftContent - left)
-  val top = bottom + maxHours * hourLineDelta
-  val lastHour = firstHour + hours
-
-  val defaultDuration = 0.5
-}
-
-class LatexDayPlan(plans: List[DayPlan], conf: ConfA4) {
+class LatexDayPlan(plans: List[DayPlan], conf: DayPlanConf) {
   val pageWidth = 18.5
   val pageHeight = 27.5
 
@@ -74,7 +40,7 @@ class LatexDayPlan(plans: List[DayPlan], conf: ConfA4) {
     result += s"% createHourLines(${hour}, ${i}, ${withOffset})"
     result += "% vertical hour lines"
     result += f"\\put(${conf.leftContent + offset},${end}){\\line(0,1){${conf.hourLineDelta}}}"
-    result += f"\\put(${conf.middle + offset},${end}){\\line(0,1){${conf.hourLineDelta}}}"
+    //    result += f"\\put(${conf.middle + offset},${end}){\\line(0,1){${conf.hourLineDelta}}}"
     //    if (!conf.shortHourLine)
     result += f"\\put(${conf.right},${end}){\\line(0,1){${conf.hourLineDelta}}}"
     //
@@ -113,36 +79,53 @@ class LatexDayPlan(plans: List[DayPlan], conf: ConfA4) {
 
   def escapeMsg(msg: String) = msg.replace("&", "\\&").replace("%", "\\%")
 
-  def timeDiff(from: Time, to: Time) = {
-    //Pre: from < to and both on the same day
-    val toT = to.hh * 60 + to.mm
-    val fromT = from.hh * 60 + from.mm
-    (toT - fromT) / 60
-  }
-
   def createTextEntry(msg: String, from: Time, to: Time) = {
     val result = new ListBuffer[String]
-    val offsetY = conf.hourLineDelta * (from.mm / 60)
+    val offsetY = conf.hourLineDelta * (from.mm / 60.0)
     val textX = conf.leftContent + conf.leftFullHourWidth
     val i = from.hh - conf.firstHour
     val start = startI(i)
     val textY = start - offsetY - conf.textHeight
-    val entry = f"\\put(${textX},${textY}){${conf.textSize} ${escapeMsg(msg)}}"
-    result += entry
+    result += f"\\put(${textX},${textY}){${conf.textSize} ${escapeMsg(msg)}}"
     val thicknessInCm = 0.15
-    val posX = conf.leftContent + thicknessInCm / 2
-    val td = timeDiff(from, to)
+    val posX = conf.leftContent + thicknessInCm / 2.0
+    val td = DateTimeHelper.timeDiff(from, to)
     val duration = if (Math.abs(td) < 0.01) conf.defaultDuration else td
     val length = conf.hourLineDelta * duration
     val posY = start - offsetY - length
+    val tickThickness = thicknessInCm / 2.0
+    val posYTick = posY + tickThickness / 2.0
     result += f"\\linethickness{${thicknessInCm} cm}"
     result += f"\\put(${posX},${posY}){\\line(0,1){${length}}}"
-    result += f"\\linethickness{${thicknessInCm / 2} cm}"
-    result += f"\\put(${posX},${posY}){\\line(1,0){${thicknessInCm}}}"
-    result += f"\\put(${posX},${posY + length}){\\line(1,0){${thicknessInCm}}}"
+    result += f"\\linethickness{${tickThickness} cm}"
+    result += f"\\put(${posX},${posYTick}){\\line(1,0){${thicknessInCm}}}"
+    result += f"\\put(${posX},${posYTick + length - tickThickness}){\\line(1,0){${thicknessInCm}}}"
     result += f"\\linethickness{0.01cm}"
     result
   }
+  /*
+def createTextEntry(msg, conf):
+	result = []
+	offsetY = conf['hourLineDelta'] * (msg.fromMinute/60)
+	textX = conf['leftContent'] + conf['leftFullHourWidth']
+	i = msg.fromHour - conf['firstHour']
+	start = startI(i, conf)
+	textY = start - offsetY - conf['textHeight']
+	entry = r'\put(%2.2f,%2.2f){%s %s}' % (textX, textY, conf['textSize'], escapeMsg(msg))
+	result.append(entry)
+	#
+	thicknessInCm = 0.15
+	posX = conf['leftContent'] + thicknessInCm / 2
+	length = conf['hourLineDelta'] * msg.duration
+	posY = start - length - offsetY
+	result.append('\linethickness{%s cm}' %(thicknessInCm))
+	result.append(r'\put(%2.2f,%2.2f){\line(0,1){%2.2f}}' % (posX, posY, length))
+	result.append('\linethickness{%s cm}' %(thicknessInCm/2))
+	result.append(r'\put(%2.2f,%2.2f){\line(1,0){%2.2f}}' % (posX, posY, thicknessInCm))
+	result.append(r'\put(%2.2f,%2.2f){\line(1,0){%2.2f}}' % (posX, posY+length, thicknessInCm))
+	result.append('\linethickness{0.01cm}')
+	return result
+ */
 
   def isRelevant(from: Time) = from.hh >= conf.firstHour && from.hh < conf.lastHour
 
