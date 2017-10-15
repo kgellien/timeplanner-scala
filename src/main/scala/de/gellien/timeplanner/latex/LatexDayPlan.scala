@@ -155,6 +155,20 @@ def createTextEntry(msg, conf):
     val withOffset = false
     result ++= pagePreamble.split("\n").map(_.stripLineEnd)
     //
+    /*
+	#
+	(year, week, weekDay) = day.isocalendar()
+	date = day.strftime('%A, %d.%m.%Y')
+	headerA = r'%s' % (date)
+	result.append(r'\put(%s,%s){\scalebox{2}{\large \textbf{%s}}}' % (conf['leftFullHour'], conf['headerPos'], headerA))
+	#
+	headerB = r'KW%02d' % (week)
+	result.append(r'\put(%s,%s){\scalebox{2}{\makebox[%s cm][r]{\large \textbf{%s}}}}' % (conf['middle'], conf['headerPos'], (conf['right']-conf['middle'])/2, headerB))
+	#
+     */
+    val headerA = plan.periodEntry
+    result += f"\\put(${conf.leftFullHour},${conf.headerPos}){\\scalebox{2}{\\large \\textbf{${headerA}}}}"
+    //
     result ++= createHeader(plan.period.header, withOffset)
     for ((hour, i) <- (conf.firstHour until conf.lastHour).zipWithIndex) {
       result ++= createHourEntries(hour, i)
