@@ -66,7 +66,7 @@ object Plan {
       }
     }
     val dayPlans = for (periodPlan <- periodPlans) yield periodPlan.asInstanceOf[DayPlan]
-    val ldp = new LatexDayPlan(dayPlans, new ConfA4)
+    val ldp = new LatexDayPlan(dayPlans, ConfBig)
     val latexSource = ldp.render
     io.saveStringList(outputFileName, latexSource)
   }
