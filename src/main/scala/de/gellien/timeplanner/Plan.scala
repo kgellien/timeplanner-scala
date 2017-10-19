@@ -25,27 +25,33 @@ object Plan {
       pe <- ToDoDsl.getPeriodEntry(line)
     } yield PeriodPlan(pe, todoList, modifier.withOverview)(modifier.daysPerWeek, modifier.withAdditionalTasks)
 
-    val (dayPlans, periodPlans) = allPeriodPlans.partition {
+    val (dayPlansPp, periodPlans) = allPeriodPlans.partition {
       case dp: DayPlan => true
       case _           => false
     }
+    val dayPlans = for (dayPlanPp <- dayPlansPp) yield dayPlanPp.asInstanceOf[DayPlan]
 
-    val dpLatexSource = fileNames.dayplanoutput
-    createTexOutputForDayPlans(dpLatexSource, dayPlans, io, withBigFont = false)
+    if (dayPlans.size > 0) {
+      val dpLatexSource = fileNames.dayplanoutput
+      val withBigFont = false
+      createTexOutputForDayPlans(dpLatexSource, dayPlans, io, withBigFont)
+      if (modifier.callPdfLatex) {
+        io.callPdfLaTeX(fileNames.pdflatexFullPath, dpLatexSource)
+      }
+    }
 
-    val tpLatexSource = fileNames.timeplanoutput
-    createTexOutput(tpLatexSource, periodPlans, io, modifier.withSeparator)
-
-    if (modifier.callPdfLatex) {
-      io.callPdfLaTeX(fileNames.pdflatexFullPath, dpLatexSource)
-      io.callPdfLaTeX(fileNames.pdflatexFullPath, tpLatexSource)
+    if (periodPlans.size > 0) {
+      val tpLatexSource = fileNames.timeplanoutput
+      createTexOutput(tpLatexSource, periodPlans, io, modifier.withSeparator)
+      if (modifier.callPdfLatex) {
+        io.callPdfLaTeX(fileNames.pdflatexFullPath, tpLatexSource)
+      }
     }
   }
 
-  def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, withBigFont: Boolean) = {
+  def createTexOutputForDayPlans(outputFileName: String, dayPlans: List[DayPlan], io: Io, withBigFont: Boolean) = {
     val conf = if (withBigFont) ConfBig else ConfRegular
-    val dayPlans = for (periodPlan <- periodPlans) yield periodPlan.asInstanceOf[DayPlan]
-    val ldp = new LatexDayPlan(dayPlans, conf)
+    val ldp = new LatexDayPlans(dayPlans, conf)
     val latexSource = ldp.render
     io.saveStringList(outputFileName, latexSource)
   }

@@ -3,50 +3,50 @@ package de.gellien.timeplanner.latex
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
 
-class LatexDayPlan(plans: List[DayPlan], conf: DayPlanConf) {
-  val pageWidth = 18.5
-  val pageHeight = 27.5
-
+class LatexDayPlans(plans: List[DayPlan], conf: DayPlanConf) {
   def render = {
     val result = new ListBuffer[String]
     result += """"""
     result += """\documentclass[a4paper,12pt]{article}"""
     result += "\\usepackage[utf8]{inputenc}"
-    result += "%\\usepackage[latin1]{inputenc}"
-    //    result += "\\usepackage[german]{babel}"
-    //    result += "\\usepackage[T1]{fontenc}"
-    //    result += "\\usepackage{times}"
     result += "\\usepackage{graphicx}"
-    result ++= preamble.split("\n").map(_.stripLineEnd)
+    result += "\\setlength{\\headsep}{-3 cm}"
+    result += "\\setlength{\\footskip}{1 cm}"
+    result += s"\\setlength{\\textheight}{${conf.pageHeight} cm}"
+    result += s"\\setlength{\\textwidth}{${conf.pageWidth} cm}"
     result += """\begin{document}"""
     result += """\pagestyle{empty}"""
-    result += s"""\\setlength{\\unitlength}{10mm}"""
-    for (plan <- plans)
-      result ++= renderSinglePlan(plan)
+    result += "\\setlength{\\unitlength}{10mm}"
+    val latexSingleDayPlan = new LatexDayPlan(conf)
+    for (plan <- plans) {
+      result ++= latexSingleDayPlan.renderDayPlanPage(plan)
+      //      result ++= latexSingleDayPlan.renderDayPlanPage(plan, Some(plan))
+    }
     result += """\end{document}"""
     result
   }
 
+}
+
+class LatexDayPlan(conf: DayPlanConf) {
+
   def startI(i: Double) = conf.top - i * conf.hourLineDelta
 
-  def createHourLines(hour: Int, i: Int, withOffset: Boolean) = {
+  def createHourLines(hour: Int, i: Int) = {
     val result = new ListBuffer[String]
-    val offset = if (withOffset) conf.middle - conf.leftContent else 0.0
     val start = startI(i)
     val end = startI(i + 1)
     val startHalf = start - conf.hourLineDelta / 2.0
     val fullHour = start - 0.375 * conf.hourLineDelta
     val halfHour = start - 0.875 * conf.hourLineDelta
-    result += s"% createHourLines(${hour}, ${i}, ${withOffset})"
+    result += s"% createHourLines(${hour}, ${i})"
     result += "% vertical hour lines"
-    result += f"\\put(${conf.leftContent + offset},${end}){\\line(0,1){${conf.hourLineDelta}}}"
-    //    result += f"\\put(${conf.middle + offset},${end}){\\line(0,1){${conf.hourLineDelta}}}"
-    //    if (!conf.shortHourLine)
+    result += f"\\put(${conf.leftContent},${end}){\\line(0,1){${conf.hourLineDelta}}}"
+    result += f"\\put(${conf.middle},${end}){\\line(0,1){${conf.hourLineDelta}}}"
     result += f"\\put(${conf.right},${end}){\\line(0,1){${conf.hourLineDelta}}}"
-    //
     result += "% horizontal hour lines"
-    result += f"\\put(${conf.leftContent + offset},${start}){\\line(1,0){${conf.hourLength}}}"
-    result += f"\\put(${conf.leftContent + offset},${startHalf}){\\line(1,0){${conf.halfHourLength}}}"
+    result += f"\\put(${conf.leftContent},${start}){\\line(1,0){${conf.hourLength}}}"
+    result += f"\\put(${conf.leftContent},${startHalf}){\\line(1,0){${conf.halfHourLength}}}"
     result
   }
 
@@ -70,25 +70,27 @@ class LatexDayPlan(plans: List[DayPlan], conf: DayPlanConf) {
 
   def createHeader(header: String, withOffset: Boolean) = {
     val result = new ListBuffer[String]
-    val posX = if (withOffset) conf.leftContent + conf.middle - conf.leftContent else conf.leftContent
+    val posX = if (withOffset) conf.middle else conf.leftContent
     val posY = startI(-0.35)
     val width = conf.middle - conf.leftContent
-    result += f"\\put(${posX},${posY}){\\scalebox{1.25}{\\makebox[${width} cm][c]{\\large \\textbf{${header}}}}}"
+    //    result += f"\\put(${posX},${posY}){\\scalebox{1.25}{\\makebox[${width} cm][c]{\\large \\textbf{${header}}}}}"
+    result += f"\\put(${posX},${posY}){\\scalebox{1.25}{\\large \\textbf{${header}}}}"
     result
   }
 
   def escapeMsg(msg: String) = msg.replace("&", "\\&").replace("%", "\\%")
 
-  def createTextEntry(msg: String, from: Time, to: Time) = {
+  def createTextEntry(msg: String, from: Time, to: Time, withOffset: Boolean) = {
     val result = new ListBuffer[String]
     val offsetY = conf.hourLineDelta * (from.mm / 60.0)
-    val textX = conf.leftContent + conf.leftFullHourWidth
+    val textX = (if (withOffset) conf.middle else conf.leftContent) + conf.leftFullHourWidth
     val i = from.hh - conf.firstHour
     val start = startI(i)
     val textY = start - offsetY - conf.textHeight
     result += f"\\put(${textX},${textY}){${conf.textSize} ${escapeMsg(msg)}}"
+    // create left bracket
     val thicknessInCm = 0.15
-    val posX = conf.leftContent + thicknessInCm / 2.0
+    val posX = (if (withOffset) conf.middle else conf.leftContent) + thicknessInCm / 2.0
     val td = DateTimeHelper.timeDiff(from, to)
     val duration = if (Math.abs(td) < 0.01) conf.defaultDuration else td
     val length = conf.hourLineDelta * duration
@@ -103,56 +105,30 @@ class LatexDayPlan(plans: List[DayPlan], conf: DayPlanConf) {
     result += f"\\linethickness{0.01cm}"
     result
   }
-  /*
-def createTextEntry(msg, conf):
-	result = []
-	offsetY = conf['hourLineDelta'] * (msg.fromMinute/60)
-	textX = conf['leftContent'] + conf['leftFullHourWidth']
-	i = msg.fromHour - conf['firstHour']
-	start = startI(i, conf)
-	textY = start - offsetY - conf['textHeight']
-	entry = r'\put(%2.2f,%2.2f){%s %s}' % (textX, textY, conf['textSize'], escapeMsg(msg))
-	result.append(entry)
-	#
-	thicknessInCm = 0.15
-	posX = conf['leftContent'] + thicknessInCm / 2
-	length = conf['hourLineDelta'] * msg.duration
-	posY = start - length - offsetY
-	result.append('\linethickness{%s cm}' %(thicknessInCm))
-	result.append(r'\put(%2.2f,%2.2f){\line(0,1){%2.2f}}' % (posX, posY, length))
-	result.append('\linethickness{%s cm}' %(thicknessInCm/2))
-	result.append(r'\put(%2.2f,%2.2f){\line(1,0){%2.2f}}' % (posX, posY, thicknessInCm))
-	result.append(r'\put(%2.2f,%2.2f){\line(1,0){%2.2f}}' % (posX, posY+length, thicknessInCm))
-	result.append('\linethickness{0.01cm}')
-	return result
- */
 
   def isRelevant(from: Time) = from.hh >= conf.firstHour && from.hh < conf.lastHour
 
-  def addTextEntries(msgs: List[Appointment]) = {
+  def addTextEntries(msgs: List[Appointment], withOffset: Boolean) = {
     println(s"addTextEntries:")
     val result = new ListBuffer[String]
     for (msg <- msgs) {
-      println(msg)
-      //Appointment(2012-04-19,None,List(),Range(09:00,18:00),JAX in Mainz)
       val from = msg.timeInfo.from.asInstanceOf[Time]
       val to = msg.timeInfo.to.asInstanceOf[Time]
       if (isRelevant(from)) {
         if (to.hh >= conf.lastHour) {
           val endTime = Time(conf.lastHour, 0)
           val msgTxt = s"${msg.info} (-- ${endTime})"
-          result ++= createTextEntry(msgTxt, from, endTime)
+          result ++= createTextEntry(msgTxt, from, endTime, withOffset)
         } else {
-          result ++= createTextEntry(msg.info, from, to)
+          result ++= createTextEntry(msg.info, from, to, withOffset)
         }
       }
     }
     result
   }
 
-  def renderSinglePlan(plan: DayPlan) = {
+  def xrenderSinglePlan(plan: DayPlan) = {
     val result = new ListBuffer[String]
-    val withOffset = false
     result ++= pagePreamble.split("\n").map(_.stripLineEnd)
     //
     val headerA = plan.periodEntry
@@ -161,40 +137,66 @@ def createTextEntry(msg, conf):
     val headerB = s"KW${plan.periodEntry.localDate.weekOfWeekyear().get}-${plan.periodEntry.localDate.weekyear().get}"
     result += f"\\put(${conf.middle},${conf.headerPos}){\\scalebox{2}{\\makebox[${(conf.right - conf.middle) / 2.0} cm][r]{\\large \\textbf{${headerB}}}}}"
     //
-    result ++= createHeader(plan.period.header, withOffset)
     for ((hour, i) <- (conf.firstHour until conf.lastHour).zipWithIndex) {
       result ++= createHourEntries(hour, i)
-      result ++= createHourLines(hour, i, withOffset)
+      result ++= createHourLines(hour, i)
     }
     val currentBottom = startI(conf.lastHour - conf.firstHour)
     result += f"\\put(${conf.left},${currentBottom}){\\line(1,0){${conf.lineWidth}}}"
     //
     result += "% text entries"
-    result ++= addTextEntries(plan.period.todo.appointments)
+    result ++= createHeader(plan.period.header, withOffset = false)
+    result ++= addTextEntries(plan.period.todo.appointments, withOffset = false)
     //
     result ++= pagePostamble.split("\n").map(_.stripLineEnd)
     result
   }
 
-  val preamble = s"""
-\\setlength{\\headsep}{-3 cm}
-\\setlength{\\footskip}{1 cm}
-\\setlength{\\textheight}{${pageHeight} cm}
-\\setlength{\\textwidth}{${pageWidth} cm}
-"""
+  def renderDayPlanPage(plan: DayPlan, planRightOpt: Option[DayPlan] = None) = {
+    val result = new ListBuffer[String]
+    result ++= pagePreamble.split("\n").map(_.stripLineEnd)
+    //
+    val headerA = s"KW${plan.periodEntry.localDate.weekOfWeekyear().get}"
+    result += f"\\put(${conf.leftFullHour},${conf.headerPos}){\\scalebox{2}{\\large \\textbf{${headerA}}}}"
+    //
+    val headerB = s"${plan.periodEntry.localDate.weekyear().get}"
+    result += f"\\put(${conf.middle},${conf.headerPos}){\\scalebox{2}{\\makebox[${(conf.right - conf.middle) / 2.0} cm][r]{\\large \\textbf{${headerB}}}}}"
+    //
+    for ((hour, i) <- (conf.firstHour until conf.lastHour).zipWithIndex) {
+      result ++= createHourEntries(hour, i)
+      result ++= createHourLines(hour, i)
+    }
+    val currentBottom = startI(conf.lastHour - conf.firstHour)
+    result += f"\\put(${conf.left},${currentBottom}){\\line(1,0){${conf.lineWidth}}}"
+    //
+    result += "% text entries left"
+    result ++= createHeader(plan.period.header, withOffset = false)
+    result ++= addTextEntries(plan.period.todo.appointments, withOffset = false)
+    //
+    planRightOpt match {
+      case Some(planRight) =>
+        result += "% text entries right"
+        result ++= createHeader(planRight.period.header, withOffset = true)
+        result ++= addTextEntries(planRight.period.todo.appointments, withOffset = true)
+      case _ =>
+    }
+    //
+    result ++= pagePostamble.split("\n").map(_.stripLineEnd)
+    result
+  }
 
   val pagePreamble = s"""
 % page preamble
 \\begin{center}
-\\begin{picture}(${pageWidth},${pageHeight})(2.35,0.5)
+\\begin{picture}(${conf.pageWidth},${conf.pageHeight})(2.35,0.5)
 
-% Aussenrahmen
-% links / rechts
-\\put(0,0){\\line(0,1){${pageHeight}}}
-\\put(${pageWidth},0){\\line(0,1){${pageHeight}}}
-% unten / oben
-\\put(0,0){\\line(1,0){${pageWidth}}}
-\\put(0,${pageHeight}){\\line(1,0){${pageWidth}}}
+% Outer frame
+% left / right
+\\put(0,0){\\line(0,1){${conf.pageHeight}}}
+\\put(${conf.pageWidth},0){\\line(0,1){${conf.pageHeight}}}
+% bottom / top
+\\put(0,0){\\line(1,0){${conf.pageWidth}}}
+\\put(0,${conf.pageHeight}){\\line(1,0){${conf.pageWidth}}}
 """
 
   val pagePostamble = s"""
