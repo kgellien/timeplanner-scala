@@ -3,12 +3,12 @@ package de.gellien.timeplanner.latex
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
 
-class LatexDayPlans(plans: List[DayPlan], conf: DayPlanConf) {
+class LatexDayPlans(plans: List[PeriodPlan], conf: DayPlanConf) {
   def render = {
     val result = new ListBuffer[String]
     result += """"""
     result += """\documentclass[a4paper,12pt]{article}"""
-    result += "\\usepackage[utf8]{inputenc}"
+    result += "\\usepackage[latin1]{inputenc}"
     result += "\\usepackage{graphicx}"
     result += "\\setlength{\\headsep}{-3 cm}"
     result += "\\setlength{\\footskip}{1 cm}"
@@ -19,7 +19,18 @@ class LatexDayPlans(plans: List[DayPlan], conf: DayPlanConf) {
     result += "\\setlength{\\unitlength}{10mm}"
     val latexSingleDayPlan = new LatexDayPlan(conf)
     for (plan <- plans) {
-      result ++= latexSingleDayPlan.renderDayPlanPage(plan)
+      plan match {
+        case dayPlan: DayPlan =>
+          result ++= latexSingleDayPlan.renderDayPlanPage(dayPlan)
+        case weekPlan: WeekPlan =>
+          val dayPlans = for (singlePeriod <- weekPlan.periodSpecifics) yield {
+            DayPlan(singlePeriod.periodEntry.asInstanceOf[DayEntry], singlePeriod, List[SinglePeriod](), false)
+          }
+          for (dayPlan <- dayPlans) {
+            result ++= latexSingleDayPlan.renderDayPlanPage(dayPlan)
+          }
+        case plan => println(s"Ignore ${plan.period}")
+      }
       //      result ++= latexSingleDayPlan.renderDayPlanPage(plan, Some(plan))
     }
     result += """\end{document}"""
@@ -124,31 +135,6 @@ class LatexDayPlan(conf: DayPlanConf) {
         }
       }
     }
-    result
-  }
-
-  def xrenderSinglePlan(plan: DayPlan) = {
-    val result = new ListBuffer[String]
-    result ++= pagePreamble.split("\n").map(_.stripLineEnd)
-    //
-    val headerA = plan.periodEntry
-    result += f"\\put(${conf.leftFullHour},${conf.headerPos}){\\scalebox{2}{\\large \\textbf{${headerA}}}}"
-    //
-    val headerB = s"KW${plan.periodEntry.localDate.weekOfWeekyear().get}-${plan.periodEntry.localDate.weekyear().get}"
-    result += f"\\put(${conf.middle},${conf.headerPos}){\\scalebox{2}{\\makebox[${(conf.right - conf.middle) / 2.0} cm][r]{\\large \\textbf{${headerB}}}}}"
-    //
-    for ((hour, i) <- (conf.firstHour until conf.lastHour).zipWithIndex) {
-      result ++= createHourEntries(hour, i)
-      result ++= createHourLines(hour, i)
-    }
-    val currentBottom = startI(conf.lastHour - conf.firstHour)
-    result += f"\\put(${conf.left},${currentBottom}){\\line(1,0){${conf.lineWidth}}}"
-    //
-    result += "% text entries"
-    result ++= createHeader(plan.period.header, withOffset = false)
-    result ++= addTextEntries(plan.period.todo.appointments, withOffset = false)
-    //
-    result ++= pagePostamble.split("\n").map(_.stripLineEnd)
     result
   }
 

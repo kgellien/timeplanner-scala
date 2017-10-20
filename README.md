@@ -74,7 +74,8 @@ To make interpretation easier, in the current version at least one month is requ
 
 ### 0.7.9-SNAPSHOT
 
- - Update to Scala 2.12 and SBT 1.0
+ - Update to Scala 2.12 and SBT 1.0 (not yet fully; on my old Mac without Java 8 I can't update yet)
+ - Added DayPlans (single entry possible; per WeekPlan automatically daysPerWeek plans will be generated)
 
 ### 0.7.8-SNAPSHOT
 

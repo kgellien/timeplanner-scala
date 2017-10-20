@@ -29,16 +29,6 @@ object Plan {
       case dp: DayPlan => true
       case _           => false
     }
-    val dayPlans = for (dayPlanPp <- dayPlansPp) yield dayPlanPp.asInstanceOf[DayPlan]
-
-    if (dayPlans.size > 0) {
-      val dpLatexSource = fileNames.dayplanoutput
-      val withBigFont = false
-      createTexOutputForDayPlans(dpLatexSource, dayPlans, io, withBigFont)
-      if (modifier.callPdfLatex) {
-        io.callPdfLaTeX(fileNames.pdflatexFullPath, dpLatexSource)
-      }
-    }
 
     if (periodPlans.size > 0) {
       val tpLatexSource = fileNames.timeplanoutput
@@ -47,11 +37,18 @@ object Plan {
         io.callPdfLaTeX(fileNames.pdflatexFullPath, tpLatexSource)
       }
     }
+
+    val dpLatexSource = fileNames.dayplanoutput
+    val withBigFont = false
+    createTexOutputForDayPlans(dpLatexSource, allPeriodPlans, io, withBigFont)
+    if (modifier.callPdfLatex) {
+      io.callPdfLaTeX(fileNames.pdflatexFullPath, dpLatexSource)
+    }
   }
 
-  def createTexOutputForDayPlans(outputFileName: String, dayPlans: List[DayPlan], io: Io, withBigFont: Boolean) = {
+  def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, withBigFont: Boolean) = {
     val conf = if (withBigFont) ConfBig else ConfRegular
-    val ldp = new LatexDayPlans(dayPlans, conf)
+    val ldp = new LatexDayPlans(periodPlans, conf)
     val latexSource = ldp.render
     io.saveStringList(outputFileName, latexSource)
   }
