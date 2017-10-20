@@ -23,6 +23,7 @@ class LatexDayPlans(plans: List[PeriodPlan], conf: DayPlanConf) {
         case dayPlan: DayPlan =>
           result ++= latexSingleDayPlan.renderDayPlanPage(dayPlan)
         case weekPlan: WeekPlan =>
+          println(s"daysPerWeek ${weekPlan.periodEntry.header}: ${weekPlan.daysPerWeek}")
           val dayPlans = for (singlePeriod <- weekPlan.periodSpecifics) yield {
             DayPlan(singlePeriod.periodEntry.asInstanceOf[DayEntry], singlePeriod, List[SinglePeriod](), false)
           }
@@ -117,22 +118,26 @@ class LatexDayPlan(conf: DayPlanConf) {
     result
   }
 
-  def isRelevant(from: Time) = from.hh >= conf.firstHour && from.hh < conf.lastHour
-
   def addTextEntries(msgs: List[Appointment], withOffset: Boolean) = {
-    println(s"addTextEntries:")
+    val startTime = Time(conf.firstHour, 0)
+    val endTime = Time(conf.lastHour + 1, 0)
+    def isRelevant(from: Time, to: Time) =
+      (from.hh >= conf.firstHour && from.hh < conf.lastHour) ||
+        (to.hh >= conf.firstHour && to.hh < conf.lastHour)
+    def fromBar(from: Time) = if (from < startTime) startTime else from
+    def toBar(to: Time) = if (to > endTime) endTime else to
+    def msgTxt(msg: String, from: Time, to: Time) = {
+      val start = if (from < startTime) from.toString else ""
+      val end = if (to > endTime) to.toString else ""
+      val suffix = if (start != "" || end != "") List(start, end).mkString(" (", " -- ", ")") else ""
+      msg + suffix
+    }
     val result = new ListBuffer[String]
     for (msg <- msgs) {
       val from = msg.timeInfo.from.asInstanceOf[Time]
       val to = msg.timeInfo.to.asInstanceOf[Time]
-      if (isRelevant(from)) {
-        if (to.hh >= conf.lastHour) {
-          val endTime = Time(conf.lastHour, 0)
-          val msgTxt = s"${msg.info} (-- ${endTime})"
-          result ++= createTextEntry(msgTxt, from, endTime, withOffset)
-        } else {
-          result ++= createTextEntry(msg.info, from, to, withOffset)
-        }
+      if (isRelevant(from, to)) {
+        result ++= createTextEntry(msgTxt(msg.info, from, to), fromBar(from), toBar(to), withOffset)
       }
     }
     result
