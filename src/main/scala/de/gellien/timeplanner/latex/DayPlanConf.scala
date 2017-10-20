@@ -37,7 +37,7 @@ object ConfRegular extends DayPlanConf {
   val firstHour = 8
   val hours = 14
 
-  val maxHours = 15
+  val maxHours = 16
   val hourLineDelta = 1.60
   val textSize = "\\normalsize"
   val textHeight = 0.35
@@ -51,7 +51,7 @@ object ConfBig extends DayPlanConf {
   val firstHour = 8
   val hours = 9
 
-  val maxHours = 12
+  val maxHours = 13
   val hourLineDelta = 2.00
   val textSize = "\\large"
   val textHeight = 0.40

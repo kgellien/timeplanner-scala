@@ -29,15 +29,15 @@ class LatexDayPlans(plans: List[PeriodPlan], conf: DayPlanConf) {
           }
           for (dayPlan <- dayPlans) {
             result ++= latexSingleDayPlan.renderDayPlanPage(dayPlan)
+            // later: for weekend
+            // result ++= latexSingleDayPlan.renderDayPlanPage(dayPlan, Some(dayPlan))
           }
         case plan => println(s"Ignore ${plan.period}")
       }
-      //      result ++= latexSingleDayPlan.renderDayPlanPage(plan, Some(plan))
     }
     result += """\end{document}"""
     result
   }
-
 }
 
 class LatexDayPlan(conf: DayPlanConf) {
@@ -77,16 +77,6 @@ class LatexDayPlan(conf: DayPlanConf) {
     result += "% text"
     result += f"\\put(${conf.leftFullHour},${fullHour}){${conf.hourTextSize} ${hour}%02d:00}"
     result += f"\\put(${conf.leftHalfHour},${halfHour}){${conf.hourTextSize} :30}"
-    result
-  }
-
-  def createHeader(header: String, withOffset: Boolean) = {
-    val result = new ListBuffer[String]
-    val posX = if (withOffset) conf.middle else conf.leftContent
-    val posY = startI(-0.35)
-    val width = conf.middle - conf.leftContent
-    //    result += f"\\put(${posX},${posY}){\\scalebox{1.25}{\\makebox[${width} cm][c]{\\large \\textbf{${header}}}}}"
-    result += f"\\put(${posX},${posY}){\\scalebox{1.25}{\\large \\textbf{${header}}}}"
     result
   }
 
@@ -153,6 +143,8 @@ class LatexDayPlan(conf: DayPlanConf) {
     val headerB = s"${plan.periodEntry.localDate.weekyear().get}"
     result += f"\\put(${conf.middle},${conf.headerPos}){\\scalebox{2}{\\makebox[${(conf.right - conf.middle) / 2.0} cm][r]{\\large \\textbf{${headerB}}}}}"
     //
+    result += f"\\put(${2.0 * conf.leftContent + conf.leftFullHour},${conf.headerPos}){\\scalebox{1.25}{\\large \\textbf{${plan.period.header}}}}"
+    //
     for ((hour, i) <- (conf.firstHour until conf.lastHour).zipWithIndex) {
       result ++= createHourEntries(hour, i)
       result ++= createHourLines(hour, i)
@@ -161,13 +153,12 @@ class LatexDayPlan(conf: DayPlanConf) {
     result += f"\\put(${conf.left},${currentBottom}){\\line(1,0){${conf.lineWidth}}}"
     //
     result += "% text entries left"
-    result ++= createHeader(plan.period.header, withOffset = false)
     result ++= addTextEntries(plan.period.todo.appointments, withOffset = false)
     //
     planRightOpt match {
       case Some(planRight) =>
         result += "% text entries right"
-        result ++= createHeader(planRight.period.header, withOffset = true)
+        result += f"\\put(${conf.middle + conf.leftFullHour},${conf.headerPos}){\\scalebox{1.25}{\\large \\textbf{${planRight.period.header}}}}"
         result ++= addTextEntries(planRight.period.todo.appointments, withOffset = true)
       case _ =>
     }
