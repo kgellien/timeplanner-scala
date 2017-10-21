@@ -3,8 +3,12 @@ package de.gellien.timeplanner.latex
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
 
-class LatexDayPlans(plans: List[PeriodPlan], conf: DayPlanConf) {
-  def render = {
+class LatexDayPlans {
+  def renderDayPlanPage(conf: DayPlanConf, dayPlan: DayPlan, dayPlanRightOpt: Option[DayPlan] = None) = {
+    val latexSingleDayPlan = new LatexDayPlan(conf)
+    latexSingleDayPlan.render(dayPlan, dayPlanRightOpt)
+  }
+  def render(plans: List[PeriodPlan], conf: DayPlanConf) = {
     val result = new ListBuffer[String]
     result += """"""
     result += """\documentclass[a4paper,12pt]{article}"""
@@ -17,20 +21,19 @@ class LatexDayPlans(plans: List[PeriodPlan], conf: DayPlanConf) {
     result += """\begin{document}"""
     result += """\pagestyle{empty}"""
     result += "\\setlength{\\unitlength}{10mm}"
-    val latexSingleDayPlan = new LatexDayPlan(conf)
     for (plan <- plans) {
       plan match {
         case dayPlan: DayPlan =>
-          result ++= latexSingleDayPlan.renderDayPlanPage(dayPlan)
+          result ++= renderDayPlanPage(conf, dayPlan)
         case weekPlan: WeekPlan =>
           println(s"daysPerWeek ${weekPlan.periodEntry.header}: ${weekPlan.daysPerWeek}")
           val dayPlans = for (singlePeriod <- weekPlan.periodSpecifics) yield {
             DayPlan(singlePeriod.periodEntry.asInstanceOf[DayEntry], singlePeriod, List[SinglePeriod](), false)
           }
           for (dayPlan <- dayPlans) {
-            result ++= latexSingleDayPlan.renderDayPlanPage(dayPlan)
+            result ++= renderDayPlanPage(conf, dayPlan)
             // later: for weekend
-            // result ++= latexSingleDayPlan.renderDayPlanPage(dayPlan, Some(dayPlan))
+            // result ++= renderDayPlanPage(dayPlan, Some(dayPlan))
           }
         case plan => println(s"Ignore ${plan.period}")
       }
@@ -41,6 +44,42 @@ class LatexDayPlans(plans: List[PeriodPlan], conf: DayPlanConf) {
 }
 
 class LatexDayPlan(conf: DayPlanConf) {
+
+  def render(plan: DayPlan, planRightOpt: Option[DayPlan] = None) = {
+    val result = new ListBuffer[String]
+    result ++= pagePreamble.split("\n").map(_.stripLineEnd)
+    //
+    val dayHeaderY = conf.headerPos
+    val headerA = s"KW${plan.periodEntry.localDate.weekOfWeekyear().get}"
+    result += f"\\put(${conf.leftFullHour},${dayHeaderY}){\\scalebox{2}{\\large \\textbf{${headerA}}}}"
+    val headerB = s"${plan.periodEntry.localDate.weekyear().get}"
+    //    result += f"\\put(${conf.middle + (conf.right - conf.middle) / 2.0},${conf.headerPos}){\\scalebox{2}{\\large \\textbf{${headerB}}}}"
+    result += f"\\put(${conf.middle},${dayHeaderY}){\\scalebox{2}{\\makebox[${(conf.right - conf.middle) / 2.0} cm][r]{\\large \\textbf{${headerB}}}}}"
+    //
+    val dayHeaderX = if (planRightOpt.isDefined) 2.0 * conf.leftContent + conf.leftFullHour else conf.middle - (conf.middle - conf.leftContent) / 4.0
+    result += f"\\put(${dayHeaderX},${dayHeaderY}){\\scalebox{1.25}{\\large \\textbf{${plan.period.header}}}}"
+    //
+    for ((hour, i) <- (conf.firstHour until conf.lastHour).zipWithIndex) {
+      result ++= createHourEntries(hour, i)
+      result ++= createHourLines(hour, i)
+    }
+    val currentBottom = startI(conf.lastHour - conf.firstHour)
+    result += f"\\put(${conf.left},${currentBottom}){\\line(1,0){${conf.lineWidth}}}"
+    //
+    result += "% text entries left"
+    result ++= addTextEntries(plan.period.todo.appointments, withOffset = false)
+    //
+    planRightOpt match {
+      case Some(planRight) =>
+        result += "% text entries right"
+        result += f"\\put(${conf.middle + conf.leftFullHour},${conf.headerPos}){\\scalebox{1.25}{\\large \\textbf{${planRight.period.header}}}}"
+        result ++= addTextEntries(planRight.period.todo.appointments, withOffset = true)
+      case _ =>
+    }
+    //
+    result ++= pagePostamble.split("\n").map(_.stripLineEnd)
+    result
+  }
 
   def startI(i: Double) = conf.top - i * conf.hourLineDelta
 
@@ -130,40 +169,6 @@ class LatexDayPlan(conf: DayPlanConf) {
         result ++= createTextEntry(msgTxt(msg.info, from, to), fromBar(from), toBar(to), withOffset)
       }
     }
-    result
-  }
-
-  def renderDayPlanPage(plan: DayPlan, planRightOpt: Option[DayPlan] = None) = {
-    val result = new ListBuffer[String]
-    result ++= pagePreamble.split("\n").map(_.stripLineEnd)
-    //
-    val headerA = s"KW${plan.periodEntry.localDate.weekOfWeekyear().get}"
-    result += f"\\put(${conf.leftFullHour},${conf.headerPos}){\\scalebox{2}{\\large \\textbf{${headerA}}}}"
-    //
-    val headerB = s"${plan.periodEntry.localDate.weekyear().get}"
-    result += f"\\put(${conf.middle},${conf.headerPos}){\\scalebox{2}{\\makebox[${(conf.right - conf.middle) / 2.0} cm][r]{\\large \\textbf{${headerB}}}}}"
-    //
-    result += f"\\put(${2.0 * conf.leftContent + conf.leftFullHour},${conf.headerPos}){\\scalebox{1.25}{\\large \\textbf{${plan.period.header}}}}"
-    //
-    for ((hour, i) <- (conf.firstHour until conf.lastHour).zipWithIndex) {
-      result ++= createHourEntries(hour, i)
-      result ++= createHourLines(hour, i)
-    }
-    val currentBottom = startI(conf.lastHour - conf.firstHour)
-    result += f"\\put(${conf.left},${currentBottom}){\\line(1,0){${conf.lineWidth}}}"
-    //
-    result += "% text entries left"
-    result ++= addTextEntries(plan.period.todo.appointments, withOffset = false)
-    //
-    planRightOpt match {
-      case Some(planRight) =>
-        result += "% text entries right"
-        result += f"\\put(${conf.middle + conf.leftFullHour},${conf.headerPos}){\\scalebox{1.25}{\\large \\textbf{${planRight.period.header}}}}"
-        result ++= addTextEntries(planRight.period.todo.appointments, withOffset = true)
-      case _ =>
-    }
-    //
-    result ++= pagePostamble.split("\n").map(_.stripLineEnd)
     result
   }
 

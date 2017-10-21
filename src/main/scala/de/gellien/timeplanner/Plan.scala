@@ -48,8 +48,8 @@ object Plan {
 
   def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, withBigFont: Boolean) = {
     val conf = if (withBigFont) ConfBig else ConfRegular
-    val ldp = new LatexDayPlans(periodPlans, conf)
-    val latexSource = ldp.render
+    val ldp = new LatexDayPlans
+    val latexSource = ldp.render(periodPlans, conf)
     io.saveStringList(outputFileName, latexSource)
   }
 
