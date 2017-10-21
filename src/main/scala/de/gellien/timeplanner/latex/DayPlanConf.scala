@@ -18,6 +18,8 @@ abstract class DayPlanConf {
   val leftHalfHourWidth: Double
   val leftContentWidth: Double
 
+  val top: Double
+
   def lineWidth = pageWidth - 2.0 * left
   def headerPos = pageHeight - 1.0
   def leftFullHour = left + leftFullHourWidth
@@ -27,7 +29,6 @@ abstract class DayPlanConf {
   def middle = leftContent + (right - leftContent) / 2
   def hourLength = lineWidth - (leftContent - left)
   def halfHourLength = lineWidth - (leftContent - left)
-  def top = bottom + maxHours * hourLineDelta + hourLineDelta / 10.0
   def lastHour = firstHour + hours
 
   def defaultDuration = 0.5
@@ -36,7 +37,6 @@ abstract class DayPlanConf {
 object ConfRegular extends DayPlanConf {
   val firstHour = 8
   val hours = 14
-
   val maxHours = 16
   val hourLineDelta = 1.60
   val textSize = "\\normalsize"
@@ -45,12 +45,12 @@ object ConfRegular extends DayPlanConf {
   val leftFullHourWidth = 0.30
   val leftHalfHourWidth = 0.80
   val leftContentWidth = 1.75
+  val top = bottom + maxHours * hourLineDelta + hourLineDelta / 3.0
 }
 
 object ConfBig extends DayPlanConf {
   val firstHour = 8
   val hours = 8
-
   val maxHours = 13
   val hourLineDelta = 2.00
   val textSize = "\\large"
@@ -59,4 +59,5 @@ object ConfBig extends DayPlanConf {
   val leftFullHourWidth = 0.40
   val leftHalfHourWidth = 1.18
   val leftContentWidth = 2.60
+  val top = bottom + maxHours * hourLineDelta + hourLineDelta / 10.0
 }
