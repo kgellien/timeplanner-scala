@@ -30,10 +30,14 @@ class LatexDayPlans {
           val dayPlans = for (singlePeriod <- weekPlan.periodSpecifics) yield {
             DayPlan(singlePeriod.periodEntry.asInstanceOf[DayEntry], singlePeriod, List[SinglePeriod](), false)
           }
-          for (dayPlan <- dayPlans) {
-            result ++= renderDayPlanPage(conf, dayPlan)
-            // later: for weekend
-            // result ++= renderDayPlanPage(dayPlan, Some(dayPlan))
+          if (weekPlan.daysPerWeek == 7) {
+            val (weekDays, weekend) = dayPlans.splitAt(5)
+            for (dayPlan <- weekDays)
+              result ++= renderDayPlanPage(conf, dayPlan)
+            result ++= renderDayPlanPage(conf, weekend(0), Some(weekend(1)))
+          } else {
+            for (dayPlan <- dayPlans)
+              result ++= renderDayPlanPage(conf, dayPlan)
           }
         case plan => println(s"Ignore ${plan.period}")
       }
@@ -60,7 +64,7 @@ class LatexDayPlan(conf: DayPlanConf) {
     //
     for ((hour, i) <- (conf.firstHour until conf.lastHour).zipWithIndex) {
       result ++= createHourEntries(hour, i)
-      result ++= createHourLines(hour, i)
+      result ++= createHourLines(hour, i, planRightOpt.isDefined)
     }
     val currentBottom = startI(conf.lastHour - conf.firstHour)
     result += f"\\put(${conf.left},${currentBottom}){\\line(1,0){${conf.lineWidth}}}"
@@ -82,7 +86,7 @@ class LatexDayPlan(conf: DayPlanConf) {
 
   def startI(i: Double) = conf.top - i * conf.hourLineDelta
 
-  def createHourLines(hour: Int, i: Int) = {
+  def createHourLines(hour: Int, i: Int, withMiddleLine: Boolean) = {
     val result = new ListBuffer[String]
     val start = startI(i)
     val end = startI(i + 1)
@@ -92,7 +96,8 @@ class LatexDayPlan(conf: DayPlanConf) {
     result += s"% createHourLines(${hour}, ${i})"
     result += "% vertical hour lines"
     result += f"\\put(${conf.leftContent},${end}){\\line(0,1){${conf.hourLineDelta}}}"
-    //    result += f"\\put(${conf.middle},${end}){\\line(0,1){${conf.hourLineDelta}}}"
+    if (withMiddleLine)
+      result += f"\\put(${conf.middle},${end}){\\line(0,1){${conf.hourLineDelta}}}"
     result += f"\\put(${conf.right},${end}){\\line(0,1){${conf.hourLineDelta}}}"
     result += "% horizontal hour lines"
     result += f"\\put(${conf.leftContent},${start}){\\line(1,0){${conf.hourLength}}}"
