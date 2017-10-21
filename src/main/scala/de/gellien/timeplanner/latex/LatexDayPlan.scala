@@ -53,7 +53,6 @@ class LatexDayPlan(conf: DayPlanConf) {
     val headerA = s"KW${plan.periodEntry.localDate.weekOfWeekyear().get}"
     result += f"\\put(${conf.leftFullHour},${dayHeaderY}){\\scalebox{2}{\\large \\textbf{${headerA}}}}"
     val headerB = s"${plan.periodEntry.localDate.weekyear().get}"
-    //    result += f"\\put(${conf.middle + (conf.right - conf.middle) / 2.0},${conf.headerPos}){\\scalebox{2}{\\large \\textbf{${headerB}}}}"
     result += f"\\put(${conf.middle},${dayHeaderY}){\\scalebox{2}{\\makebox[${(conf.right - conf.middle) / 2.0} cm][r]{\\large \\textbf{${headerB}}}}}"
     //
     val dayHeaderX = if (planRightOpt.isDefined) 2.0 * conf.leftContent + conf.leftFullHour else conf.middle - (conf.middle - conf.leftContent) / 4.0
@@ -93,7 +92,7 @@ class LatexDayPlan(conf: DayPlanConf) {
     result += s"% createHourLines(${hour}, ${i})"
     result += "% vertical hour lines"
     result += f"\\put(${conf.leftContent},${end}){\\line(0,1){${conf.hourLineDelta}}}"
-    result += f"\\put(${conf.middle},${end}){\\line(0,1){${conf.hourLineDelta}}}"
+    //    result += f"\\put(${conf.middle},${end}){\\line(0,1){${conf.hourLineDelta}}}"
     result += f"\\put(${conf.right},${end}){\\line(0,1){${conf.hourLineDelta}}}"
     result += "% horizontal hour lines"
     result += f"\\put(${conf.leftContent},${start}){\\line(1,0){${conf.hourLength}}}"

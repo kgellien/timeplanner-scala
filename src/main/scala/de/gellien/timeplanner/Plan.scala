@@ -39,7 +39,7 @@ object Plan {
     }
 
     val dpLatexSource = fileNames.dayplanoutput
-    val withBigFont = false
+    val withBigFont = modifier.daysPerWeek == 5 // working week in big
     createTexOutputForDayPlans(dpLatexSource, allPeriodPlans, io, withBigFont)
     if (modifier.callPdfLatex) {
       io.callPdfLaTeX(fileNames.pdflatexFullPath, dpLatexSource)
