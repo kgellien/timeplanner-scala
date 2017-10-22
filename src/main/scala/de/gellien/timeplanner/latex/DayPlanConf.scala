@@ -27,7 +27,7 @@ abstract class DayPlanConf {
   def middle = leftContent + (right - leftContent) / 2
   def hourLength = lineWidth - (leftContent - left)
   def halfHourLength = lineWidth - (leftContent - left)
-  def top = bottom + maxHours * hourLineDelta
+  def top = bottom + maxHours * hourLineDelta + hourLineDelta / 10.0
   def lastHour = firstHour + hours
 
   def defaultDuration = 0.5
@@ -37,7 +37,7 @@ object ConfRegular extends DayPlanConf {
   val firstHour = 8
   val hours = 14
 
-  val maxHours = 15
+  val maxHours = 16
   val hourLineDelta = 1.60
   val textSize = "\\normalsize"
   val textHeight = 0.35
@@ -49,9 +49,9 @@ object ConfRegular extends DayPlanConf {
 
 object ConfBig extends DayPlanConf {
   val firstHour = 8
-  val hours = 9
+  val hours = 8
 
-  val maxHours = 12
+  val maxHours = 13
   val hourLineDelta = 2.00
   val textSize = "\\large"
   val textHeight = 0.40
