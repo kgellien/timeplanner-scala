@@ -1,5 +1,8 @@
 package de.gellien.timeplanner.latex
 
+import java.util.Properties
+import java.io.FileInputStream
+
 abstract class DayPlanConf {
   val left = 0.0
   val pageWidth = 18.5
@@ -18,6 +21,7 @@ abstract class DayPlanConf {
   val leftHalfHourWidth: Double
   val leftContentWidth: Double
 
+  val topFraction: Double
   val top: Double
 
   def lineWidth = pageWidth - 2.0 * left
@@ -34,6 +38,29 @@ abstract class DayPlanConf {
   def defaultDuration = 0.5
 }
 
+object ConfFactory {
+  def getConf(dpConfig: String) = {
+    val properties = new Properties()
+    properties.load(new FileInputStream(dpConfig))
+
+    new DayPlanConf {
+      val firstHour = properties.getProperty("firstHour").toInt
+      val hours = properties.getProperty("hours").toInt
+      val maxHours = properties.getProperty("maxHours").toInt
+      val hourLineDelta = properties.getProperty("hourLineDelta").toDouble
+      val textSize = properties.getProperty("textSize")
+      val textHeight = properties.getProperty("textHeight").toDouble
+      val hourTextSize = properties.getProperty("hourTextSize")
+      val leftFullHourWidth = properties.getProperty("leftFullHourWidth").toDouble
+      val leftHalfHourWidth = properties.getProperty("leftHalfHourWidth").toDouble
+      val leftContentWidth = properties.getProperty("leftContentWidth").toDouble
+      val topFraction = properties.getProperty("topFraction").toDouble
+
+      val top = bottom + maxHours * hourLineDelta + hourLineDelta / topFraction
+    }
+  }
+}
+
 object ConfRegular extends DayPlanConf {
   val firstHour = 8
   val hours = 14
@@ -45,19 +72,7 @@ object ConfRegular extends DayPlanConf {
   val leftFullHourWidth = 0.30
   val leftHalfHourWidth = 0.80
   val leftContentWidth = 1.75
-  val top = bottom + maxHours * hourLineDelta + hourLineDelta / 3.0
-}
+  val topFraction = 3.0
 
-object ConfBig extends DayPlanConf {
-  val firstHour = 8
-  val hours = 8
-  val maxHours = 13
-  val hourLineDelta = 2.00
-  val textSize = "\\large"
-  val textHeight = 0.40
-  val hourTextSize = "\\huge"
-  val leftFullHourWidth = 0.40
-  val leftHalfHourWidth = 1.18
-  val leftContentWidth = 2.60
-  val top = bottom + maxHours * hourLineDelta + hourLineDelta / 10.0
+  val top = bottom + maxHours * hourLineDelta + hourLineDelta / topFraction
 }

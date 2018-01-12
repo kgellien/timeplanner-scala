@@ -39,15 +39,15 @@ object Plan {
     }
 
     val dpLatexSource = fileNames.dayplanoutput
-    val withBigFont = modifier.daysPerWeek == 5 // working week in big
-    createTexOutputForDayPlans(dpLatexSource, allPeriodPlans, io, withBigFont)
+    val dpConfig = fileNames.dpconfig
+    createTexOutputForDayPlans(dpLatexSource, allPeriodPlans, io, dpConfig)
     if (modifier.callPdfLatex) {
       io.callPdfLaTeX(fileNames.pdflatexFullPath, dpLatexSource)
     }
   }
 
-  def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, withBigFont: Boolean) = {
-    val conf = if (withBigFont) ConfBig else ConfRegular
+  def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, dpConfig: String) = {
+    val conf = ConfFactory.getConf(dpConfig)
     val ldp = new LatexDayPlans
     val latexSource = ldp.render(periodPlans, conf)
     io.saveStringList(outputFileName, latexSource)
@@ -96,6 +96,7 @@ object Plan {
     val latin1 = "iso-8859-1"
     val defaultTimeplanoutput = "example.tex"
     val defaultDayplanoutput = "example-dp.tex"
+    val defaultDpconfig = "dayplan-regular.properties"
     println("os: " + System.getProperty("os.name"))
     println("pwd: " + System.getProperty("user.dir"))
     if (args.length == 0) {
@@ -127,14 +128,16 @@ object Plan {
     val withAdditionalTasks = options contains 'withAdditionalTasks
     val inputEncoding = latin1
     val outputEncoding = latin1
+    val dpconfig = if (options contains 'dpconfig) options('dpconfig).asInstanceOf[String] else defaultDpconfig
 
     val properties = new Properties()
     properties.load(new FileInputStream("timeplan.properties"))
     val pdflatexFullPath = properties.getProperty(os + ".pdflatex")
     println("Path to pdflatex: >%s<" format pdflatexFullPath)
 
-    (Encodings(inputEncoding, outputEncoding),
-      FileNames(inputFiles, inputDsl, pdflatexFullPath, timeplanoutput, dayplanoutput),
+    (
+      Encodings(inputEncoding, outputEncoding),
+      FileNames(inputFiles, inputDsl, pdflatexFullPath, timeplanoutput, dayplanoutput, dpconfig),
       Modifier(quote, daysPerWeek, withSeparator, withOverview, callPdfLatex, debug, withAdditionalTasks))
   }
 
@@ -151,6 +154,7 @@ object Plan {
         case "--timeplanoutput" :: fileName :: tail => nextOption(map ++ Map('timeplanoutput -> fileName), tail)
         case "-o" :: fileName :: tail               => nextOption(map ++ Map('timeplanoutput -> fileName), tail)
         case "--dayplanoutput" :: fileName :: tail  => nextOption(map ++ Map('dayplanoutput -> fileName), tail)
+        case "--dpconfig" :: fileName :: tail       => nextOption(map ++ Map('dpconfig -> fileName), tail)
         case "--debug" :: tail                      => nextOption(map ++ Map('debug -> true), tail)
         case "-d" :: tail                           => nextOption(map ++ Map('debug -> true), tail)
         case "--withSeparator" :: tail              => nextOption(map ++ Map('withSeparator -> true), tail)
@@ -171,5 +175,5 @@ object Plan {
 
 sealed abstract class Config
 case class Modifier(quote: String, daysPerWeek: Int, withSeparator: Boolean, withOverview: Boolean, callPdfLatex: Boolean, debug: Boolean, withAdditionalTasks: Boolean) extends Config
-case class FileNames(inputFiles: List[String], inputDsl: String, pdflatexFullPath: String, timeplanoutput: String, dayplanoutput: String) extends Config
+case class FileNames(inputFiles: List[String], inputDsl: String, pdflatexFullPath: String, timeplanoutput: String, dayplanoutput: String, dpconfig: String) extends Config
 case class Encodings(inputEncoding: String, outputEncoding: String) extends Config
