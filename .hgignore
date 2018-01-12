@@ -19,3 +19,4 @@ timeplan.properties
 .cache-tests
 .idea/
 *.iml
+.goutput*
