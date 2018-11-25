@@ -69,8 +69,27 @@ To make interpretation easier, in the current version at least one month is requ
 - test properly under Win 7 and Linux
 - find a way to distinguish between birthdays and anniversaries
 
+## SBT assembly
+
+can create a fat jar via sbt assembly plugin
+
+```bash
+sbt assembly
+```
 
 ## Revision History
+
+### 0.8.0-SNAPSHOT
+
+- Added three new week plans
+
+#### TODOs
+
+- Refactor LatexWeekSchedule and LatexWeekWorkPlan (quite a bit of duplication); these might constitute a use case for a template engine
+- Externalize corresponding configs
+- Internationalization
+- latin1 vs. utf8 should be configurable
+- new week plans and day plans should be configurable
 
 ### 0.7.9-SNAPSHOT
 

@@ -44,6 +44,45 @@ object Plan {
     if (modifier.callPdfLatex) {
       io.callPdfLaTeX(fileNames.pdflatexFullPath, dpLatexSource)
     }
+
+    val wwLatexSource = fileNames.weekworkplanoutput
+    createTexOutputForWeekWorkPlans(wwLatexSource, allPeriodPlans, io)
+    if (modifier.callPdfLatex) {
+      io.callPdfLaTeX(fileNames.pdflatexFullPath, wwLatexSource)
+    }
+
+    val wsLatexSource = fileNames.weekscheduleoutput
+    createTexOutputForWeekSchedule(wsLatexSource, allPeriodPlans, io)
+    if (modifier.callPdfLatex) {
+      io.callPdfLaTeX(fileNames.pdflatexFullPath, wsLatexSource)
+    }
+
+    val ws24LatexSource = fileNames.weekschedule24output
+    createTexOutputForWeekSchedule24(ws24LatexSource, allPeriodPlans, io)
+    if (modifier.callPdfLatex) {
+      io.callPdfLaTeX(fileNames.pdflatexFullPath, ws24LatexSource)
+    }
+  }
+
+  def createTexOutputForWeekSchedule24(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
+    val conf = new WeekPlanConf
+    val lws = new LatexWeekSchedules
+    val latexSource = lws.render(periodPlans, conf, LatexWeekSchedule24)
+    io.saveStringList(outputFileName, latexSource)
+  }
+
+  def createTexOutputForWeekSchedule(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
+    val conf = new WeekPlanConf
+    val lws = new LatexWeekSchedules
+    val latexSource = lws.render(periodPlans, conf, LatexWeekSchedule)
+    io.saveStringList(outputFileName, latexSource)
+  }
+
+  def createTexOutputForWeekWorkPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
+    val conf = new WeekPlanConf
+    val lwwp = new LatexWeekWorkPlans
+    val latexSource = lwwp.render(periodPlans, conf)
+    io.saveStringList(outputFileName, latexSource)
   }
 
   def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, dpConfig: String) = {
@@ -97,6 +136,7 @@ object Plan {
     val defaultTimeplanoutput = "example.tex"
     val defaultDayplanoutput = "example-dp.tex"
     val defaultDpconfig = "dayplan-regular.properties"
+    val defaultWeekworkplanoutput = "example-ww.tex"
     println("os: " + System.getProperty("os.name"))
     println("pwd: " + System.getProperty("user.dir"))
     if (args.length == 0) {
@@ -121,6 +161,9 @@ object Plan {
     val callPdfLatex = options contains 'pdflatex
     val timeplanoutput = if (options contains 'timeplanoutput) options('timeplanoutput).asInstanceOf[String] else defaultTimeplanoutput
     val dayplanoutput = if (options contains 'dayplanoutput) options('dayplanoutput).asInstanceOf[String] else defaultDayplanoutput
+    val weekworkplanoutput = if (options contains 'weekworkplanoutput) options('weekworkplanoutput).asInstanceOf[String] else defaultWeekworkplanoutput
+    val weekscheduleoutput = if (options contains 'weekscheduleoutput) options('weekscheduleoutput).asInstanceOf[String] else defaultWeekworkplanoutput
+    val weekschedule24output = if (options contains 'weekschedule24output) options('weekschedule24output).asInstanceOf[String] else defaultWeekworkplanoutput
     val inputDsl = options('inputDsl).asInstanceOf[String] // must exist - see above
     val inputFiles = options('input).asInstanceOf[List[String]].reverse // must exist - see above; reverse in case sequence matters
     val withSeparator = options contains 'withSeparator
@@ -137,7 +180,7 @@ object Plan {
 
     (
       Encodings(inputEncoding, outputEncoding),
-      FileNames(inputFiles, inputDsl, pdflatexFullPath, timeplanoutput, dayplanoutput, dpconfig),
+      FileNames(inputFiles, inputDsl, pdflatexFullPath, timeplanoutput, dayplanoutput, dpconfig, weekworkplanoutput, weekscheduleoutput, weekschedule24output),
       Modifier(quote, daysPerWeek, withSeparator, withOverview, callPdfLatex, debug, withAdditionalTasks))
   }
 
@@ -147,24 +190,27 @@ object Plan {
     type OptionMMap = MMap[Symbol, Any]
     def nextOption(map: OptionMMap, list: List[String]): OptionMMap = {
       list match {
-        case Nil                                    => map
-        case "--daysPerWeek" :: dpw :: tail         => nextOption(map ++ Map('daysPerWeek -> dpw.toInt), tail)
-        case "--input_dsl" :: fileName :: tail      => nextOption(map ++ Map('inputDsl -> fileName), tail)
-        case "-i" :: fileName :: tail               => nextOption(map ++ Map('inputDsl -> fileName), tail)
+        case Nil => map
+        case "--daysPerWeek" :: dpw :: tail => nextOption(map ++ Map('daysPerWeek -> dpw.toInt), tail)
+        case "--input_dsl" :: fileName :: tail => nextOption(map ++ Map('inputDsl -> fileName), tail)
+        case "-i" :: fileName :: tail => nextOption(map ++ Map('inputDsl -> fileName), tail)
         case "--timeplanoutput" :: fileName :: tail => nextOption(map ++ Map('timeplanoutput -> fileName), tail)
-        case "-o" :: fileName :: tail               => nextOption(map ++ Map('timeplanoutput -> fileName), tail)
-        case "--dayplanoutput" :: fileName :: tail  => nextOption(map ++ Map('dayplanoutput -> fileName), tail)
-        case "--dpconfig" :: fileName :: tail       => nextOption(map ++ Map('dpconfig -> fileName), tail)
-        case "--debug" :: tail                      => nextOption(map ++ Map('debug -> true), tail)
-        case "-d" :: tail                           => nextOption(map ++ Map('debug -> true), tail)
-        case "--withSeparator" :: tail              => nextOption(map ++ Map('withSeparator -> true), tail)
-        case "--withAdditionalTasks" :: tail        => nextOption(map ++ Map('withAdditionalTasks -> true), tail)
-        case "-s" :: tail                           => nextOption(map ++ Map('withSeparator -> true), tail)
-        case "--withOverview" :: tail               => nextOption(map ++ Map('withOverview -> true), tail)
-        case "-v" :: tail                           => nextOption(map ++ Map('withOverview -> true), tail)
-        case "--callpdflatex" :: tail               => nextOption(map ++ Map('pdflatex -> true), tail)
-        case "-t" :: tail                           => nextOption(map ++ Map('pdflatex -> true), tail)
-        case string :: tail                         => map('input) = string :: map('input).asInstanceOf[List[String]]; nextOption(map, tail)
+        case "-o" :: fileName :: tail => nextOption(map ++ Map('timeplanoutput -> fileName), tail)
+        case "--dayplanoutput" :: fileName :: tail => nextOption(map ++ Map('dayplanoutput -> fileName), tail)
+        case "--dpconfig" :: fileName :: tail => nextOption(map ++ Map('dpconfig -> fileName), tail)
+        case "--weekworkplanoutput" :: fileName :: tail => nextOption(map ++ Map('weekworkplanoutput -> fileName), tail)
+        case "--weekscheduleoutput" :: fileName :: tail => nextOption(map ++ Map('weekscheduleoutput -> fileName), tail)
+        case "--weekschedule24output" :: fileName :: tail => nextOption(map ++ Map('weekschedule24output -> fileName), tail)
+        case "--debug" :: tail => nextOption(map ++ Map('debug -> true), tail)
+        case "-d" :: tail => nextOption(map ++ Map('debug -> true), tail)
+        case "--withSeparator" :: tail => nextOption(map ++ Map('withSeparator -> true), tail)
+        case "--withAdditionalTasks" :: tail => nextOption(map ++ Map('withAdditionalTasks -> true), tail)
+        case "-s" :: tail => nextOption(map ++ Map('withSeparator -> true), tail)
+        case "--withOverview" :: tail => nextOption(map ++ Map('withOverview -> true), tail)
+        case "-v" :: tail => nextOption(map ++ Map('withOverview -> true), tail)
+        case "--callpdflatex" :: tail => nextOption(map ++ Map('pdflatex -> true), tail)
+        case "-t" :: tail => nextOption(map ++ Map('pdflatex -> true), tail)
+        case string :: tail => map('input) = string :: map('input).asInstanceOf[List[String]]; nextOption(map, tail)
       }
     }
     val initialMap: OptionMMap = MMap('input -> List())
@@ -175,5 +221,5 @@ object Plan {
 
 sealed abstract class Config
 case class Modifier(quote: String, daysPerWeek: Int, withSeparator: Boolean, withOverview: Boolean, callPdfLatex: Boolean, debug: Boolean, withAdditionalTasks: Boolean) extends Config
-case class FileNames(inputFiles: List[String], inputDsl: String, pdflatexFullPath: String, timeplanoutput: String, dayplanoutput: String, dpconfig: String) extends Config
+case class FileNames(inputFiles: List[String], inputDsl: String, pdflatexFullPath: String, timeplanoutput: String, dayplanoutput: String, dpconfig: String, weekworkplanoutput: String, weekscheduleoutput: String, weekschedule24output: String) extends Config
 case class Encodings(inputEncoding: String, outputEncoding: String) extends Config
