@@ -54,7 +54,7 @@ object LatexWeekSchedule extends WeekSchedule {
     result += s"""\\begin{tabular}{|r|*{7}{p{${conf.daywidthWs}}|}}"""
     result += """\hline"""
     result += """Zeit & Montag & Dienstag & Mittwoch & Donnerstag & Freitag & Samstag & Sonntag\\ \hline \hline"""
-    for (i <- offset to (offset + 14)) {
+    for (i <- offset to (offset + 13)) {
       result += s""" ${i} -- ${i + 1} & & & & & & & \\\\[0.65cm] \\hline"""
     }
     result += """\end{tabular}"""
