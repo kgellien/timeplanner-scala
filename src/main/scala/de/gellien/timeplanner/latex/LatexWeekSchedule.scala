@@ -1,8 +1,8 @@
 package de.gellien.timeplanner.latex
 
-import de.gellien.timeplanner.timeplan.WeekPlan
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan.PeriodPlan
+import de.gellien.timeplanner.timeplan.WeekPlan
 
 class LatexWeekSchedules {
   val preamble = """
@@ -40,6 +40,24 @@ class LatexWeekSchedules {
 
 sealed trait WeekSchedule {
   def render(weekPlan: WeekPlan, conf: WeekPlanConf): ListBuffer[String]
+}
+
+object LatexWeekWorkPlan extends WeekSchedule {
+  def render(weekPlan: WeekPlan, conf: WeekPlanConf): ListBuffer[String] = {
+    val result = new ListBuffer[String]
+    val (left, middle, rightCandidate) = weekPlan.header
+    val right = if (rightCandidate == "") """\phantom{.}""" else rightCandidate
+    result += """{\Large \bf %s \hfill %s \hfill %s}\\""" format (left, middle.replace(" - ", " -- "), right)
+    result += s"""\\begin{tabular}{|p{4cm}|*{7}{p{${conf.daywidthWw}}|}}"""
+    result += """\hline"""
+    result += """Aufgabenbeschreibung & Montag & Dienstag & Mittwoch & Donnerstag & Freitag & Samstag & Sonntag\\ \hline \hline"""
+    for (i <- 1 to 10) {
+      result += """ & & & & & & & \\[1.10cm] \hline"""
+    }
+    result += """\end{tabular}"""
+    result += """\newpage"""
+    result
+  }
 }
 
 object LatexWeekSchedule extends WeekSchedule {

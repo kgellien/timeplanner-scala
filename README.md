@@ -85,11 +85,12 @@ sbt assembly
 
 #### TODOs
 
-- Refactor LatexWeekSchedule and LatexWeekWorkPlan (quite a bit of duplication); these might constitute a use case for a template engine
+- Refactor LatexWeekSchedule; this might constitute a use case for a template engine
 - Externalize corresponding configs
 - Internationalization
 - latin1 vs. utf8 should be configurable
 - new week plans and day plans should be configurable
+- clean-up generated LaTeX
 
 ### 0.7.9-SNAPSHOT
 

@@ -80,8 +80,8 @@ object Plan {
 
   def createTexOutputForWeekWorkPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
     val conf = new WeekPlanConf
-    val lwwp = new LatexWeekWorkPlans
-    val latexSource = lwwp.render(periodPlans, conf)
+    val lwwp = new LatexWeekSchedules
+    val latexSource = lwwp.render(periodPlans, conf, LatexWeekWorkPlan)
     io.saveStringList(outputFileName, latexSource)
   }
 
