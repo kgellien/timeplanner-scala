@@ -11,30 +11,9 @@ object LatexTimePlan {
 }
 
 class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
-  val preamble = """\oddsidemargin 1cm
-\evensidemargin 1cm
-\topmargin 0cm
-\addtolength{\oddsidemargin}{-2.54cm}
-\addtolength{\evensidemargin}{-2.54cm}
-\addtolength{\topmargin}{-2.54cm}
-\textwidth 27.7cm
-\textheight18cm
-\pagestyle{empty}
-\parindent 0pt
-"""
-
   def render = {
     val result = new ListBuffer[String]
-    result += """\documentclass[12pt,a4paper,landscape]{article}"""
-    result += "\\usepackage[landscape]{geometry}" // escape does not work in """ """, neither does single backslash; backslash-u as Unicode-escape?!?
-    result += "\\usepackage[latin1]{inputenc}"
-    result += "\\usepackage[german]{babel}"
-    result += "\\usepackage[T1]{fontenc}"
-    result += "\\usepackage{times}"
-    result += "\\usepackage{multicol}"
-    result += "\\usepackage{rotating}"
-    result += "\\usepackage{amssymb}"
-    result += preamble
+    result ++= LatexHeader.header(TimePlanConf)
     result += """\begin{document}"""
     for (plan <- plans)
       result ++= renderSinglePlan(plan)
@@ -86,7 +65,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
   }
 
   def renderTodoList(todo: ToDoList) = {
-    def escapeSpecialChars(txt : String) = {
+    def escapeSpecialChars(txt: String) = {
       txt.replace("&", "\\##").replace("##", "&")
     }
     val centeredLine = """{\center \rule{0.5\linewidth}{0.3mm}\\[1.5em] }"""
@@ -124,7 +103,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     result += """\begin{center}"""
     result += """{\bf %s} \\""" format singlePeriod.header.replace(" - ", " -- ")
     val specials = singlePeriod.todo.specials
-//    result ++= specials map ("""%s \\""" format _.info)
+    //    result ++= specials map ("""%s \\""" format _.info)
     for (special <- specials) {
       result += """%s \\""" format special.info
     }
