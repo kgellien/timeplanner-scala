@@ -16,7 +16,6 @@ class LatexWeekSchedules {
       }
     }
     result += """\end{document}"""
-    result
   }
 }
 
@@ -34,7 +33,6 @@ object LatexWeekScheduleRenderer {
     }
     result += """\end{tabular}"""
     result += """\newpage"""
-    result
   }
 }
 
@@ -59,7 +57,6 @@ object LatexWeekWorkPlan extends WeekSchedule {
     }
     result += """\end{tabular}"""
     result += """\newpage"""
-    result
   }
 }
 
