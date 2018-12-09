@@ -18,7 +18,6 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     for (plan <- plans)
       result ++= renderSinglePlan(plan)
     result += """\end{document}"""
-    result
   }
 
   def renderSinglePlan(plan: PeriodPlan) = {
@@ -31,7 +30,6 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
       result ++= renderSinglePeriods("17cm", """\small""", plan.periodSpecifics)
     }
     result += "\\newpage"
-    result
   }
 
   def renderHeader(plan: PeriodPlan) = {
@@ -39,7 +37,6 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     val right = if (rightCandidate == "") """\phantom{.}""" else rightCandidate
     val result = new ListBuffer[String]
     result += """{\Large \bf %s \hfill %s \hfill %s}""" format (left, middle.replace(" - ", " -- "), right)
-    result
   }
 
   def renderSinglePeriods(height: String, textsize: String, singlePeriods: List[SinglePeriod]) = {
@@ -61,7 +58,6 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
     result ++= renderTodoList(singlePeriod.todo)
     result += """\end{minipage}"""
     result += "}"
-    result
   }
 
   def renderTodoList(todo: ToDoList) = {
@@ -111,6 +107,5 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
       result += "\\"
     result += """\rule{\linewidth}{0.3mm} \\"""
     result += """\end{center}"""
-    result
   }
 }

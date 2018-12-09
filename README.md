@@ -82,6 +82,7 @@ sbt assembly
 ### 0.8.0-SNAPSHOT
 
 - Added three new week plans
+- LaTeX clean up started; try to use same basic structure for all pages
 
 #### TODOs
 
@@ -90,7 +91,7 @@ sbt assembly
 - Internationalization
 - latin1 vs. utf8 should be configurable
 - new week plans and day plans should be configurable
-- clean-up generated LaTeX
+- clean-up generated LaTeX (too many Over-/Underfull \vboxes )
 
 ### 0.7.9-SNAPSHOT
 

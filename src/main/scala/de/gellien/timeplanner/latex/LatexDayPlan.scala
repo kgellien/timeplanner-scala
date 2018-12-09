@@ -10,15 +10,8 @@ class LatexDayPlans {
   }
   def render(plans: List[PeriodPlan], conf: DayPlanConf) = {
     val result = new ListBuffer[String]
-    result += "\\documentclass[a4paper,12pt]{article}"
-    result += "\\usepackage[latin1]{inputenc}"
-    result += "\\usepackage{graphicx}"
-    result += "\\setlength{\\headsep}{-3 cm}"
-    result += "\\setlength{\\footskip}{1 cm}"
-    result += s"\\setlength{\\textheight}{${conf.pageHeight} cm}"
-    result += s"\\setlength{\\textwidth}{${conf.pageWidth} cm}"
+    result ++= LatexHeader.header(DayPlanConf2)
     result += "\\begin{document}"
-    result += "\\pagestyle{empty}"
     result += "\\setlength{\\unitlength}{10mm}"
     for (plan <- plans) {
       plan match {
@@ -33,11 +26,10 @@ class LatexDayPlans {
             result ++= renderDayPlanPage(conf, weekend(0), Some(weekend(1)))
           } else for (dayPlan <- dayPlans)
             result ++= renderDayPlanPage(conf, dayPlan)
-        case plan => println(s"Ignore ${plan.period}")
+        case _ => //println(s"Ignore ${plan.period}")
       }
     }
     result += """\end{document}"""
-    result
   }
 }
 
@@ -72,7 +64,6 @@ class LatexDayPlan(conf: DayPlanConf) {
     }
     //
     result ++= pagePostamble.split("\n").map(_.stripLineEnd)
-    result
   }
 
   def startI(i: Double) = conf.top - i * conf.hourLineDelta
@@ -103,7 +94,6 @@ class LatexDayPlan(conf: DayPlanConf) {
     result += "% horizontal hour lines"
     result += f"\\put(${conf.leftContent},${start}){\\line(1,0){${conf.hourLength}}}"
     result += f"\\put(${conf.leftContent},${startHalf}){\\line(1,0){${conf.halfHourLength}}}"
-    result
   }
 
   def escapeMsg(msg: String) = msg.replace("&", "\\&").replace("%", "\\%")
@@ -131,7 +121,6 @@ class LatexDayPlan(conf: DayPlanConf) {
     result += f"\\put(${posX},${posYTick}){\\line(1,0){${thicknessInCm}}}"
     result += f"\\put(${posX},${posYTick + length - tickThickness}){\\line(1,0){${thicknessInCm}}}"
     result += f"\\linethickness{0.01cm}"
-    result
   }
 
   def addTextEntries(msgs: List[Appointment], withOffset: Boolean) = {

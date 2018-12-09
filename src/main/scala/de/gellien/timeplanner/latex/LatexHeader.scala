@@ -12,9 +12,15 @@ object LatexHeader {
 """
   def header(conf: LatexConf) = {
     val result = new ListBuffer[String]
-    result += "\\documentclass[12pt,a4paper,landscape]{article}"
+    if (conf.landscape) {
+      result += "\\documentclass[12pt,a4paper,twoside,landscape]{article}"
+      result += "\\usepackage[landscape]{geometry}"
+    } else {
+      result += "\\documentclass[12pt,a4paper,twoside]{article}"
+      //result += "\\usepackage{geometry}"
+      result += "\\usepackage{graphicx}"
+    }
     // escape does not work in """ """, neither does single backslash; backslash-u as Unicode-escape?!?
-    result += "\\usepackage[landscape]{geometry}"
     result += s"\\usepackage[${conf.encoding}]{inputenc}"
     result += "\\usepackage[ngerman]{babel}"
     result += "\\usepackage[T1]{fontenc}"

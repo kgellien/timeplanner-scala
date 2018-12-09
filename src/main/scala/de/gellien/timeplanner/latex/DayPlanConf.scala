@@ -9,20 +9,20 @@ abstract class DayPlanConf {
   val pageHeight = 27.5
   val bottom = 0.0
 
-  val firstHour: Int
-  val hours: Int
+  def firstHour: Int
+  def hours: Int
 
-  val maxHours: Int
-  val hourLineDelta: Double
-  val textSize: String
-  val textHeight: Double
-  val hourTextSize: String
-  val leftFullHourWidth: Double
-  val leftHalfHourWidth: Double
-  val leftContentWidth: Double
+  def maxHours: Int
+  def hourLineDelta: Double
+  def textSize: String
+  def textHeight: Double
+  def hourTextSize: String
+  def leftFullHourWidth: Double
+  def leftHalfHourWidth: Double
+  def leftContentWidth: Double
 
-  val topFraction: Double
-  val top: Double
+  def topFraction: Double
+  def top: Double
 
   def lineWidth = pageWidth - 2.0 * left
   def headerPos = pageHeight - 1.0
