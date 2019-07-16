@@ -118,7 +118,7 @@ object Plan {
       println(usage)
       sys.exit(1)
     }
-    val winQuote = "\"" // WinXP
+    val winQuote = "\"" // Windows
     val macQuote = "" // Mac OS X
     val linQuote = "" // Linux
     val osName = System.getProperty("os.name")
@@ -126,11 +126,11 @@ object Plan {
     val (os, quote) = osName match {
       case "Linux"      => ("Linux", linQuote)
       case "Mac OS X"   => ("Mac", macQuote)
-      case "Windows XP" => ("WinXP", winQuote)
-      case "Windows 7"  => ("Win7", winQuote)
+      case "Windows 7"  => ("Windows", winQuote)
+      case "Windows 10"  => ("Windows", winQuote)
       case _ =>
-        println("WARNING: osName >%s< not yet recognized; take >Linux<" format osName)
-        ("Linux", linQuote)
+        println("WARNING: osName >%s< not yet recognized; take >Windows<" format osName)
+        ("Windows", winQuote)
     }
     val latin1 = "iso-8859-1"
     val defaultTimeplanoutput = "example.tex"
