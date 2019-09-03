@@ -62,7 +62,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
 
   def renderTodoList(todo: ToDoList) = {
     def escapeSpecialChars(txt: String) = {
-      txt.replace("&", "\\##").replace("##", "&")
+      txt.replace("&", "\\&").replace("%", "\\%")
     }
     val centeredLine = """{\center \rule{0.5\linewidth}{0.3mm}\\[1.5em] }"""
     val result = new ListBuffer[String]
@@ -70,7 +70,7 @@ class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
       if (a.timeInfo.from == a.timeInfo.to) {
         s"${a.timeInfo.from.short} ${a.info}"
       } else {
-        s"${a.timeInfo.from.short} -- ${a.timeInfo.to.short} ${a.info}"
+        s"${a.timeInfo.from.short} -- ${a.timeInfo.to.short} ${escapeSpecialChars(a.info)}"
       }
     }.mkString("\n\n")
     if (!todo.anniversaries.isEmpty) {
