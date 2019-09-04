@@ -13,6 +13,9 @@ object Plan {
   def main(args: Array[String]): Unit = {
     val (encodings, fileNames, modifier) = getConfigsAfterValidation(args)
 
+    import java.util.Locale
+    Locale.setDefault(new Locale("de", "DE"))
+
     val io = new Io(modifier.quote, encodings.outputEncoding, modifier.debug)
 
     val todoList = for {
