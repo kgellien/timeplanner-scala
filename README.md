@@ -89,8 +89,9 @@ sbt assembly
 
 - [x] replace joda.time with java.time
 - [ ] complete verification of getWeekyear
-- [ ] Localisation via comandline parameter
-- [ ] update to current SBT (1.3.0)
+- [x] Localisation via properties
+- [ ] test in-/output encoding properly (latin1 *and* utf-8)
+- [x] update to current SBT (1.3.0)
 - [ ] update to Scala 2.13
 - [x] Dayplan: change KW to W
 - [ ] Localise -ws, -ws24 and -ww too

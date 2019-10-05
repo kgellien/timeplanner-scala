@@ -2,3 +2,7 @@
 Linux.pdflatex=/usr/bin/pdflatex
 Mac.pdflatex=/usr/texbin/pdflatex
 Windows.pdflatex="c:/Progs/MiKTeX-2.9/miktex/bin/x64/pdflatex.exe"
+
+input.encoding=iso-8859-1
+output.encoding=iso-8859-1
+locale.language=de

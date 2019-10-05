@@ -13,9 +13,6 @@ object Plan {
   def main(args: Array[String]): Unit = {
     val (encodings, fileNames, modifier) = getConfigsAfterValidation(args)
 
-    import java.util.Locale
-    Locale.setDefault(new Locale("de", "DE"))
-
     val io = new Io(modifier.quote, encodings.outputEncoding, modifier.debug)
 
     val todoList = for {
@@ -135,7 +132,6 @@ object Plan {
         println("WARNING: osName >%s< not yet recognized; take >Windows<" format osName)
         ("Windows", winQuote)
     }
-    val latin1 = "iso-8859-1"
     val defaultTimeplanoutput = "example.tex"
     val defaultDayplanoutput = "example-dp.tex"
     val defaultDpconfig = "dayplan-regular.properties"
@@ -172,14 +168,18 @@ object Plan {
     val withSeparator = options contains 'withSeparator
     val withOverview = options contains 'withOverview
     val withAdditionalTasks = options contains 'withAdditionalTasks
-    val inputEncoding = latin1
-    val outputEncoding = latin1
     val dpconfig = if (options contains 'dpconfig) options('dpconfig).asInstanceOf[String] else defaultDpconfig
 
     val properties = new Properties()
     properties.load(new FileInputStream("timeplan.properties"))
     val pdflatexFullPath = properties.getProperty(os + ".pdflatex")
     println("Path to pdflatex: >%s<" format pdflatexFullPath)
+    val inputEncoding = properties.getProperty("input.encoding")
+    val outputEncoding = properties.getProperty("output.encoding")
+
+    import java.util.Locale
+    val language = properties.getProperty("locale.language")
+    Locale.setDefault(new Locale(language))
 
     (
       Encodings(inputEncoding, outputEncoding),
