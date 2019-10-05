@@ -66,8 +66,13 @@ To make interpretation easier, in the current version at least one month is requ
 - remove absolute paths
 - Documentation!
 - make use of ISO8601 calender consistent
-- test properly under Win 7 and Linux
 - find a way to distinguish between birthdays and anniversaries
+- Refactor LatexWeekSchedule; this might constitute a use case for a template engine
+- Externalize corresponding configs
+- Internationalization
+- latin1 vs. utf8 should be configurable
+- new week plans and day plans should be configurable
+- clean-up generated LaTeX (too many Over-/Underfull \vboxes )
 
 ## SBT assembly
 
@@ -79,19 +84,10 @@ sbt assembly
 
 ## Revision History
 
-### 0.8.0-SNAPSHOT
+### 0.8.0
 
-- Added three new week plans
+- Added three new week plans (working, but very ad-hoc)
 - LaTeX clean up started; try to use same basic structure for all pages
-
-#### TODOs
-
-- Refactor LatexWeekSchedule; this might constitute a use case for a template engine
-- Externalize corresponding configs
-- Internationalization
-- latin1 vs. utf8 should be configurable
-- new week plans and day plans should be configurable
-- clean-up generated LaTeX (too many Over-/Underfull \vboxes )
 
 ### 0.7.9-SNAPSHOT
 
