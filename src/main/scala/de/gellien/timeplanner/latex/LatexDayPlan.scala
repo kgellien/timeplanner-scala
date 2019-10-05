@@ -1,5 +1,7 @@
 package de.gellien.timeplanner.latex
 
+import java.time.temporal.WeekFields
+
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
 
@@ -34,14 +36,15 @@ class LatexDayPlans {
 }
 
 class LatexDayPlan(conf: DayPlanConf) {
+  val weekFields = WeekFields.ISO
   def render(plan: DayPlan, planRightOpt: Option[DayPlan] = None) = {
     val result = new ListBuffer[String]
     result ++= pagePreamble.split("\n").map(_.stripLineEnd)
     //
     val dayHeaderY = conf.headerPos
-    val headerA = s"KW${plan.periodEntry.localDate.weekOfWeekyear().get}"
+    val headerA = s"W${plan.periodEntry.localDate.get(weekFields.weekOfWeekBasedYear())}"
     result += f"\\put(${conf.leftFullHour},${dayHeaderY}){\\scalebox{2}{\\large \\textbf{${headerA}}}}"
-    val headerB = s"${plan.periodEntry.localDate.weekyear().get}"
+    val headerB = s"${TimeHelper.getWeekyear(plan.periodEntry.localDate)}"
     result += f"\\put(${conf.middle},${dayHeaderY}){\\scalebox{2}{\\makebox[${(conf.right - conf.middle) / 2.0} cm][r]{\\large \\textbf{${headerB}}}}}"
     val dayHeaderX = if (planRightOpt.isDefined) 2.0 * conf.leftContent + conf.leftFullHour else conf.middle - (conf.middle - conf.leftContent) / 4.0
     result += f"\\put(${dayHeaderX},${dayHeaderY}){\\scalebox{1.25}{\\large \\textbf{${plan.period.header}}}}"

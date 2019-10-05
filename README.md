@@ -84,6 +84,17 @@ sbt assembly
 
 ## Revision History
 
+
+### 0.8.1-SNAPSHOT
+
+- [x] replace joda.time with java.time
+- [ ] complete verification of getWeekyear
+- [ ] Localisation via comandline parameter
+- [ ] update to current SBT (1.3.0)
+- [ ] update to Scala 2.13
+- [x] Dayplan: change KW to W
+- [ ] Localise -ws, -ws24 and -ww too
+
 ### 0.8.0
 
 - Added three new week plans (working, but very ad-hoc)

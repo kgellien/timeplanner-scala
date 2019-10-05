@@ -1,6 +1,6 @@
 package de.gellien.timeplanner.timeplan
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 
 abstract sealed trait DateTime extends Ordered[DateTime] {
   def short = toString
@@ -101,7 +101,7 @@ object Appointment {
         def date2DayEntry(date: Date, local: LocalDate) = {
           // TODO: further logic!
           val year = if (date.year == 0) local.getYear else date.year
-          val month = if (date.month == 0) local.getMonthOfYear else date.month
+          val month = if (date.month == 0) local.getMonthValue else date.month
           DayEntry(year, month, date.day)
         }
         val (from, to) = a.timeInfo match {

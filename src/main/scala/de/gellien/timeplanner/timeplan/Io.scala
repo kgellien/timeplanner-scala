@@ -1,7 +1,6 @@
 package de.gellien.timeplanner.timeplan
 
 import java.io._
-import scala.collection.mutable.ListBuffer
 
 class Io(quote: String, encoding: String, debug: Boolean) {
 

@@ -1,6 +1,6 @@
 package de.gellien.timeplanner.timeplan
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 
 abstract sealed class PeriodBase
 
@@ -15,7 +15,7 @@ case class DayEntry(override val year: Int, month: Int, day: Int, headerSuffix: 
   override def toString = "%d-%02d-%02d" format (year, month, day)
   override val header = TimeHelper.displayDay(year, month, day) + headerSuffix
   val isoDate = IsoDate(year, month, day)
-  val localDate = new LocalDate(year, month, day)
+  val localDate = LocalDate.of(year, month, day)
 }
 
 case class WeekEntry(override val year: Int, week: Int) extends PeriodEntry(year) {

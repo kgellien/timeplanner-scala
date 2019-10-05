@@ -1,7 +1,5 @@
 package de.gellien.timeplanner.timeplan
 
-import org.joda.time.LocalDate
-
 sealed abstract class DateBound(val base: PeriodEntry) {
   // TODO find better way/names
   val lower = base.lower
