@@ -67,34 +67,34 @@ object Plan {
   def createTexOutputForWeekSchedule24(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
     val conf = new WeekPlanConf
     val lws = new LatexWeekSchedules
-    val latexSource = lws.render(periodPlans, conf, LatexWeekSchedule24)
+    val latexSource = lws.render(periodPlans, conf, LatexWeekSchedule24).toList
     io.saveStringList(outputFileName, latexSource)
   }
 
   def createTexOutputForWeekSchedule(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
     val conf = new WeekPlanConf
     val lws = new LatexWeekSchedules
-    val latexSource = lws.render(periodPlans, conf, LatexWeekSchedule)
+    val latexSource = lws.render(periodPlans, conf, LatexWeekSchedule).toList
     io.saveStringList(outputFileName, latexSource)
   }
 
   def createTexOutputForWeekWorkPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
     val conf = new WeekPlanConf
     val lwwp = new LatexWeekSchedules
-    val latexSource = lwwp.render(periodPlans, conf, LatexWeekWorkPlan)
+    val latexSource = lwwp.render(periodPlans, conf, LatexWeekWorkPlan).toList
     io.saveStringList(outputFileName, latexSource)
   }
 
   def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, dpConfig: String) = {
     val conf = ConfFactory.getConf(dpConfig)
     val ldp = new LatexDayPlans
-    val latexSource = ldp.render(periodPlans, conf)
+    val latexSource = ldp.render(periodPlans, conf).toList
     io.saveStringList(outputFileName, latexSource)
   }
 
   def createTexOutput(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, withSeparator: Boolean) = {
     val ltp = new LatexTimePlan(periodPlans, withSeparator)
-    val latexSource = ltp.render
+    val latexSource = ltp.render.toList
     io.saveStringList(outputFileName, latexSource)
   }
 

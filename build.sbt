@@ -2,15 +2,14 @@ name := "timeplanner"
 
 version := "0.8.1-SNAPSHOT"
 
-scalaVersion := "2.12.10"
-//scalaVersion := "2.13.0"
+//scalaVersion := "2.12.10"
+scalaVersion := "2.13.1"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 
 libraryDependencies ++= {
-  //val specs2Version = "3.9.5"
-  val specs2Version = "4.6.0"
+  val specs2Version = "4.8.1"
   Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
     //
