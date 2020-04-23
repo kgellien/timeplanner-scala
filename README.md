@@ -1,7 +1,7 @@
 # Timeplanner
 
 
-Due to the fact that I work on different computers (Win XP / 7, Linux, OS X) inside and outside of a corporate setting,
+Due to the fact that I work on different computers (Win XP / 7 / 10, Linux, OS X) inside and outside of a corporate setting,
 I need a timeplanner which I can use on all these platforms and which provides the possibility to print out timeplans in different granularities.
 
 I started with a simple Python project, about 400 LoC, which had the main functionality I needed.

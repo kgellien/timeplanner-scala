@@ -1,10 +1,6 @@
 bin
 target
-.classpath
-.project
 .scala_dependencies
-.settings
-.cache
 *~
 *.tex
 *.aux
@@ -14,8 +10,22 @@ target
 pdflatex.stderr
 pdflatex.stdout
 timeplan.properties
+.cache
 .cache-main
 .cache-tests
+.goutput*
+
+
+# Eclipse
+.classpath
+.project
+.settings
+
+# IDEA / IntelliJ
 .idea/
 *.iml
-.goutput*
+
+# VS Code (Scala (Metals) plugin)
+.metals
+.bloop
+project/metals.sbt
