@@ -107,6 +107,7 @@ object Appointment {
         val (from, to) = a.timeInfo match {
           case Range(f: Date, t: Date) =>
             (date2DayEntry(f, first), date2DayEntry(t, last))
+          case _                       => ???
         }
         val zeroTimeRange = Range(Time(0, 0), Time(0, 0))
         for {

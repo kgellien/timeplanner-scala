@@ -58,6 +58,7 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val clockspan = hhmm ~ opt("-") ~ opt(hhmm) ^^ {
     case from ~ Some(str) ~ Some(to) => Range(from, to)
     case from ~ str ~ None           => Range(from, from)
+    case _                           => ???
   }
   lazy val hhmm = hours ~ ":" ~ minutes ^^ { case hh ~ str ~ mm => Time(hh, mm) }
   lazy val minutes = """\d\d?""".r ^? ({ case minutes if ((0 to 59) contains minutes.toInt) => minutes.toInt }, (minutes => "day needs to be in the range of 0 to 59"))
@@ -66,11 +67,13 @@ class ToDoDsl extends JavaTokenParsers {
   lazy val datespan = ddmmyyyy ~ opt("-") ~ opt(ddmmyyyy) ^^ {
     case from ~ Some(str) ~ Some(to) => Range(from, to)
     case from ~ str ~ None           => Range(from, from)
+    case _                           => ???
   }
   lazy val ddmmyyyy = day ~ opt(month) ~ opt(yearNo) ^^ {
     case day ~ Some(month) ~ Some(year) => Date(year, month, day)
     case day ~ Some(month) ~ None       => Date(0, month, day)
     case day ~ None ~ None              => Date(0, 0, day)
+    case _                              => ???
   }
 
   lazy val dayMonth = day ~ month ^^ { case d ~ m => DayMonth(d, m) }
@@ -102,7 +105,7 @@ object ToDoDsl {
   def getToDo(line: String): Option[ToDo] = {
     val tdld = new ToDoDsl()
     val result = tdld.parseAll(tdld.toDoItem, line) match {
-      case tdld.Success(toDoItem, _) => Some(toDoItem)
+      case tdld.Success(toDoItem: ToDo, _) => Some(toDoItem)
       case tdld.Failure(msg, _) =>
         println("Failure parsing line >%s<: %s" format (line, msg))
         None
@@ -116,7 +119,7 @@ object ToDoDsl {
   def getPeriodEntry(line: String): Option[PeriodEntry] = {
     val tdld = new ToDoDsl()
     val result = tdld.parseAll(tdld.calDate, line) match {
-      case tdld.Success(pe, _) => Some(pe)
+      case tdld.Success(pe: PeriodEntry, _) => Some(pe)
       case tdld.Failure(msg, _) =>
         println("Failure parsing line >%s<: %s" format (line, msg))
         None

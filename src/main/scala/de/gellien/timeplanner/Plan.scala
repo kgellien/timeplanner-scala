@@ -113,7 +113,7 @@ object Plan {
   def getConfigsAfterValidation(args: Array[String]) = {
     // TODO: Sort properly;try to make clean distinction between validation and output
     val usage = """Usage: Plan [-d | --debug] -i timeplan.txt todoFileName[s]"""
-    def fatal(msg: String) {
+    def fatal(msg: String): Unit = {
       println("Fatal: %s" format msg)
       println(usage)
       sys.exit(1)
@@ -144,31 +144,31 @@ object Plan {
     val options = getOptions(args)
     println("options:")
     options foreach { option => println("  %s -> %s" format (option._1, option._2)) }
-    if (options('input).asInstanceOf[List[String]].size == 0) {
+    if (options(Symbol("input")).asInstanceOf[List[String]].size == 0) {
       fatal("Need File(s) to read ToDo from")
     }
-    if (!(options contains 'inputDsl)) {
+    if (!(options contains Symbol("inputDsl"))) {
       fatal("No input DSL file specified (via Option -i/--input_dsl)")
     }
 
-    val daysPerWeek = if (options contains 'daysPerWeek) options('daysPerWeek).asInstanceOf[Int] else 7
+    val daysPerWeek = if (options contains Symbol("daysPerWeek")) options(Symbol("daysPerWeek")).asInstanceOf[Int] else 7
     if (daysPerWeek < 1 || daysPerWeek > 7) {
       fatal("daysPerWeek needs to be between 1 and 7 (including)")
     }
 
-    val debug = options contains 'debug
-    val callPdfLatex = options contains 'pdflatex
-    val timeplanoutput = if (options contains 'timeplanoutput) options('timeplanoutput).asInstanceOf[String] else defaultTimeplanoutput
-    val dayplanoutput = if (options contains 'dayplanoutput) options('dayplanoutput).asInstanceOf[String] else defaultDayplanoutput
-    val weekworkplanoutput = if (options contains 'weekworkplanoutput) options('weekworkplanoutput).asInstanceOf[String] else defaultWeekworkplanoutput
-    val weekscheduleoutput = if (options contains 'weekscheduleoutput) options('weekscheduleoutput).asInstanceOf[String] else defaultWeekworkplanoutput
-    val weekschedule24output = if (options contains 'weekschedule24output) options('weekschedule24output).asInstanceOf[String] else defaultWeekworkplanoutput
-    val inputDsl = options('inputDsl).asInstanceOf[String] // must exist - see above
-    val inputFiles = options('input).asInstanceOf[List[String]].reverse // must exist - see above; reverse in case sequence matters
-    val withSeparator = options contains 'withSeparator
-    val withOverview = options contains 'withOverview
-    val withAdditionalTasks = options contains 'withAdditionalTasks
-    val dpconfig = if (options contains 'dpconfig) options('dpconfig).asInstanceOf[String] else defaultDpconfig
+    val debug = options contains Symbol("debug")
+    val callPdfLatex = options contains Symbol("pdflatex")
+    val timeplanoutput = if (options contains Symbol("timeplanoutput")) options(Symbol("timeplanoutput")).asInstanceOf[String] else defaultTimeplanoutput
+    val dayplanoutput = if (options contains Symbol("dayplanoutput")) options(Symbol("dayplanoutput")).asInstanceOf[String] else defaultDayplanoutput
+    val weekworkplanoutput = if (options contains Symbol("weekworkplanoutput")) options(Symbol("weekworkplanoutput")).asInstanceOf[String] else defaultWeekworkplanoutput
+    val weekscheduleoutput = if (options contains Symbol("weekscheduleoutput")) options(Symbol("weekscheduleoutput")).asInstanceOf[String] else defaultWeekworkplanoutput
+    val weekschedule24output = if (options contains Symbol("weekschedule24output")) options(Symbol("weekschedule24output")).asInstanceOf[String] else defaultWeekworkplanoutput
+    val inputDsl = options(Symbol("inputDsl")).asInstanceOf[String] // must exist - see above
+    val inputFiles = options(Symbol("input")).asInstanceOf[List[String]].reverse // must exist - see above; reverse in case sequence matters
+    val withSeparator = options contains Symbol("withSeparator")
+    val withOverview = options contains Symbol("withOverview")
+    val withAdditionalTasks = options contains Symbol("withAdditionalTasks")
+    val dpconfig = if (options contains Symbol("dpconfig")) options(Symbol("dpconfig")).asInstanceOf[String] else defaultDpconfig
 
     val properties = new Properties()
     properties.load(new FileInputStream("timeplan.properties"))
@@ -194,30 +194,30 @@ object Plan {
     def nextOption(map: OptionMMap, list: List[String]): OptionMMap = {
       list match {
         case Nil => map
-        case "--daysPerWeek" :: dpw :: tail => nextOption(map ++ Map('daysPerWeek -> dpw.toInt), tail)
-        case "--input_dsl" :: fileName :: tail => nextOption(map ++ Map('inputDsl -> fileName), tail)
-        case "-i" :: fileName :: tail => nextOption(map ++ Map('inputDsl -> fileName), tail)
-        case "--timeplanoutput" :: fileName :: tail => nextOption(map ++ Map('timeplanoutput -> fileName), tail)
-        case "-o" :: fileName :: tail => nextOption(map ++ Map('timeplanoutput -> fileName), tail)
-        case "--dayplanoutput" :: fileName :: tail => nextOption(map ++ Map('dayplanoutput -> fileName), tail)
-        case "--dpconfig" :: fileName :: tail => nextOption(map ++ Map('dpconfig -> fileName), tail)
-        case "--weekworkplanoutput" :: fileName :: tail => nextOption(map ++ Map('weekworkplanoutput -> fileName), tail)
-        case "--weekscheduleoutput" :: fileName :: tail => nextOption(map ++ Map('weekscheduleoutput -> fileName), tail)
-        case "--weekschedule24output" :: fileName :: tail => nextOption(map ++ Map('weekschedule24output -> fileName), tail)
-        case "--debug" :: tail => nextOption(map ++ Map('debug -> true), tail)
-        case "-d" :: tail => nextOption(map ++ Map('debug -> true), tail)
-        case "--withSeparator" :: tail => nextOption(map ++ Map('withSeparator -> true), tail)
-        case "--withAdditionalTasks" :: tail => nextOption(map ++ Map('withAdditionalTasks -> true), tail)
-        case "-s" :: tail => nextOption(map ++ Map('withSeparator -> true), tail)
-        case "--withOverview" :: tail => nextOption(map ++ Map('withOverview -> true), tail)
-        case "-v" :: tail => nextOption(map ++ Map('withOverview -> true), tail)
-        case "--callpdflatex" :: tail => nextOption(map ++ Map('pdflatex -> true), tail)
-        case "-t" :: tail => nextOption(map ++ Map('pdflatex -> true), tail)
-        case string :: tail => map('input) = string :: map('input).asInstanceOf[List[String]]; nextOption(map, tail)
+        case "--daysPerWeek" :: dpw :: tail => nextOption(map ++ Map(Symbol("daysPerWeek") -> dpw.toInt), tail)
+        case "--input_dsl" :: fileName :: tail => nextOption(map ++ Map(Symbol("inputDsl") -> fileName), tail)
+        case "-i" :: fileName :: tail => nextOption(map ++ Map(Symbol("inputDsl") -> fileName), tail)
+        case "--timeplanoutput" :: fileName :: tail => nextOption(map ++ Map(Symbol("timeplanoutput") -> fileName), tail)
+        case "-o" :: fileName :: tail => nextOption(map ++ Map(Symbol("timeplanoutput") -> fileName), tail)
+        case "--dayplanoutput" :: fileName :: tail => nextOption(map ++ Map(Symbol("dayplanoutput") -> fileName), tail)
+        case "--dpconfig" :: fileName :: tail => nextOption(map ++ Map(Symbol("dpconfig") -> fileName), tail)
+        case "--weekworkplanoutput" :: fileName :: tail => nextOption(map ++ Map(Symbol("weekworkplanoutput") -> fileName), tail)
+        case "--weekscheduleoutput" :: fileName :: tail => nextOption(map ++ Map(Symbol("weekscheduleoutput") -> fileName), tail)
+        case "--weekschedule24output" :: fileName :: tail => nextOption(map ++ Map(Symbol("weekschedule24output") -> fileName), tail)
+        case "--debug" :: tail => nextOption(map ++ Map(Symbol("debug") -> true), tail)
+        case "-d" :: tail => nextOption(map ++ Map(Symbol("debug") -> true), tail)
+        case "--withSeparator" :: tail => nextOption(map ++ Map(Symbol("withSeparator") -> true), tail)
+        case "--withAdditionalTasks" :: tail => nextOption(map ++ Map(Symbol("withAdditionalTasks") -> true), tail)
+        case "-s" :: tail => nextOption(map ++ Map(Symbol("withSeparator") -> true), tail)
+        case "--withOverview" :: tail => nextOption(map ++ Map(Symbol("withOverview") -> true), tail)
+        case "-v" :: tail => nextOption(map ++ Map(Symbol("withOverview") -> true), tail)
+        case "--callpdflatex" :: tail => nextOption(map ++ Map(Symbol("pdflatex") -> true), tail)
+        case "-t" :: tail => nextOption(map ++ Map(Symbol("pdflatex") -> true), tail)
+        case string :: tail => map(Symbol("input")) = string :: map(Symbol("input")).asInstanceOf[List[String]]; nextOption(map, tail)
       }
     }
-    val initialMap: OptionMMap = MMap('input -> List())
-    val input = initialMap('input).asInstanceOf[List[String]]
+    val initialMap: OptionMMap = MMap(Symbol("input") -> List())
+    val input = initialMap(Symbol("input")).asInstanceOf[List[String]]
     nextOption(initialMap, args.toList).toMap // return immutable version
   }
 }

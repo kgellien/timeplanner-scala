@@ -29,7 +29,7 @@ object PeriodSplitter {
       }
       append(appointmentMap, appointment, classifier, dummyAppointment)
     }
-    val classifiers = (appointmentMap.keySet ++ taskMap.keySet + miscHeader).toList.sorted
+    val classifiers = (appointmentMap.keySet ++ taskMap.keySet ++ Set(miscHeader)).toList.sorted
     val lsp = for {
       classifier <- classifiers
       appointments = appointmentMap.getOrElse(classifier, Nil)

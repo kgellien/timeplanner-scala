@@ -43,21 +43,21 @@ class Io(quote: String, encoding: String, debug: Boolean) {
     exitValue
   }
 
-  def callPdfLaTeX(pdflatexFullPath: String, source: String) {
+  def callPdfLaTeX(pdflatexFullPath: String, source: String): Unit = {
     println("callPdfLaTeX...")
     val outputDir = new File(source).getAbsoluteFile.getParentFile.getCanonicalPath
     val cmd = pdflatexFullPath :: ("-output-directory=%s" format outputDir) :: quote + source + quote :: Nil
     executeAndSaveArr(cmd.toArray, filePrefix = "%s/pdflatex" format outputDir) // ignore exitValue
   }
 
-  def saveString(fileName: String, string: String) {
+  def saveString(fileName: String, string: String): Unit = {
     val fos = new FileOutputStream(fileName)
     val osw = new OutputStreamWriter(fos, encoding)
     osw.write(string + "\n")
     osw.close()
   }
 
-  def saveStringList(fileName: String, list: Seq[String]) {
+  def saveStringList(fileName: String, list: Seq[String]): Unit = {
     val fos = new FileOutputStream(fileName)
     val osw = new OutputStreamWriter(fos, encoding)
     list foreach { line => osw.write(line + "\n") }
