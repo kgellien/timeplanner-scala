@@ -85,16 +85,19 @@ sbt assembly
 ## Revision History
 
 
-### 0.8.1-SNAPSHOT
+### 0.8.2-SNAPSHOT
+
+- [ ] complete verification of getWeekyear
+- [ ] test in-/output encoding properly (latin1 *and* utf-8)
+- [ ] Localise -ws, -ws24 and -ww too
+
+### 0.8.1
 
 - [x] replace joda.time with java.time
-- [ ] complete verification of getWeekyear
 - [x] Localisation via properties
-- [ ] test in-/output encoding properly (latin1 *and* utf-8)
-- [x] update to current SBT (1.3.0)
-- [ ] update to Scala 2.13
+- [x] update to current SBT (1.3.6)
+- [x] update to Scala 2.13.1
 - [x] Dayplan: change KW to W
-- [ ] Localise -ws, -ws24 and -ww too
 
 ### 0.8.0
 
