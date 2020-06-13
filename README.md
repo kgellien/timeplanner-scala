@@ -87,6 +87,7 @@ sbt assembly
 
 ### 0.8.2-SNAPSHOT
 
+- [ ] check ApointmentSpec (commented out test cases)
 - [ ] complete verification of getWeekyear
 - [ ] test in-/output encoding properly (latin1 *and* utf-8)
 - [ ] Localise -ws, -ws24 and -ww too
