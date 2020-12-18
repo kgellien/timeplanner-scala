@@ -69,10 +69,37 @@ object TimeHelper {
 
   def getFirstDayInWeek(year: Int, isoWeek: Int): LocalDate = {
     val calendar = Calendar.getInstance()
+    val timeZone = calendar.getTimeZone()
+    val zoneId = calendar.getTimeZone().toZoneId()
     calendar.clear()
     calendar.set(Calendar.WEEK_OF_YEAR, isoWeek)
     calendar.set(Calendar.YEAR, year)
-    LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId()).toLocalDate();
+    val result = LocalDateTime.ofInstant(calendar.toInstant(), zoneId).toLocalDate()
+
+    /*
+    Something changed so that instead of the expected Monday as first day of week for Europe/Berlin I get the sunday just before.
+    Update from Java8 to Java11???
+    Tests below and Stackoverflow did not lead to solution, so current quick hack
+     */
+
+    /*
+    println(f"getFirstDayInWeek($year, $isoWeek)")
+    println(f"  calendar-a: ${calendar}")
+    calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek())
+    val result = LocalDateTime.ofInstant(calendar.toInstant(), zoneId).toLocalDate()
+
+    println(f"  result': ${result.`with`(WeekFields.of(Locale.GERMANY).dayOfWeek(), 1L)}")
+    println(f"  result'': ${result.`with`(DayOfWeek.MONDAY)}")
+
+    println(f"  calendar-b: ${calendar}")
+    println(f"  calendar.getFirstDayOfWeek: ${calendar.getFirstDayOfWeek}")
+    println(f"  zoneId: ${zoneId}")
+    println(f"  result: ${result}")
+     */
+
+    // TODO replace addig one day as quick hack with proper solution
+    result.plusDays(1) // works with Java11
+    //result // works with Java8
   }
 
   def daysInPeriod(startDay: LocalDate, endDay: LocalDate): List[LocalDate] = {
