@@ -2,7 +2,7 @@ name := "timeplanner"
 
 version := "0.8.2-SNAPSHOT"
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.4"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
