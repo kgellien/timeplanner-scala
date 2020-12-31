@@ -97,9 +97,17 @@ object TimeHelper {
     println(f"  result: ${result}")
      */
 
-    // TODO replace addig one day as quick hack with proper solution
-    result.plusDays(1) // works with Java11
-    //result // works with Java8
+    val javaVersion = System.getProperty("java.version").split("\\.")(1)
+
+    // TODO: test more Java evrsions and update accordingly
+    javaVersion match {
+      case "8" => result // works with Java8
+      case "11" => result.plusDays(1) // works with Java11
+      case _ =>
+        println(f"Java version $javaVersion not yet explicitely supportet; check java.util.time")
+        result
+    }
+
   }
 
   def daysInPeriod(startDay: LocalDate, endDay: LocalDate): List[LocalDate] = {
