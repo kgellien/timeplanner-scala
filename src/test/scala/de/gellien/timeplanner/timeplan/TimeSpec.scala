@@ -4,6 +4,13 @@ import java.time.LocalDate
 import org.specs2.mutable._
 class TimeSpec extends SpecificationWithJUnit {
 
+  // TODO: improve on this block; initial try to demonstrate difference between Java8 and Java11
+  "start of week" should {
+    "be Monday for my current time zone" in {
+      TimeHelper.getFirstDayInWeek(2020, 52) must_== LocalDate.parse("2020-12-21")
+    }
+  }
+
   "weeks in year" should {
     "be 52 for 2001" in { TimeHelper.weeksInYear(2001) must_== 52 }
     "be 52 for 2002" in { TimeHelper.weeksInYear(2002) must_== 52 }
@@ -21,6 +28,8 @@ class TimeSpec extends SpecificationWithJUnit {
     "be 52 for 2014" in { TimeHelper.weeksInYear(2014) must_== 52 }
     "be 53 for 2015" in { TimeHelper.weeksInYear(2015) must_== 53 }
     "be 52 for 2016" in { TimeHelper.weeksInYear(2016) must_== 52 }
+    "be 53 for 2020" in { TimeHelper.weeksInYear(2020) must_== 53 }
+    "be 52 for 2021" in { TimeHelper.weeksInYear(2021) must_== 52 }
   }
   
   "month in quarter" should {
