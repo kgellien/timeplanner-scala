@@ -16,6 +16,9 @@ object Plan {
 
     val (allPeriodPlans, periodPlans) = read(fileNames, encodings.inputEncoding, modifier)
 
+    println("periodPlans")
+    periodPlans.foreach(p => println(p.header))
+
     if (periodPlans.size > 0) {
       val tpLatexSource = fileNames.timeplanoutput
       createTexOutput(tpLatexSource, periodPlans, io, modifier.withSeparator)
@@ -113,5 +116,5 @@ object Plan {
     result.toList.sortWith((e1, e2) => (e1 compareTo e2) < 0)
   }
 
-  def getFilteredLines(fileName: String, encoding: String) = Source.fromFile(fileName, encoding).getLines.toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }
+  def getFilteredLines(fileName: String, encoding: String) = Source.fromFile(fileName, encoding).getLines().toList.filterNot { line => (line.startsWith("#") || line.isEmpty()) }
 }
