@@ -79,7 +79,7 @@ object TimeHelper {
     /*
     Something changed so that instead of the expected Monday as first day of week for Europe/Berlin I get the sunday just before.
     Update from Java8 to Java11???
-    Tests below and Stackoverflow did not lead to solution, so current quick hack
+    Tests below and Stackoverflow did not lead to solution YET
      */
 
     /*
@@ -97,17 +97,21 @@ object TimeHelper {
     println(f"  result: ${result}")
      */
 
-    val javaVersion = System.getProperty("java.version").split("\\.")(1)
+    val javaVersion = System.getProperty("java.version")
 
     // TODO: test more Java evrsions and update accordingly
-    javaVersion match {
-      case "8" => result // works with Java8
-      case "11" => result.plusDays(1) // works with Java11
-      case _ =>
-        println(f"Java version $javaVersion not yet explicitely supportet; check java.util.time")
-        result
+    if (javaVersion.startsWith("1.8.")) {
+      result
+    } else if (javaVersion.startsWith("11.")) {
+      result.plusDays(1) // needed on Windows with Java 11 !?!
+    } else {
+      println(f"Java version $javaVersion not yet explicitely supportet; check java.util.time")
+      result
     }
 
+    println(f"getFirstDayInWeek($year, $isoWeek) = $result")
+
+    result // tests OK on Ubuntu 20.04 with Java 11.0.9.1; wrong during runtime!?!
   }
 
   def daysInPeriod(startDay: LocalDate, endDay: LocalDate): List[LocalDate] = {
@@ -133,7 +137,9 @@ object TimeHelper {
 
   def daysInWeek(year: Int, week: Int): List[LocalDate] = {
     val startDay = getFirstDayInWeek(year, week)
-    daysInPeriod(startDay, startDay plusDays 6)
+    val result = daysInPeriod(startDay, startDay plusDays 6)
+    println(f"daysInWeek($year, $week) = $result")
+    result
   }
 
   def weeksInYear(year: Int): Int = {

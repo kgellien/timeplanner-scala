@@ -6,8 +6,23 @@ class TimeSpec extends SpecificationWithJUnit {
 
   // TODO: improve on this block; initial try to demonstrate difference between Java8 and Java11
   "start of week" should {
-    "be Monday for my current time zone" in {
+    "be Monday for my current time zone 2020W52" in {
       TimeHelper.getFirstDayInWeek(2020, 52) must_== LocalDate.parse("2020-12-21")
+    }
+    "be Monday for my current time zone 2020W53" in {
+      TimeHelper.getFirstDayInWeek(2020, 53) must_== LocalDate.parse("2020-12-28")
+    }
+    "be Monday for my current time zone 2021W01" in {
+      TimeHelper.getFirstDayInWeek(2021, 1) must_== LocalDate.parse("2021-01-04")
+    }
+  }
+
+  "daysOfWeek" should {
+    "return days of week starting with proper first day of week" in {
+      val days = TimeHelper.daysInWeek(2021, 1)
+      val ds = days.map(_.toString).mkString(", ")
+      days(0) must_== LocalDate.parse("2021-01-04")
+      ds must_== "2021-01-04, 2021-01-05, 2021-01-06, 2021-01-07, 2021-01-08, 2021-01-09, 2021-01-10"
     }
   }
 
@@ -73,6 +88,7 @@ class TimeSpec extends SpecificationWithJUnit {
     "give same year when first day is a Wednesday" in {TimeHelper.getWeekyear(LocalDate.of(2020, 1, 1)) must_== 2020}
     "give same year when first day is a Thursday" in {TimeHelper.getWeekyear(LocalDate.of(2015, 1, 1)) must_== 2015}
     "give last year when first day is a Friday" in {TimeHelper.getWeekyear(LocalDate.of(2016, 1, 1)) must_== 2015}
+    "give last year when first day is a Friday (2021)" in {TimeHelper.getWeekyear(LocalDate.of(2021, 1, 1)) must_== 2020}
   }
 
 }
