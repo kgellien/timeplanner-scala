@@ -30,3 +30,4 @@ timeplan.properties
 .metals/
 metals.sbt
 .vscode/
+.bsp/
