@@ -2,12 +2,17 @@ package de.gellien.timeplanner.latex
 
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
+
+import java.util.Locale
 import scala.collection.mutable.Map
 
 object LatexTimePlan {
+  val locale = Locale.ENGLISH
   val totalWidth = List(275, 272, 267, 262, 258, 255, 248.15)
-  def getColumnWidth(numberOfColumns: Int) =
-    "%4.2fmm" format (totalWidth(numberOfColumns - 1) / (numberOfColumns))
+  def getColumnWidth(numberOfColumns: Int) = {
+    val width = (1.0*totalWidth(numberOfColumns - 1)) / (numberOfColumns)
+    "%4.2fmm" formatLocal (locale, width)
+  }
 }
 
 class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
