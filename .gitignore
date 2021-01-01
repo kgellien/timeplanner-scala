@@ -26,6 +26,7 @@ timeplan.properties
 *.iml
 
 # VS Code (Scala (Metals) plugin)
-.metals
-.bloop
-project/metals.sbt
+.bloop/
+.metals/
+metals.sbt
+.vscode/
