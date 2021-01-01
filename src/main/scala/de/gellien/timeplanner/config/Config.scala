@@ -3,10 +3,10 @@ package de.gellien.timeplanner.config
 import java.io.FileInputStream
 import java.util.Properties
 
-sealed abstract class Config
-case class Modifier(quote: String, daysPerWeek: Int, withSeparator: Boolean, withOverview: Boolean, callPdfLatex: Boolean, debug: Boolean, withAdditionalTasks: Boolean) extends Config
-case class FileNames(inputFiles: List[String], inputDsl: String, pdflatexFullPath: String, timeplanoutput: String, dayplanoutput: String, dpconfig: String, weekworkplanoutput: String, weekscheduleoutput: String, weekschedule24output: String) extends Config
-case class Encodings(inputEncoding: String, outputEncoding: String) extends Config
+sealed abstract class ConfigEntry
+case class Modifier(quote: String, daysPerWeek: Int, withSeparator: Boolean, withOverview: Boolean, callPdfLatex: Boolean, debug: Boolean, withAdditionalTasks: Boolean) extends ConfigEntry
+case class FileNames(inputFiles: List[String], inputDsl: String, pdflatexFullPath: String, timeplanoutput: String, dayplanoutput: String, dpconfig: String, weekworkplanoutput: String, weekscheduleoutput: String, weekschedule24output: String) extends ConfigEntry
+case class Encodings(inputEncoding: String, outputEncoding: String) extends ConfigEntry
 
 object Config {
   type OptionMap = Map[Symbol, Any]

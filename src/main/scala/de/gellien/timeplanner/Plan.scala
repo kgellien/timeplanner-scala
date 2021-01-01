@@ -14,20 +14,7 @@ object Plan {
 
     val io = new Io(modifier.quote, encodings.outputEncoding, modifier.debug)
 
-    val todoList = for {
-      line <- readFiles(fileNames.inputFiles, encodings.inputEncoding)
-      td <- ToDoDsl.getToDo(line)
-    } yield td
-
-    val allPeriodPlans = for {
-      line <- getFilteredLines(fileNames.inputDsl, encodings.inputEncoding)
-      pe <- ToDoDsl.getPeriodEntry(line)
-    } yield PeriodPlan(pe, todoList, modifier.withOverview)(modifier.daysPerWeek, modifier.withAdditionalTasks)
-
-    val (dayPlansPp, periodPlans) = allPeriodPlans.partition {
-      case dp: DayPlan => true
-      case _           => false
-    }
+    val (allPeriodPlans, periodPlans) = read(fileNames, encodings.inputEncoding, modifier)
 
     if (periodPlans.size > 0) {
       val tpLatexSource = fileNames.timeplanoutput
@@ -61,6 +48,25 @@ object Plan {
     if (modifier.callPdfLatex) {
       io.callPdfLaTeX(fileNames.pdflatexFullPath, ws24LatexSource)
     }
+  }
+
+  def read(fileNames: FileNames, inputEncoding: String, modifier: Modifier) = {
+
+    val todoList = for {
+      line <- readFiles(fileNames.inputFiles, inputEncoding)
+      td <- ToDoDsl.getToDo(line)
+    } yield td
+
+    val allPeriodPlans = for {
+      line <- getFilteredLines(fileNames.inputDsl, inputEncoding)
+      pe <- ToDoDsl.getPeriodEntry(line)
+    } yield PeriodPlan(pe, todoList, modifier.withOverview)(modifier.daysPerWeek, modifier.withAdditionalTasks)
+
+    val (dayPlansPp, periodPlans) = allPeriodPlans.partition {
+      case dp: DayPlan => true
+      case _           => false
+    }
+    (allPeriodPlans, periodPlans)
   }
 
   def createTexOutputForWeekSchedule24(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
