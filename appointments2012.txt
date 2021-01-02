@@ -11,6 +11,7 @@ D3 =2012-W16 WednesdayGym W16
 D5 =2012-04 <2012-04-27 FridayGym April
 D7 Re\-tro\-spek\-ti\-ve
 D7 Planning next week
+D1 Umlautcheck: äöüß
 
 W =2012-04 weekly aim April
 W [Business] =2012-Q2 weekly in Q2

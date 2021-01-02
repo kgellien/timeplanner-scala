@@ -4,9 +4,9 @@ import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
 
 import java.util.Locale
-import scala.collection.mutable.Map
 
 object LatexTimePlan {
+  // need to guarantee decimal point in output
   val locale = Locale.ENGLISH
   val totalWidth = List(275, 272, 267, 262, 258, 255, 248.15)
   def getColumnWidth(numberOfColumns: Int) = {

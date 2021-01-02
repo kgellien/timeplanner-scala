@@ -87,9 +87,10 @@ sbt assembly
 
 ### 0.8.2-SNAPSHOT
 
+- [x] utf-8 as default
+- [x] test in-/output encoding properly (latin1 *and* utf-8)
 - [ ] check ApointmentSpec (commented out test cases)
 - [ ] complete verification of getWeekyear
-- [ ] test in-/output encoding properly (latin1 *and* utf-8)
 - [ ] Localise -ws, -ws24 and -ww too
 
 ### 0.8.1
