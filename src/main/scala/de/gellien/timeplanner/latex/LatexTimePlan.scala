@@ -1,5 +1,7 @@
 package de.gellien.timeplanner.latex
 
+import de.gellien.timeplanner.config.Encodings
+
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
 
@@ -15,7 +17,7 @@ object LatexTimePlan {
   }
 }
 
-class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean) {
+class LatexTimePlan(plans: List[PeriodPlan], withSeparator: Boolean)(implicit encodings: Encodings) {
   def render = {
     val result = new ListBuffer[String]
     result ++= LatexHeader.header(TimePlanConf)

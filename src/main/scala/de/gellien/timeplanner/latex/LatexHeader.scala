@@ -1,5 +1,7 @@
 package de.gellien.timeplanner.latex
 
+import de.gellien.timeplanner.config.Encodings
+
 import scala.collection.mutable.ListBuffer
 
 object LatexHeader {
@@ -10,7 +12,7 @@ object LatexHeader {
 \pagestyle{empty}
 \parindent 0pt
 """
-  def header(conf: LatexConf) = {
+  def header(conf: LatexConf)(implicit encodings: Encodings) = {
     val result = new ListBuffer[String]
     if (conf.landscape) {
       result += "\\documentclass[12pt,a4paper,twoside,landscape]{article}"
@@ -21,7 +23,7 @@ object LatexHeader {
       result += "\\usepackage{graphicx}"
     }
     // escape does not work in """ """, neither does single backslash; backslash-u as Unicode-escape?!?
-    result += s"\\usepackage[${conf.encoding}]{inputenc}"
+    result += s"\\usepackage[${encodings.outputLatexEncoding}]{inputenc}"
     result += "\\usepackage[ngerman]{babel}"
     result += "\\usepackage[T1]{fontenc}"
     result += "\\usepackage{times}"

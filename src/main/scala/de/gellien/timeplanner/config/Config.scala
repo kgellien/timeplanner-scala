@@ -6,7 +6,15 @@ import java.util.Properties
 sealed abstract class ConfigEntry
 case class Modifier(quote: String, daysPerWeek: Int, withSeparator: Boolean, withOverview: Boolean, callPdfLatex: Boolean, debug: Boolean, withAdditionalTasks: Boolean) extends ConfigEntry
 case class FileNames(inputFiles: List[String], inputDsl: String, pdflatexFullPath: String, timeplanoutput: String, dayplanoutput: String, dpconfig: String, weekworkplanoutput: String, weekscheduleoutput: String, weekschedule24output: String) extends ConfigEntry
-case class Encodings(inputEncoding: String, outputEncoding: String) extends ConfigEntry
+case class Encodings(inputEncoding: String, outputEncoding: String) extends ConfigEntry {
+  val  outputLatexEncoding:String = outputEncoding match {
+    case "utf-8"  => "utf8"
+    case "iso-8859-1" => "latin1"
+    case _ =>
+      println(f"outputEncoding $outputEncoding not yet recognized; use utf8 for LaTeX output")
+      "utf8"
+  }
+}
 
 object Config {
   type OptionMap = Map[Symbol, Any]

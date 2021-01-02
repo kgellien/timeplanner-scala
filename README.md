@@ -57,6 +57,7 @@ To make interpretation easier, in the current version at least one month is requ
 
 ## To Do
 
+- Find better solution for usage of implicit Encodings
 - Make it easy to provide ones own inputfiles *outside* of this project directory
   (see runTp.sh)
 - Internationalisation
@@ -70,9 +71,8 @@ To make interpretation easier, in the current version at least one month is requ
 - Refactor LatexWeekSchedule; this might constitute a use case for a template engine
 - Externalize corresponding configs
 - Internationalization
-- latin1 vs. utf8 should be configurable
 - new week plans and day plans should be configurable
-- clean-up generated LaTeX (too many Over-/Underfull \vboxes )
+- clean-up generated LaTeX (too many Over-/Underfull \vboxes) -- might be a bit involved, as this  is a result of fine-tuning box widths
 
 ## SBT assembly
 

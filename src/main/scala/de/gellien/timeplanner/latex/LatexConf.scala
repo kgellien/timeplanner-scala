@@ -2,7 +2,6 @@ package de.gellien.timeplanner.latex
 
 trait LatexConf {
   def landscape: Boolean
-  def encoding: String
   def pageWidth: String
   def pageHeight: String
   def oddsidemargin: String
@@ -12,7 +11,6 @@ trait LatexConf {
 
 object DayPlanConf2 extends LatexConf {
   val landscape = false
-  val encoding = "utf8"
   val pageWidth = "18.5cm"
   val pageHeight = "27.5cm"
   val oddsidemargin = "3.6cm"
@@ -22,7 +20,6 @@ object DayPlanConf2 extends LatexConf {
 
 object TimePlanConf extends LatexConf {
   val landscape = true
-  val encoding = "utf8"
   val pageWidth = "27.7cm"
   val pageHeight = "18.0cm"
   val oddsidemargin = "1.0cm"
@@ -32,7 +29,6 @@ object TimePlanConf extends LatexConf {
 
 class WeekPlanConf extends LatexConf {
   val landscape = true
-  val encoding = "utf8"
   val pageWidth = "26.0cm"
   val pageHeight = "18.0cm"
   val oddsidemargin = "1.78cm"

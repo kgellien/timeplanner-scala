@@ -1,11 +1,13 @@
 package de.gellien.timeplanner.latex
 
+import de.gellien.timeplanner.config.Encodings
+
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan.PeriodPlan
 import de.gellien.timeplanner.timeplan.WeekPlan
 
 class LatexWeekSchedules {
-  def render(plans: List[PeriodPlan], conf: WeekPlanConf, weekSchedule: WeekSchedule) = {
+  def render(plans: List[PeriodPlan], conf: WeekPlanConf, weekSchedule: WeekSchedule)(implicit encodings: Encodings) = {
     val result = new ListBuffer[String]
     result ++= LatexHeader.header(conf)
     result += "\\begin{document}"

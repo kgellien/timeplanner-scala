@@ -10,7 +10,7 @@ object Plan {
   import Config._
 
   def main(args: Array[String]): Unit = {
-    val (encodings, fileNames, modifier) = getConfigsAfterValidation(args)
+    implicit val (encodings, fileNames, modifier) = getConfigsAfterValidation(args)
 
     val io = new Io(modifier.quote, encodings.outputEncoding, modifier.debug)
 
@@ -72,35 +72,35 @@ object Plan {
     (allPeriodPlans, periodPlans)
   }
 
-  def createTexOutputForWeekSchedule24(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
+  def createTexOutputForWeekSchedule24(outputFileName: String, periodPlans: List[PeriodPlan], io: Io)(implicit encodings: Encodings) = {
     val conf = new WeekPlanConf
     val lws = new LatexWeekSchedules
     val latexSource = lws.render(periodPlans, conf, LatexWeekSchedule24).toList
     io.saveStringList(outputFileName, latexSource)
   }
 
-  def createTexOutputForWeekSchedule(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
+  def createTexOutputForWeekSchedule(outputFileName: String, periodPlans: List[PeriodPlan], io: Io)(implicit encodings: Encodings) = {
     val conf = new WeekPlanConf
     val lws = new LatexWeekSchedules
     val latexSource = lws.render(periodPlans, conf, LatexWeekSchedule).toList
     io.saveStringList(outputFileName, latexSource)
   }
 
-  def createTexOutputForWeekWorkPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io) = {
+  def createTexOutputForWeekWorkPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io)(implicit encodings: Encodings) = {
     val conf = new WeekPlanConf
     val lwwp = new LatexWeekSchedules
     val latexSource = lwwp.render(periodPlans, conf, LatexWeekWorkPlan).toList
     io.saveStringList(outputFileName, latexSource)
   }
 
-  def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, dpConfig: String) = {
+  def createTexOutputForDayPlans(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, dpConfig: String)(implicit encodings: Encodings) = {
     val conf = ConfFactory.getConf(dpConfig)
     val ldp = new LatexDayPlans
     val latexSource = ldp.render(periodPlans, conf).toList
     io.saveStringList(outputFileName, latexSource)
   }
 
-  def createTexOutput(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, withSeparator: Boolean) = {
+  def createTexOutput(outputFileName: String, periodPlans: List[PeriodPlan], io: Io, withSeparator: Boolean)(implicit encodings: Encodings) = {
     val ltp = new LatexTimePlan(periodPlans, withSeparator)
     val latexSource = ltp.render.toList
     io.saveStringList(outputFileName, latexSource)

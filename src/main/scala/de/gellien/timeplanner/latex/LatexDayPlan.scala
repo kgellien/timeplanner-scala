@@ -1,7 +1,8 @@
 package de.gellien.timeplanner.latex
 
-import java.time.temporal.WeekFields
+import de.gellien.timeplanner.config.Encodings
 
+import java.time.temporal.WeekFields
 import scala.collection.mutable.ListBuffer
 import de.gellien.timeplanner.timeplan._
 
@@ -10,7 +11,7 @@ class LatexDayPlans {
     val latexSingleDayPlan = new LatexDayPlan(conf)
     latexSingleDayPlan.render(dayPlan, dayPlanRightOpt)
   }
-  def render(plans: List[PeriodPlan], conf: DayPlanConf) = {
+  def render(plans: List[PeriodPlan], conf: DayPlanConf)(implicit encodings: Encodings) = {
     val result = new ListBuffer[String]
     result ++= LatexHeader.header(DayPlanConf2)
     result += "\\begin{document}"
