@@ -83,13 +83,18 @@ object Config {
     val properties = new Properties()
     properties.load(new FileInputStream("timeplan.properties"))
     val pdflatexFullPath = properties.getProperty(os + ".pdflatex")
-    println("Path to pdflatex: >%s<" format pdflatexFullPath)
     val inputEncoding = properties.getProperty("input.encoding")
     val outputEncoding = properties.getProperty("output.encoding")
 
     import java.util.Locale
-    val language = properties.getProperty("locale.language")
-    Locale.setDefault(new Locale(language))
+    val locale = properties.getProperty("locale")
+    Locale.setDefault(Locale.forLanguageTag(locale))
+    // TODO CHECK that expected Locale really is set!
+
+    println("Path to pdflatex: >%s<" format pdflatexFullPath)
+    println("inputEncoding: >%s<" format inputEncoding)
+    println("outputEncoding: >%s<" format outputEncoding)
+    println("locale: >%s<" format locale)
 
     (
       Encodings(inputEncoding, outputEncoding),

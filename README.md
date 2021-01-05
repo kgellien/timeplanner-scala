@@ -57,6 +57,7 @@ To make interpretation easier, in the current version at least one month is requ
 
 ## To Do
 
+- Try to use default locale - maybe set on commandline before call? (During tests the configured locale from timeplanner.properties is not read!)
 - Find better solution for usage of implicit Encodings
 - Make it easy to provide ones own inputfiles *outside* of this project directory
   (see runTp.sh)
@@ -89,6 +90,7 @@ sbt assembly
 
 - [x] utf-8 as default
 - [x] test in-/output encoding properly (latin1 *and* utf-8)
+- [ ] read-in locale also for tests
 - [ ] check ApointmentSpec (commented out test cases)
 - [ ] complete verification of getWeekyear
 - [ ] Localise -ws, -ws24 and -ww too

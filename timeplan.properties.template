@@ -6,4 +6,5 @@ Windows.pdflatex="c:/Progs/MiKTeX-2.9/miktex/bin/x64/pdflatex.exe"
 # tested: iso-8859-1 | utf-8
 input.encoding=utf-8
 output.encoding=utf-8
-locale.language=de
+# de_DE does not work for Locale.forLanguageTag!
+locale=de-DE

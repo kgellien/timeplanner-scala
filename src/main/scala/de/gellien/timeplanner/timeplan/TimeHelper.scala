@@ -68,8 +68,8 @@ object TimeHelper {
     displayDay(LocalDate.of(year, month, day))
 
   def getFirstDayInWeek(year: Int, isoWeek: Int): LocalDate = {
+    // TODO: ensure that configured locale is set - also in tests!
     val calendar = Calendar.getInstance()
-    val timeZone = calendar.getTimeZone()
     val zoneId = calendar.getTimeZone().toZoneId()
     calendar.clear()
     calendar.set(Calendar.WEEK_OF_YEAR, isoWeek)
@@ -77,41 +77,16 @@ object TimeHelper {
     val result = LocalDateTime.ofInstant(calendar.toInstant(), zoneId).toLocalDate()
 
     /*
-    Something changed so that instead of the expected Monday as first day of week for Europe/Berlin I get the sunday just before.
-    Update from Java8 to Java11???
-    Tests below and Stackoverflow did not lead to solution YET
-     */
-
-    /*
-    println(f"getFirstDayInWeek($year, $isoWeek)")
-    println(f"  calendar-a: ${calendar}")
-    calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek())
-    val result = LocalDateTime.ofInstant(calendar.toInstant(), zoneId).toLocalDate()
-
-    println(f"  result': ${result.`with`(WeekFields.of(Locale.GERMANY).dayOfWeek(), 1L)}")
-    println(f"  result'': ${result.`with`(DayOfWeek.MONDAY)}")
-
-    println(f"  calendar-b: ${calendar}")
-    println(f"  calendar.getFirstDayOfWeek: ${calendar.getFirstDayOfWeek}")
-    println(f"  zoneId: ${zoneId}")
-    println(f"  result: ${result}")
-     */
-
-    val javaVersion = System.getProperty("java.version")
-
-    // TODO: test more Java evrsions and update accordingly
-    if (javaVersion.startsWith("1.8.")) {
-      result
-    } else if (javaVersion.startsWith("11.")) {
-      result.plusDays(1) // needed on Windows with Java 11 !?!
-    } else {
-      println(f"Java version $javaVersion not yet explicitely supportet; check java.util.time")
-      result
-    }
-
     println(f"getFirstDayInWeek($year, $isoWeek) = $result")
+    import java.util.Locale
+    var currentLocale = Locale.getDefault()
+    println(currentLocale.getDisplayCountry)
+    println(currentLocale.getLanguage)
+    println(currentLocale.getCountry)
+    println(currentLocale.getDisplayLanguage)
+     */
 
-    result // tests OK on Ubuntu 20.04 with Java 11.0.9.1; wrong during runtime!?!
+    result
   }
 
   def daysInPeriod(startDay: LocalDate, endDay: LocalDate): List[LocalDate] = {
