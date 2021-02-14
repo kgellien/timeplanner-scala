@@ -74,6 +74,9 @@ To make interpretation easier, in the current version at least one month is requ
 - Internationalization
 - new week plans and day plans should be configurable
 - clean-up generated LaTeX (too many Over-/Underfull \vboxes) -- might be a bit involved, as this  is a result of fine-tuning box widths
+- [ ] read-in locale also for tests
+- [ ] check ApointmentSpec (commented out test cases)
+- [ ] Localise -ws, -ws24 and -ww too
 
 ## SBT assembly
 
@@ -86,22 +89,19 @@ sbt assembly
 ## Revision History
 
 
-### 0.8.2-SNAPSHOT
+### 0.8.2
 
-- [x] utf-8 as default
-- [x] test in-/output encoding properly (latin1 *and* utf-8)
-- [ ] read-in locale also for tests
-- [ ] check ApointmentSpec (commented out test cases)
-- [ ] complete verification of getWeekyear
-- [ ] Localise -ws, -ws24 and -ww too
+- utf-8 as default
+- test in-/output encoding properly (latin1 *and* utf-8)
+- complete verification of getWeekyear (i.e. move from Java 8 to Java 11)
 
 ### 0.8.1
 
-- [x] replace joda.time with java.time
-- [x] Localisation via properties
-- [x] update to current SBT (1.3.6)
-- [x] update to Scala 2.13.1
-- [x] Dayplan: change KW to W
+- replace joda.time with java.time
+- Localisation via properties
+- update to current SBT (1.3.6)
+- update to Scala 2.13.1
+- Dayplan: change KW to W
 
 ### 0.8.0
 
