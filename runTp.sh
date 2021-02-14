@@ -7,7 +7,7 @@ WEEKSCHEDULE=$TIMEPLAN-ws
 WEEKSCHEDULE24=$TIMEPLAN-ws24
 
 LATEX="--callpdflatex"
-LATEX=""
+#LATEX=""
 
 TP_OPTS="--withSeparator"
 TP_OPTS="--withAdditionalTasks --daysPerWeek 7 --dpconfig dayplan-regular.properties --withOverview"
