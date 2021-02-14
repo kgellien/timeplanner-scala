@@ -64,12 +64,12 @@ To make interpretation easier, in the current version at least one month is requ
 - Internationalisation
 - use logging instead of println
 - try template engine (e.g. scalate) for latex output (DONE: for now not worth the effort)
+- Refactor LatexWeekSchedule; this might constitute a use case for a template engine
 - set (configurabe) amount of different classifiers displayed in overview; collapse single entries into miscellaneous?
 - remove absolute paths
 - Documentation!
 - make use of ISO8601 calender consistent
 - find a way to distinguish between birthdays and anniversaries
-- Refactor LatexWeekSchedule; this might constitute a use case for a template engine
 - Externalize corresponding configs
 - Internationalization
 - new week plans and day plans should be configurable
@@ -88,6 +88,9 @@ sbt assembly
 
 ## Revision History
 
+### 0.8.3-SNAPSHOT
+- [ ] check ApointmentSpec (commented out test cases)
+- [ ] Localise -ws, -ws24 and -ww too
 
 ### 0.8.2
 
